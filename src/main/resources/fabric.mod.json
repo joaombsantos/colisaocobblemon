@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "colisao-cobblemon",
+	"version": "${version}",
+	"name": "Colisao Cobblemon",
+	"description": "Auxiliar mod to Colisao Cobblemon",
+	"authors": [
+		"Marcronte"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/joaombsantos/colisaocobblemon"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/colisao-cobblemon/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"me.marcronte.colisaocobblemon.ColisaoCobblemon"
+		],
+		"fabric-datagen": [
+			"me.marcronte.colisaocobblemon.ColisaoCobblemonDataGenerator"
+		],
+		"client": [
+			"me.marcronte.colisaocobblemon.ColisaoCobblemonClient"
+		]
+	},
+	"mixins": [
+		"colisao-cobblemon.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.3",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
