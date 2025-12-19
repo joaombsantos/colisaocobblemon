@@ -27,8 +27,6 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
             return -1;
         }, HmManager.CUT_OBSTACLE);
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
-            return -1;
-        }, HmManager.CUT_OBSTACLE);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> -1, HmManager.CUT_OBSTACLE);
     }
 }
