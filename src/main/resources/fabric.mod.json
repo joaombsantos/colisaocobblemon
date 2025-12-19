@@ -22,7 +22,7 @@
 			"me.marcronte.colisaocobblemon.ColisaoCobblemonDataGenerator"
 		],
 		"client": [
-			"me.marcronte.colisaocobblemon.ColisaoCobblemonClient"
+          "me.marcronte.colisaocobblemon.client.ColisaoCobblemonClient"
 		]
 	},
 	"mixins": [
