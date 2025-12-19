@@ -1,7 +1,7 @@
 package me.marcronte.colisaocobblemon;
 
 import net.fabricmc.api.ModInitializer;
-
+import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +11,10 @@ public class ColisaoCobblemon implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		LOGGER.info("Inicializando Colisao Cobblemon...");
+
+		// Inicializa o módulo de HMs
+		HmManager.register();
 
 	}
 }
