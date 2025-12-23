@@ -1,26 +1,26 @@
 package me.marcronte.colisaocobblemon.features.badges;
 
 import me.marcronte.colisaocobblemon.config.LevelCapConfig;
-import net.minecraft.core.registries.BuiltInRegistries; // Mudou de Registries
-import net.minecraft.server.level.ServerPlayer;         // Mudou de ServerPlayerEntity
-import net.minecraft.world.entity.player.Inventory;     // Mudou de PlayerInventory
-import net.minecraft.world.item.ItemStack;              // Pacote diferente
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class LevelCapCalculator {
 
-    public static int getPlayerLevelCap(ServerPlayer player) {
+    public static int getPlayerLevelCap(ServerPlayerEntity player) {
+        // 1. Começa com o nível inicial definido no JSON (ex: 10)
         int maxLevel = LevelCapConfig.get().startLevel;
 
-        Inventory inv = player.getInventory();
+        PlayerInventory inv = player.getInventory();
 
         // 2. Vasculha o inventário principal do jogador
-        // inv.getContainerSize() substitui inv.size()
-        for (int i = 0; i < inv.getContainerSize(); i++) {
-            ItemStack stack = inv.getItem(i); // getStack virou getItem
+        for (int i = 0; i < inv.size(); i++) {
+            ItemStack stack = inv.getStack(i);
             if (stack.isEmpty()) continue;
 
-            // Pega o ID do item. getKey() substitui getId()
-            String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+            // Pega o ID do item (ex: "colisao-cobblemon:kanto_boulder_badge")
+            String itemId = Registries.ITEM.getId(stack.getItem()).toString();
 
             // Pergunta para a Config: "Esse item dá level cap?"
             int capFromItem = LevelCapConfig.get().getCapForBadge(itemId);
@@ -30,6 +30,8 @@ public class LevelCapCalculator {
                 maxLevel = capFromItem;
             }
         }
+
+        // TODO: Futuramente, aqui vamos checar dentro da Badge Case (NBT)
 
         return maxLevel;
     }

@@ -1,29 +1,28 @@
 package me.marcronte.colisaocobblemon.features.badges;
 
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
-import me.marcronte.colisaocobblemon.ModItemGroup;
+import me.marcronte.colisaocobblemon.ModItemGroup; // Importe o Grupo
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.core.Registry;                // Mudou o pacote
-import net.minecraft.core.registries.BuiltInRegistries; // Mudou de Registries
-import net.minecraft.resources.ResourceLocation;    // Mudou de Identifier
-import net.minecraft.world.item.Item;               // Mudou o pacote
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 
 public class BadgeItems {
 
-    // Item.Properties substitui Item.Settings
-    public static final Item KANTO_BOULDER_BADGE = new Item(new Item.Properties().stacksTo(1)); // maxCount virou stacksTo
-    public static final Item KANTO_CASCADE_BADGE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item KANTO_THUNDER_BADGE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item KANTO_RAINBOW_BADGE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item KANTO_SOUL_BADGE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item KANTO_MARSH_BADGE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item KANTO_VOLCANO_BADGE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item KANTO_EARTH_BADGE = new Item(new Item.Properties().stacksTo(1));
+    // ... (Mantenha as declarações dos itens iguais: KANTO_BOULDER_BADGE, etc...)
+    // Vou resumir para não ocupar espaço, mas mantenha todas as linhas "public static final Item..."
 
-    public static final Item KANTO_CHAMPION_BADGE = new Item(new Item.Properties().stacksTo(1));
-
-    // Badge Case
-    public static final Item KANTO_BADGE_CASE = new Item(new Item.Properties().stacksTo(1));
+    public static final Item KANTO_BOULDER_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_CASCADE_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_THUNDER_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_RAINBOW_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_SOUL_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_MARSH_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_VOLCANO_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_EARTH_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_CHAMPION_BADGE = new Item(new Item.Settings().maxCount(1));
+    public static final Item KANTO_BADGE_CASE = new Item(new Item.Settings().maxCount(1));
 
     public static void register() {
         registerItem("kanto_boulder_badge", KANTO_BOULDER_BADGE);
@@ -40,9 +39,11 @@ public class BadgeItems {
     }
 
     private static void registerItem(String path, Item item) {
-        // ResourceLocation.fromNamespaceAndPath substitui Identifier.of
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, path), item);
+        Registry.register(Registries.ITEM, Identifier.of(ColisaoCobblemon.MOD_ID, path), item);
 
-        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> entries.accept(item)); // add virou accept
+        // MUDANÇA: Adiciona ao nosso grupo personalizado
+        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> {
+            entries.add(item);
+        });
     }
 }

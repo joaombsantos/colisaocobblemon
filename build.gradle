@@ -22,8 +22,6 @@ repositories {
 }
 
 loom {
-	// Garante que estamos usando os nomes oficiais
-	officialMojangMappings()
 
 	// --- A CORREÇÃO DE SEGURANÇA ---
 	// Isso ajuda o Loom a lidar com injeções de interface em mods complexos como Cobblemon
@@ -37,7 +35,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
 	// Mappings oficiais (MANTENHA ISSO, NÃO MUDE)
-	mappings loom.officialMojangMappings()
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
 
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

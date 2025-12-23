@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.storage.LevelResource; // Mudou de WorldSavePath
+import net.minecraft.util.WorldSavePath; // Yarn: WorldSavePath em vez de LevelResource
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +30,8 @@ public class LevelCapConfig {
     }
 
     public static void load(MinecraftServer server) {
-        // getWorldPath substitui getSavePath, e LevelResource substitui WorldSavePath
-        Path worldDir = server.getWorldPath(LevelResource.ROOT);
+        // Yarn: getSavePath e WorldSavePath
+        Path worldDir = server.getSavePath(WorldSavePath.ROOT);
         File file = worldDir.resolve("cobblemon_level_cap.json").toFile();
 
         if (!file.exists()) {
