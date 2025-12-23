@@ -1,6 +1,18 @@
 {
+  "itemGroup.colisao-cobblemon.general": "Colisão Cobblemon",
   "block.colisao-cobblemon.cut_obstacle": "Arbusto de Corte",
   "block.colisao-cobblemon.rock_smash": "Pedra Quebrável",
   "item.colisao-cobblemon.surf": "Surf",
-  "message.colisao-cobblemon.need_surf": "Você precisa de Surf!"
+  "message.colisao-cobblemon.need_surf": "Você precisa de Surf!",
+  "item.colisao-cobblemon.kanto_boulder_badge": "Insígnia da Rocha",
+  "item.colisao-cobblemon.kanto_cascade_badge": "Insígnia da Cascata",
+  "item.colisao-cobblemon.kanto_thunder_badge": "Insígnia do Trovão",
+  "item.colisao-cobblemon.kanto_rainbow_badge": "Insígnia do Arco-Íris",
+  "item.colisao-cobblemon.kanto_soul_badge": "Insígnia da Alma",
+  "item.colisao-cobblemon.kanto_marsh_badge": "Insígnia da Lama",
+  "item.colisao-cobblemon.kanto_volcando_badge": "Insígnia do Vulcão",
+  "item.colisao-cobblemon.kanto_earth_badge": "Insígnia da Terra",
+  "item.colisao-cobblemon.kanto_champion_badge": "Insígnia do Campeão",
+  "item.colisao-cobblemon.kanto_badge_case": "Estojo de Insígnias de Kanto",
+  "message.colisao-cobblemon.level_cap_limit": "Você possui um Pokemon acima do limite de nível!"
 }
