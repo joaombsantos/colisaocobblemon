@@ -20,8 +20,8 @@ public class ColisaoCobblemon implements ModInitializer {
 
 		// Inicializa os módulos
 		ModItemGroup.register();
-		HmManager.register();
 		BadgeItems.register();
+		HmManager.register();
 		LevelCapConfig.register();
 		LevelCapEvents.register();
 

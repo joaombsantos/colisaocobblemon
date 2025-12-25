@@ -1,32 +1,33 @@
 package me.marcronte.colisaocobblemon.features.hms;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.EntityShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,58 +43,59 @@ public class CutObstacleBlock extends Block {
     // --- Configurações do Cut ---
     private static final Map<UUID, Long> PERMISSIONS = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
-    private static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 24.0D, 16.0D);
+    private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 24.0D, 16.0D);
 
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public CutObstacleBlock(Settings settings) {
+    public CutObstacleBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
-    // Métodos para permitir rotação por comandos/worldedit
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    public @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     // --- LÓGICA DE INTERAÇÃO (Cut) ---
-    public static ActionResult handleInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.PASS;
-        if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
+    public static InteractionResult handleInteract(Player player, Level world, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
 
-        ItemStack stack = player.getMainHandStack();
-        if (!stack.isOf(Items.SHEARS)) return ActionResult.PASS;
+        ItemStack stack = player.getMainHandItem();
+        if (!stack.is(Items.SHEARS)) return InteractionResult.PASS;
 
         BlockPos pos = hit.getBlockPos();
         BlockState state = world.getBlockState(pos);
 
         if (!(state.getBlock() instanceof CutObstacleBlock)) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        cutSmartLine(world, pos, state.getBlock(), (ServerPlayerEntity) player);
-        stack.damage(1, player, EquipmentSlot.MAINHAND);
+        cutSmartLine(world, pos, state.getBlock(), (ServerPlayer) player);
 
-        return ActionResult.SUCCESS;
+        // CORREÇÃO: Uso simplificado do hurtAndBreak (sem lambda)
+        stack.hurtAndBreak(0, player, EquipmentSlot.MAINHAND);
+
+        return InteractionResult.SUCCESS;
     }
 
-    private static void cutSmartLine(World world, BlockPos centerPos, Block targetBlock, ServerPlayerEntity player) {
+    private static void cutSmartLine(Level world, BlockPos centerPos, Block targetBlock, ServerPlayer player) {
         List<BlockPos> blocksToHide = new ArrayList<>();
         blocksToHide.add(centerPos);
 
@@ -104,7 +106,7 @@ public class CutObstacleBlock extends Block {
         Direction.Axis axisToCut = null;
 
         if (hasX && hasZ) {
-            axisToCut = player.getHorizontalFacing().getAxis();
+            axisToCut = player.getDirection().getAxis();
         } else if (hasX) {
             axisToCut = Direction.Axis.X;
         } else if (hasZ) {
@@ -124,15 +126,15 @@ public class CutObstacleBlock extends Block {
 
         // AÇÃO
         long duration = 10;
-        allowPlayer(player.getUuid(), duration);
+        allowPlayer(player.getUUID(), duration);
 
-        BlockState airState = Blocks.AIR.getDefaultState(); // Agora funciona com o import correto
+        BlockState airState = Blocks.AIR.defaultBlockState();
 
-        // Envio Imediato do Pacote (Delay unificado de 100ms)
+        // Envio Imediato do Pacote
         SCHEDULER.schedule(() -> {
-            if (player.getServer() == null || player.isDisconnected()) return;
+            if (player.getServer() == null || player.hasDisconnected()) return;
             for (BlockPos pos : blocksToHide) {
-                player.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, airState));
+                player.connection.send(new ClientboundBlockUpdatePacket(pos, airState));
             }
         }, 100, TimeUnit.MILLISECONDS);
 
@@ -140,12 +142,12 @@ public class CutObstacleBlock extends Block {
         SCHEDULER.schedule(() -> {
             if (player.getServer() != null) {
                 player.getServer().execute(() -> {
-                    if (player.isDisconnected()) return;
+                    if (player.hasDisconnected()) return;
 
                     for (BlockPos pos : blocksToHide) {
                         BlockState originalState = world.getBlockState(pos);
                         if (originalState.getBlock() instanceof CutObstacleBlock) {
-                            player.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, originalState));
+                            player.connection.send(new ClientboundBlockUpdatePacket(pos, originalState));
                         }
                     }
                 });
@@ -153,9 +155,9 @@ public class CutObstacleBlock extends Block {
         }, duration, TimeUnit.SECONDS);
     }
 
-    private static void collectOffsets(World world, BlockPos startPos, Block targetBlock, Direction dir, List<BlockPos> list) {
+    private static void collectOffsets(Level world, BlockPos startPos, Block targetBlock, Direction dir, List<BlockPos> list) {
         for (int i = 1; i <= 15; i++) {
-            BlockPos checkPos = startPos.offset(dir, i);
+            BlockPos checkPos = startPos.relative(dir, i);
             if (isTarget(world, checkPos, targetBlock)) {
                 list.add(checkPos);
             } else {
@@ -164,8 +166,8 @@ public class CutObstacleBlock extends Block {
         }
     }
 
-    private static boolean isTarget(World world, BlockPos pos, Block target) {
-        return world.getBlockState(pos).isOf(target);
+    private static boolean isTarget(Level world, BlockPos pos, Block target) {
+        return world.getBlockState(pos).is(target);
     }
 
     // --- Colisão e Permissões ---
@@ -175,18 +177,18 @@ public class CutObstacleBlock extends Block {
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        if (context instanceof EntityShapeContext entityContext) {
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (context instanceof EntityCollisionContext entityContext) {
             Entity entity = entityContext.getEntity();
-            if (entity instanceof PlayerEntity player && hasPermission(player.getUuid())) {
-                return VoxelShapes.empty();
+            if (entity instanceof Player player && hasPermission(player.getUUID())) {
+                return Shapes.empty();
             }
         }
         return SHAPE;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 

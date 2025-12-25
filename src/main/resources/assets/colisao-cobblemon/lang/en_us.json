@@ -14,5 +14,7 @@
   "item.colisao-cobblemon.kanto_earth_badge": "Earth Badge",
   "item.colisao-cobblemon.kanto_champion_badge": "Champion Badge",
   "item.colisao-cobblemon.kanto_badge_case": "Kanto Badge Case",
-  "message.colisao-cobblemon.level_cap_limit": "You have a Pokemon above your level cap"
+  "message.colisao-cobblemon.level_cap_limit": "Your Pokemon is above your level cap",
+  "message.colisao-cobblemon.reached_level_cap_limit": "Yor Pokemon reached the level cap",
+  "message.colisao-cobblemon.battle_blocked": "You cannot enter a battle because you have a Pokemon above level cap"
 }

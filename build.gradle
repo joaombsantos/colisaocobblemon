@@ -1,72 +1,108 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'dev.architectury.loom' version '1.11-SNAPSHOT'
+	id 'architectury-plugin' version '3.4-SNAPSHOT'
+	id 'com.github.johnrengelman.shadow' version '8.1.1' apply false
+	id "org.jetbrains.kotlin.jvm" version "2.2.20"
 	id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
 
-base {
-	archivesName = project.archives_base_name
+architectury {
+	minecraft = project.minecraft_version
+	platformSetupLoomIde()
+	fabric()
 }
 
-repositories {
-	mavenCentral()
-	maven { url "https://maven.fabricmc.net/" }
-	maven {
-		name = "Impact Development"
-		url = "https://maven.impactdev.net/repository/development/"
-	}
-	maven { url "https://maven.architectury.dev/" }
-	maven { url "https://maven.pkg.jetbrains.space/public/p/kotlin/kotlin-eap" }
+base {
+	archivesName = "$rootProject.mod_id-$rootProject.minecraft_version"
 }
 
 loom {
+	silentMojangMappingsLicense()
+	mixin {
+		defaultRefmapName.set("${mod_id}.refmap.json")
+	}
+}
 
-	// --- A CORREÇÃO DE SEGURANÇA ---
-	// Isso ajuda o Loom a lidar com injeções de interface em mods complexos como Cobblemon
-	// quando rodando em ambiente de desenvolvimento Mojang.
-	interfaceInjection {
-		enableDependencyInterfaceInjection = true
+
+repositories {
+	mavenCentral()
+
+	maven {
+		name = 'Kotlin for Fabric'
+		url = 'https://maven.fabricmc.net/net/fabricmc/fabric-language-kotlin/'
+	}
+
+	maven {
+		name = "Fabric"
+		url = "https://maven.fabricmc.net/"
+	}
+
+	maven {
+		name = "Cobblemon"
+		url = "https://maven.impactdev.net/repository/development/"
+	}
+
+	maven {
+		name = "Architectury"
+		url = "https://maven.architectury.dev/"
 	}
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	// --- Dependências Fundamentais (Vieram do antigo subprojects) ---
+	minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
+	mappings loom.officialMojangMappings()
 
-	// Mappings oficiais (MANTENHA ISSO, NÃO MUDE)
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
+	// --- Dependências do Mod (Vieram da raiz) ---
 
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
-	implementation "org.jetbrains.kotlin:kotlin-reflect:2.0.20"
+	// Fabric Loader
+	modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-	modImplementation "dev.architectury:architectury-fabric:13.0.8"
-	modImplementation "com.cobblemon:fabric:1.7.1+1.21.1"
+	// Architectury API
+	modImplementation "dev.architectury:architectury-fabric:$rootProject.architectury_api_version"
+
+	// Cobblemon
+	modApi "com.cobblemon:mod:$rootProject.cobblemon_version"
+	modImplementation "com.cobblemon:fabric:$rootProject.cobblemon_version"
+
+	/*modImplementation "net.fabricmc:fabric-language-kotlin:1.12.1+kotlin.2.0.20"
+
+	modLocalRuntime "com.cobblemon:mod:$rootProject.cobblemon_version"*/
+
+	// Kotlin
+	implementation "org.jetbrains.kotlin:kotlin-reflect:2.2.20"
+	implementation "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlin_stdlib_version"
 }
 
-processResources {
-	inputs.property "version", project.version
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 21
 }
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+processResources {
+	filesMatching(['**/*.mods.toml', '**/pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
+		expand project.properties
 	}
-	withSourcesJar()
 }
 
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId = base.archivesName.get()
+			from components.java
+		}
+	}
+	repositories {
+
 	}
 }

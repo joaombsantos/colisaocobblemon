@@ -7,6 +7,14 @@ pluginManagement {
 			name = "Fabric"
 			url = "https://maven.fabricmc.net/"
 		}
+		maven {
+			name = "Forge"
+			url = "https://maven.minecraftforge.net/"
+		}
+		maven {
+			name = "Architectury"
+			url = "https://maven.architectury.dev/"
+		}
 	}
 }
 rootProject.name = "ColisaoCobblemon"

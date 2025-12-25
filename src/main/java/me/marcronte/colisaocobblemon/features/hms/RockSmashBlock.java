@@ -1,28 +1,29 @@
 package me.marcronte.colisaocobblemon.features.hms;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.EntityShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.PickaxeItem;
-import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,45 +39,48 @@ public class RockSmashBlock extends Block {
     private static final Map<UUID, Long> PERMISSIONS = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
 
-    private static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 24.0D, 16.0D);
+    private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 24.0D, 16.0D);
 
-    public RockSmashBlock(Settings settings) {
+    public RockSmashBlock(Properties settings) {
         super(settings);
     }
 
-    public static ActionResult handleInteract(PlayerEntity player, World world, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.PASS;
-        if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
+    public static InteractionResult handleInteract(Player player, Level world, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide) return InteractionResult.PASS;
+        if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
 
-        ItemStack stack = player.getMainHandStack();
+        ItemStack stack = player.getMainHandItem();
 
-        if (!(stack.getItem() instanceof PickaxeItem)) return ActionResult.PASS;
+        if (!(stack.getItem() instanceof PickaxeItem)) return InteractionResult.PASS;
 
         BlockPos pos = hit.getBlockPos();
         BlockState state = world.getBlockState(pos);
 
         if (!(state.getBlock() instanceof RockSmashBlock)) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        smashRockLine(world, pos, state.getBlock(), (ServerPlayerEntity) player);
-        stack.damage(0, player, EquipmentSlot.MAINHAND);
+        smashRockLine(world, pos, state.getBlock(), (ServerPlayer) player);
 
-        return ActionResult.SUCCESS;
+        // CORREÇÃO: Uso simplificado do hurtAndBreak (sem lambda)
+        // Isso resolve o erro "Cannot resolve method broadcastBreakEvent"
+        stack.hurtAndBreak(0, player, EquipmentSlot.MAINHAND);
+
+        return InteractionResult.SUCCESS;
     }
 
-    private static void smashRockLine(World world, BlockPos centerPos, Block targetBlock, ServerPlayerEntity player) {
+    private static void smashRockLine(Level world, BlockPos centerPos, Block targetBlock, ServerPlayer player) {
         List<BlockPos> blocksToHide = new ArrayList<>();
         blocksToHide.add(centerPos);
 
-        // 1. DETECÇÃO (Usa a direção do JOGADOR, funciona independente da rotação da pedra)
+        // 1. DETECÇÃO
         boolean hasX = isTarget(world, centerPos.east(), targetBlock) || isTarget(world, centerPos.west(), targetBlock);
         boolean hasZ = isTarget(world, centerPos.north(), targetBlock) || isTarget(world, centerPos.south(), targetBlock);
 
         Direction.Axis axisToBreak = null;
 
         if (hasX && hasZ) {
-            axisToBreak = player.getHorizontalFacing().getAxis();
+            axisToBreak = player.getDirection().getAxis();
         } else if (hasX) {
             axisToBreak = Direction.Axis.X;
         } else if (hasZ) {
@@ -96,17 +100,17 @@ public class RockSmashBlock extends Block {
 
         // 3. AÇÃO
         long duration = 10;
-        allowPlayer(player.getUuid(), duration);
+        allowPlayer(player.getUUID(), duration);
 
-        world.playSound(null, centerPos, SoundEvents.BLOCK_STONE_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        world.playSound(null, centerPos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
 
-        BlockState airState = Blocks.AIR.getDefaultState();
+        BlockState airState = Blocks.AIR.defaultBlockState();
 
         // Delay 100ms
         SCHEDULER.schedule(() -> {
-            if (player.getServer() == null || player.isDisconnected()) return;
+            if (player.getServer() == null || player.hasDisconnected()) return;
             for (BlockPos pos : blocksToHide) {
-                player.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, airState));
+                player.connection.send(new ClientboundBlockUpdatePacket(pos, airState));
             }
         }, 100, TimeUnit.MILLISECONDS);
 
@@ -114,12 +118,12 @@ public class RockSmashBlock extends Block {
         SCHEDULER.schedule(() -> {
             if (player.getServer() != null) {
                 player.getServer().execute(() -> {
-                    if (player.isDisconnected()) return;
+                    if (player.hasDisconnected()) return;
 
                     for (BlockPos pos : blocksToHide) {
                         BlockState originalState = world.getBlockState(pos);
                         if (originalState.getBlock() instanceof RockSmashBlock) {
-                            player.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, originalState));
+                            player.connection.send(new ClientboundBlockUpdatePacket(pos, originalState));
                         }
                     }
                 });
@@ -127,9 +131,9 @@ public class RockSmashBlock extends Block {
         }, duration, TimeUnit.SECONDS);
     }
 
-    private static void collectOffsets(World world, BlockPos startPos, Block targetBlock, Direction dir, List<BlockPos> list) {
+    private static void collectOffsets(Level world, BlockPos startPos, Block targetBlock, Direction dir, List<BlockPos> list) {
         for (int i = 1; i <= 15; i++) {
-            BlockPos checkPos = startPos.offset(dir, i);
+            BlockPos checkPos = startPos.relative(dir, i);
             if (isTarget(world, checkPos, targetBlock)) {
                 list.add(checkPos);
             } else {
@@ -138,8 +142,8 @@ public class RockSmashBlock extends Block {
         }
     }
 
-    private static boolean isTarget(World world, BlockPos pos, Block target) {
-        return world.getBlockState(pos).isOf(target);
+    private static boolean isTarget(Level world, BlockPos pos, Block target) {
+        return world.getBlockState(pos).is(target);
     }
 
     // --- Colisão e Permissões ---
@@ -149,18 +153,18 @@ public class RockSmashBlock extends Block {
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        if (context instanceof EntityShapeContext entityContext) {
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (context instanceof EntityCollisionContext entityContext) {
             Entity entity = entityContext.getEntity();
-            if (entity instanceof PlayerEntity player && hasPermission(player.getUuid())) {
-                return VoxelShapes.empty();
+            if (entity instanceof Player player && hasPermission(player.getUUID())) {
+                return Shapes.empty();
             }
         }
         return SHAPE;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 

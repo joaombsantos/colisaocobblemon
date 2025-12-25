@@ -14,5 +14,7 @@
   "item.colisao-cobblemon.kanto_earth_badge": "Insígnia da Terra",
   "item.colisao-cobblemon.kanto_champion_badge": "Insígnia do Campeão",
   "item.colisao-cobblemon.kanto_badge_case": "Estojo de Insígnias de Kanto",
-  "message.colisao-cobblemon.level_cap_limit": "Você possui um Pokemon acima do limite de nível!"
+  "message.colisao-cobblemon.level_cap_limit": "Seu Pokemon está acima do limite de nível!",
+  "message.colisao-cobblemon.reached_level_cap_limit": "Seu Pokemon atingiu o limete de nível",
+  "message.colisao-cobblemon.battle_blocked": "Você não pode entrar em batalha por ter um Pokemon acima do limite de nível"
 }
