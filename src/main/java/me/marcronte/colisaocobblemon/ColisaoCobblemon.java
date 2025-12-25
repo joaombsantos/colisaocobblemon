@@ -18,17 +18,17 @@ public class ColisaoCobblemon implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Inicializando Colisao Cobblemon...");
 
-		// Inicializa os módulos
+		// INITIALIZE MODULES
 		ModItemGroup.register();
 		BadgeItems.register();
 		HmManager.register();
 		LevelCapConfig.register();
 		LevelCapEvents.register();
 
-		// Captura o servidor quando ele inicia
+		// SERVER START CAPTURE
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);
 
-		// Limpa a referência quando desliga (para evitar memory leaks)
+		// CLEARS THE REFERENCE WHEN STOPPED (memory leak protection)
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> serverInstance = null);
 	}
 	public static MinecraftServer getServer() {

@@ -30,7 +30,6 @@ public class LevelCapConfig {
     }
 
     public static void load(MinecraftServer server) {
-        // getWorldPath substitui getSavePath, e LevelResource substitui WorldSavePath
         Path worldDir = server.getWorldPath(LevelResource.ROOT);
         File file = worldDir.resolve("cobblemon_level_cap.json").toFile();
 
@@ -42,7 +41,7 @@ public class LevelCapConfig {
             try (FileReader reader = new FileReader(file)) {
                 INSTANCE = GSON.fromJson(reader, LevelCapConfig.class);
             } catch (IOException e) {
-                LOGGER.error("Falha ao carregar a configuração de Level Cap. Usando padrões.", e);
+                LOGGER.error("Error when loading Level Cap configuration. Using standards.", e);
                 INSTANCE = new LevelCapConfig();
             }
         }
@@ -52,7 +51,7 @@ public class LevelCapConfig {
         try (FileWriter writer = new FileWriter(file)) {
             GSON.toJson(INSTANCE, writer);
         } catch (IOException e) {
-            LOGGER.error("Falha ao salvar a configuração de Level Cap.", e);
+            LOGGER.error("Error when saving Level Cap configurations.", e);
         }
     }
 

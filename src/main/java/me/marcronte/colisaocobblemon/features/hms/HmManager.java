@@ -16,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class HmManager {
 
-    // CORREÇÃO: Properties.copy -> Properties.ofFullCopy
     public static final Block CUT_OBSTACLE = new CutObstacleBlock(
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).noCollission()
     );
@@ -46,10 +45,8 @@ public class HmManager {
             entries.accept(SURF);
         });
 
-        // 1. Inicializa o EventHandler do Surf
         SurfHandler.register();
 
-        // 2. Inicializa os eventos de clique (Cut e Rock Smash)
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             InteractionResult cutResult = CutObstacleBlock.handleInteract(player, world, hand, hitResult);
             if (cutResult == InteractionResult.SUCCESS) return InteractionResult.SUCCESS;

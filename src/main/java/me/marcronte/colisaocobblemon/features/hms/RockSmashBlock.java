@@ -62,8 +62,6 @@ public class RockSmashBlock extends Block {
 
         smashRockLine(world, pos, state.getBlock(), (ServerPlayer) player);
 
-        // CORREÇÃO: Uso simplificado do hurtAndBreak (sem lambda)
-        // Isso resolve o erro "Cannot resolve method broadcastBreakEvent"
         stack.hurtAndBreak(0, player, EquipmentSlot.MAINHAND);
 
         return InteractionResult.SUCCESS;
@@ -73,7 +71,7 @@ public class RockSmashBlock extends Block {
         List<BlockPos> blocksToHide = new ArrayList<>();
         blocksToHide.add(centerPos);
 
-        // 1. DETECÇÃO
+        // 1. DETECTION
         boolean hasX = isTarget(world, centerPos.east(), targetBlock) || isTarget(world, centerPos.west(), targetBlock);
         boolean hasZ = isTarget(world, centerPos.north(), targetBlock) || isTarget(world, centerPos.south(), targetBlock);
 
@@ -87,7 +85,7 @@ public class RockSmashBlock extends Block {
             axisToBreak = Direction.Axis.Z;
         }
 
-        // 2. COLETA
+        // 2. COLLECT
         if (axisToBreak != null) {
             if (axisToBreak == Direction.Axis.X) {
                 collectOffsets(world, centerPos, targetBlock, Direction.EAST, blocksToHide);
@@ -98,7 +96,7 @@ public class RockSmashBlock extends Block {
             }
         }
 
-        // 3. AÇÃO
+        // 3. ACTION
         long duration = 10;
         allowPlayer(player.getUUID(), duration);
 
@@ -106,7 +104,7 @@ public class RockSmashBlock extends Block {
 
         BlockState airState = Blocks.AIR.defaultBlockState();
 
-        // Delay 100ms
+        // 100ms DELAY
         SCHEDULER.schedule(() -> {
             if (player.getServer() == null || player.hasDisconnected()) return;
             for (BlockPos pos : blocksToHide) {
@@ -114,7 +112,7 @@ public class RockSmashBlock extends Block {
             }
         }, 100, TimeUnit.MILLISECONDS);
 
-        // Retorno após 10s
+        // RETURN AFTER 10 SECONDS
         SCHEDULER.schedule(() -> {
             if (player.getServer() != null) {
                 player.getServer().execute(() -> {
@@ -146,7 +144,7 @@ public class RockSmashBlock extends Block {
         return world.getBlockState(pos).is(target);
     }
 
-    // --- Colisão e Permissões ---
+    // --- COLLISIONS AND PERMISSIONS ---
     public static void allowPlayer(UUID playerUuid, long seconds) {
         long expireTime = System.currentTimeMillis() + (seconds * 1000);
         PERMISSIONS.put(playerUuid, expireTime);

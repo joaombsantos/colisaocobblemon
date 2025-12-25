@@ -17,7 +17,7 @@ public class LevelCapEvents {
 
     public static void register() {
 
-        // --- 1. BLOQUEAR GANHO DE XP ---
+        // --- 1. BLOCK XP GAIN ---
         CobblemonEvents.EXPERIENCE_GAINED_EVENT_PRE.subscribe(event -> {
             Pokemon pokemon = event.getPokemon();
             MinecraftServer server = ColisaoCobblemon.getServer();
@@ -44,7 +44,7 @@ public class LevelCapEvents {
             }
         });
 
-        // --- 2. TRAVA CONTRA RARE CANDY (Level Up) ---
+        // --- 2. BLOCK AGAINST RARE CANDY (Level Up) ---
         CobblemonEvents.LEVEL_UP_EVENT.subscribe(event -> {
             Pokemon pokemon = event.getPokemon();
             MinecraftServer server = ColisaoCobblemon.getServer();
@@ -73,7 +73,7 @@ public class LevelCapEvents {
             }
         });
 
-        // --- 3. BLOQUEIO DE SEND OUT ---
+        // --- 3. SEND OUT BLOCK ---
         CobblemonEvents.POKEMON_SENT_PRE.subscribe(event -> {
             Pokemon pokemon = event.getPokemon();
             MinecraftServer server = ColisaoCobblemon.getServer();
@@ -101,14 +101,13 @@ public class LevelCapEvents {
             }
         });
 
-        // --- 4. BLOQUEIO DE BATALHAS (Via Party Store) ---
+        // --- 4. BATTLE BLOCK (Via Party Store) ---
         CobblemonEvents.BATTLE_STARTED_PRE.subscribe(event -> {
             MinecraftServer server = ColisaoCobblemon.getServer();
             if (server == null) return;
 
             for (BattleActor actor : event.getBattle().getActors()) {
 
-                // Pega o jogador pelo UUID do ator da batalha
                 ServerPlayer player = server.getPlayerList().getPlayer(actor.getUuid());
 
                 if (player != null) {
@@ -117,11 +116,8 @@ public class LevelCapEvents {
                     int cap = LevelCapCalculator.getPlayerLevelCap(player);
                     boolean hasOverleveledPokemon = false;
 
-                    // AQUI ESTÁ A CORREÇÃO:
-                    // Pegamos a Party (Time) direto da storage do Cobblemon
                     PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
 
-                    // A Party é iterável e contém objetos 'Pokemon' puros (sem a complicação de BattlePokemon)
                     for (Pokemon pokemon : party) {
                         if (pokemon.getLevel() > cap) {
                             hasOverleveledPokemon = true;

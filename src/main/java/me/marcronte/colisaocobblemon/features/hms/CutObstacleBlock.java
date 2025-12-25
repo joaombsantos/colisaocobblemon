@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CutObstacleBlock extends Block {
 
-    // --- Configurações do Cut ---
+    // --- Cut Configurations ---
     private static final Map<UUID, Long> PERMISSIONS = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 24.0D, 16.0D);
@@ -72,7 +72,7 @@ public class CutObstacleBlock extends Block {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
-    // --- LÓGICA DE INTERAÇÃO (Cut) ---
+    // --- ITERATION LOGIC (Cut) ---
     public static InteractionResult handleInteract(Player player, Level world, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.PASS;
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
@@ -89,7 +89,6 @@ public class CutObstacleBlock extends Block {
 
         cutSmartLine(world, pos, state.getBlock(), (ServerPlayer) player);
 
-        // CORREÇÃO: Uso simplificado do hurtAndBreak (sem lambda)
         stack.hurtAndBreak(0, player, EquipmentSlot.MAINHAND);
 
         return InteractionResult.SUCCESS;
@@ -99,7 +98,7 @@ public class CutObstacleBlock extends Block {
         List<BlockPos> blocksToHide = new ArrayList<>();
         blocksToHide.add(centerPos);
 
-        // DETECÇÃO
+        // DETECTION
         boolean hasX = isTarget(world, centerPos.east(), targetBlock) || isTarget(world, centerPos.west(), targetBlock);
         boolean hasZ = isTarget(world, centerPos.north(), targetBlock) || isTarget(world, centerPos.south(), targetBlock);
 
@@ -113,7 +112,7 @@ public class CutObstacleBlock extends Block {
             axisToCut = Direction.Axis.Z;
         }
 
-        // COLETA
+        // COLLECT
         if (axisToCut != null) {
             if (axisToCut == Direction.Axis.X) {
                 collectOffsets(world, centerPos, targetBlock, Direction.EAST, blocksToHide);
@@ -124,13 +123,13 @@ public class CutObstacleBlock extends Block {
             }
         }
 
-        // AÇÃO
+        // ACTION
         long duration = 10;
         allowPlayer(player.getUUID(), duration);
 
         BlockState airState = Blocks.AIR.defaultBlockState();
 
-        // Envio Imediato do Pacote
+        // 100ms DELAY
         SCHEDULER.schedule(() -> {
             if (player.getServer() == null || player.hasDisconnected()) return;
             for (BlockPos pos : blocksToHide) {
@@ -138,7 +137,7 @@ public class CutObstacleBlock extends Block {
             }
         }, 100, TimeUnit.MILLISECONDS);
 
-        // Retorno após 10s
+        // RETURN AFTER 10 SECONDS
         SCHEDULER.schedule(() -> {
             if (player.getServer() != null) {
                 player.getServer().execute(() -> {
@@ -170,7 +169,7 @@ public class CutObstacleBlock extends Block {
         return world.getBlockState(pos).is(target);
     }
 
-    // --- Colisão e Permissões ---
+    // --- COLLISIONS AND PERMISSIONS ---
     public static void allowPlayer(UUID playerUuid, long seconds) {
         long expireTime = System.currentTimeMillis() + (seconds * 1000);
         PERMISSIONS.put(playerUuid, expireTime);

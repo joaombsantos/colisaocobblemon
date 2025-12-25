@@ -1,15 +1,15 @@
 package me.marcronte.colisaocobblemon.features.hms;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.ChatFormatting; // Mudou de Formatting
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component; // Mudou de Text
-import net.minecraft.server.level.ServerLevel; // Mudou de ServerWorld
-import net.minecraft.server.level.ServerPlayer; // Mudou de ServerPlayerEntity
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.player.Inventory; // Mudou de PlayerInventory
-import net.minecraft.world.phys.Vec3; // Mudou de Vec3d
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,14 +24,14 @@ public class SurfHandler {
     }
 
     private static void onWorldTick(ServerLevel world) {
-        for (ServerPlayer player : world.players()) { // getPlayers -> players
+        for (ServerPlayer player : world.players()) {
 
             if (player.isCreative() || player.isSpectator()) continue;
 
             UUID playerId = player.getUUID();
             boolean isInWater = player.isInWater(); // isTouchingWater -> isInWater
 
-            // --- JOGADOR NA ÁGUA ---
+            // --- PLAYER ON WATER ---
             if (isInWater) {
                 if (!hasSurfItem(player)) {
                     Vec3 respawnPos;
@@ -39,17 +39,17 @@ public class SurfHandler {
                     if (LAST_STRICT_SAFE_POS.containsKey(playerId)) {
                         respawnPos = LAST_STRICT_SAFE_POS.get(playerId);
                     } else {
-                        // Fallback de emergência (Terra mais próxima)
-                        respawnPos = findNearestLand(world, player.blockPosition()); // getBlockPos -> blockPosition
-                        if (respawnPos == null) respawnPos = player.position().add(0, 1, 0); // getPos -> position
+                        // EMERGENCY FALLBACK (Near landing)
+                        respawnPos = findNearestLand(world, player.blockPosition());
+                        if (respawnPos == null) respawnPos = player.position().add(0, 1, 0);
                     }
 
-                    // 1. ZERA A VELOCIDADE
-                    player.setDeltaMovement(Vec3.ZERO); // setVelocity -> setDeltaMovement
-                    player.hurtMarked = true; // velocityModified -> hurtMarked (aproximação)
+                    // 1. BREAK THE SPEED
+                    player.setDeltaMovement(Vec3.ZERO);
+                    player.hurtMarked = true;
 
-                    // 2. TELEPORTA
-                    player.teleportTo(respawnPos.x, respawnPos.y + 0.5, respawnPos.z); // requestTeleport -> teleportTo
+                    // 2. TELEPORT
+                    player.teleportTo(respawnPos.x, respawnPos.y + 0.5, respawnPos.z);
 
                     player.displayClientMessage(
                             Component.translatable("message.colisao-cobblemon.need_surf")
@@ -58,11 +58,10 @@ public class SurfHandler {
                     );
                 }
             }
-            // --- JOGADOR NA TERRA ---
+            // --- PLAYER ON LAND ---
             else if (player.onGround()) {
                 BlockPos currentPos = player.blockPosition();
 
-                // Só salva se for ESTRITAMENTE seguro (longe de barrancos)
                 if (isStrictlySafe(world, currentPos)) {
                     LAST_STRICT_SAFE_POS.put(playerId, new Vec3(
                             currentPos.getX() + 0.5,
@@ -74,22 +73,21 @@ public class SurfHandler {
         }
     }
 
-    // --- O CORAÇÃO DA CORREÇÃO ---
     private static boolean isStrictlySafe(ServerLevel world, BlockPos pos) {
-        // 1. O próprio bloco é água? (Pés molhados)
+        // 1. IS THE BLOCK WATER?
         if (isWater(world, pos)) return false;
 
-        // 2. O bloco ABAIXO é água? (Ponte falsa/Gelo fino)
+        // 2. IS THE BLOCK BELOW WATER?
         if (isWater(world, pos.below())) return false;
 
-        // 3. Verificação de VIZINHOS (Detector de Barranco)
+        // 3. NEIGHBORS DETECTION
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos neighbor = pos.relative(dir);
 
-            // Tem água no mesmo nível? (Entrando na praia)
+            // IS WATER ON SAME LEVEL?
             if (isWater(world, neighbor)) return false;
 
-            // Tem água no vizinho DE BAIXO? (Beirada de rio/barranco)
+            // IS THERE WATER ON THE LEVEL BELOW?
             if (isWater(world, neighbor.below())) return false;
         }
         return true;
