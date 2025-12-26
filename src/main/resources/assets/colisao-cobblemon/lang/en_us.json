@@ -1,6 +1,24 @@
 {
+  "itemGroup.colisao-cobblemon.general": "Colisão Cobblemon",
   "block.colisao-cobblemon.cut_obstacle": "Cut Obstacle",
   "block.colisao-cobblemon.rock_smash": "Rock Smash Obstacle",
   "item.colisao-cobblemon.surf": "Surf",
-  "message.colisao-cobblemon.need_surf": "You need a Surfboard!"
+  "message.colisao-cobblemon.need_surf": "You need a Surfboard!",
+  "item.colisao-cobblemon.kanto_boulder_badge": "Boulder Badge",
+  "item.colisao-cobblemon.kanto_cascade_badge": "Cascade Badge",
+  "item.colisao-cobblemon.kanto_thunder_badge": "Thunder Badge",
+  "item.colisao-cobblemon.kanto_rainbow_badge": "Rainbow Badge",
+  "item.colisao-cobblemon.kanto_soul_badge": "Soul Badge",
+  "item.colisao-cobblemon.kanto_marsh_badge": "Marsh Badge",
+  "item.colisao-cobblemon.kanto_volcando_badge": "Volcano Badge",
+  "item.colisao-cobblemon.kanto_earth_badge": "Earth Badge",
+  "item.colisao-cobblemon.kanto_champion_badge": "Champion Badge",
+  "item.colisao-cobblemon.kanto_badge_case": "Kanto Badge Case",
+  "message.colisao-cobblemon.level_cap_limit": "Your Pokemon is above your level cap",
+  "message.colisao-cobblemon.reached_level_cap_limit": "Yor Pokemon reached the level cap",
+  "message.colisao-cobblemon.battle_blocked": "You cannot enter a battle because you have a Pokemon above level cap",
+  "message.colisao-cobblemon.badge_requirement": "You must defeat %s to pick up this badge!",
+  "message.colisao-cobblemon.trainer_defeated": "You defeated %s! Badge unlocked.",
+  "message.colisao-cobblemon.inventory_is_full": "Your inventory is too full! Item dropped on the ground.",
+  "message.colisao-cobblemon.recover_badges": "Recover Badges."
 }

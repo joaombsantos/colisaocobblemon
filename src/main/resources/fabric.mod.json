@@ -25,9 +25,6 @@
           "me.marcronte.colisaocobblemon.client.ColisaoCobblemonClient"
 		]
 	},
-	"mixins": [
-		"colisao-cobblemon.mixins.json"
-	],
 	"depends": {
 		"fabricloader": ">=0.18.3",
 		"minecraft": "~1.21.1",

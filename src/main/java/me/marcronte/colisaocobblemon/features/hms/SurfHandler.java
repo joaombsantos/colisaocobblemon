@@ -1,15 +1,15 @@
 package me.marcronte.colisaocobblemon.features.hms;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,55 +17,53 @@ import java.util.UUID;
 
 public class SurfHandler {
 
-    private static final Map<UUID, Vec3d> LAST_STRICT_SAFE_POS = new HashMap<>();
+    private static final Map<UUID, Vec3> LAST_STRICT_SAFE_POS = new HashMap<>();
 
     public static void register() {
         ServerTickEvents.END_WORLD_TICK.register(SurfHandler::onWorldTick);
     }
 
-    private static void onWorldTick(ServerWorld world) {
-        for (ServerPlayerEntity player : world.getPlayers()) {
+    private static void onWorldTick(ServerLevel world) {
+        for (ServerPlayer player : world.players()) {
 
             if (player.isCreative() || player.isSpectator()) continue;
 
-            UUID playerId = player.getUuid();
-            boolean isInWater = player.isTouchingWater();
+            UUID playerId = player.getUUID();
+            boolean isInWater = player.isInWater(); // isTouchingWater -> isInWater
 
-            // --- JOGADOR NA ÁGUA ---
+            // --- PLAYER ON WATER ---
             if (isInWater) {
                 if (!hasSurfItem(player)) {
-                    Vec3d respawnPos;
+                    Vec3 respawnPos;
 
                     if (LAST_STRICT_SAFE_POS.containsKey(playerId)) {
                         respawnPos = LAST_STRICT_SAFE_POS.get(playerId);
                     } else {
-                        // Fallback de emergência (Terra mais próxima)
-                        respawnPos = findNearestLand(world, player.getBlockPos());
-                        if (respawnPos == null) respawnPos = player.getPos().add(0, 1, 0);
+                        // EMERGENCY FALLBACK (Near landing)
+                        respawnPos = findNearestLand(world, player.blockPosition());
+                        if (respawnPos == null) respawnPos = player.position().add(0, 1, 0);
                     }
 
-                    // 1. ZERA A VELOCIDADE (Crucial para parar o "andar")
-                    player.setVelocity(Vec3d.ZERO);
-                    player.velocityModified = true;
+                    // 1. BREAK THE SPEED
+                    player.setDeltaMovement(Vec3.ZERO);
+                    player.hurtMarked = true;
 
-                    // 2. TELEPORTA
-                    // Adicionei +0.5 no Y. Isso faz o jogador cair um pouquinho ao chegar.
-                    // Esse impacto no chão ajuda a frear o movimento do cliente.
-                    player.requestTeleport(respawnPos.x, respawnPos.y + 0.5, respawnPos.z);
+                    // 2. TELEPORT
+                    player.teleportTo(respawnPos.x, respawnPos.y + 0.5, respawnPos.z);
 
-                    player.sendMessage(
-                            Text.translatable("message.colisao-cobblemon.need_surf").formatted(Formatting.RED),
+                    player.displayClientMessage(
+                            Component.translatable("message.colisao-cobblemon.need_surf")
+                                    .withStyle(ChatFormatting.RED),
                             true
                     );
                 }
             }
-            // --- JOGADOR NA TERRA ---
-            else if (player.isOnGround()) {
-                BlockPos currentPos = player.getBlockPos();
+            // --- PLAYER ON LAND ---
+            else if (player.onGround()) {
+                BlockPos currentPos = player.blockPosition();
 
-                // Só salva se for ESTRITAMENTE seguro (longe de barrancos)
                 if (isStrictlySafe(world, currentPos)) {
-                    LAST_STRICT_SAFE_POS.put(playerId, new Vec3d(
+                    LAST_STRICT_SAFE_POS.put(playerId, new Vec3(
                             currentPos.getX() + 0.5,
                             player.getY(),
                             currentPos.getZ() + 0.5
@@ -75,47 +73,45 @@ public class SurfHandler {
         }
     }
 
-    // --- O CORAÇÃO DA CORREÇÃO ---
-    private static boolean isStrictlySafe(ServerWorld world, BlockPos pos) {
-        // 1. O próprio bloco é água? (Pés molhados)
+    private static boolean isStrictlySafe(ServerLevel world, BlockPos pos) {
+        // 1. IS THE BLOCK WATER?
         if (isWater(world, pos)) return false;
 
-        // 2. O bloco ABAIXO é água? (Ponte falsa/Gelo fino)
-        if (isWater(world, pos.down())) return false;
+        // 2. IS THE BLOCK BELOW WATER?
+        if (isWater(world, pos.below())) return false;
 
-        // 3. Verificação de VIZINHOS (Detector de Barranco)
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            BlockPos neighbor = pos.offset(dir);
+        // 3. NEIGHBORS DETECTION
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockPos neighbor = pos.relative(dir);
 
-            // Tem água no mesmo nível? (Entrando na praia)
+            // IS WATER ON SAME LEVEL?
             if (isWater(world, neighbor)) return false;
 
-            // Tem água no vizinho DE BAIXO? (Beirada de rio/barranco)
-            // É AQUI que o código falhava antes!
-            if (isWater(world, neighbor.down())) return false;
+            // IS THERE WATER ON THE LEVEL BELOW?
+            if (isWater(world, neighbor.below())) return false;
         }
         return true;
     }
 
-    private static boolean isWater(ServerWorld world, BlockPos pos) {
-        return world.getFluidState(pos).isIn(FluidTags.WATER);
+    private static boolean isWater(ServerLevel world, BlockPos pos) {
+        return world.getFluidState(pos).is(FluidTags.WATER);
     }
 
-    private static Vec3d findNearestLand(ServerWorld world, BlockPos center) {
+    private static Vec3 findNearestLand(ServerLevel world, BlockPos center) {
         BlockPos bestPos = null;
         double bestDist = Double.MAX_VALUE;
 
         for (int x = -3; x <= 3; x++) {
             for (int y = -2; y <= 3; y++) {
                 for (int z = -3; z <= 3; z++) {
-                    BlockPos checkPos = center.add(x, y, z);
+                    BlockPos checkPos = center.offset(x, y, z);
 
-                    if (world.getBlockState(checkPos).isSolidBlock(world, checkPos) &&
-                            !isWater(world, checkPos.up()) &&
-                            !isWater(world, checkPos) && // Garante que não é água
-                            world.getBlockState(checkPos.up()).isAir()) {
+                    if (world.getBlockState(checkPos).isSolidRender(world, checkPos) &&
+                            !isWater(world, checkPos.above()) &&
+                            !isWater(world, checkPos) &&
+                            world.getBlockState(checkPos.above()).isAir()) {
 
-                        double dist = center.getSquaredDistance(checkPos);
+                        double dist = center.distSqr(checkPos);
                         if (dist < bestDist) {
                             bestDist = dist;
                             bestPos = checkPos;
@@ -125,13 +121,13 @@ public class SurfHandler {
             }
         }
         if (bestPos != null) {
-            return new Vec3d(bestPos.getX() + 0.5, bestPos.getY() + 1, bestPos.getZ() + 0.5);
+            return new Vec3(bestPos.getX() + 0.5, bestPos.getY() + 1, bestPos.getZ() + 0.5);
         }
         return null;
     }
 
-    private static boolean hasSurfItem(ServerPlayerEntity player) {
-        PlayerInventory inv = player.getInventory();
-        return inv.contains(HmManager.SURF.getDefaultStack());
+    private static boolean hasSurfItem(ServerPlayer player) {
+        Inventory inv = player.getInventory();
+        return inv.contains(HmManager.SURF.getDefaultInstance());
     }
 }

@@ -1,6 +1,24 @@
 {
+  "itemGroup.colisao-cobblemon.general": "Colisão Cobblemon",
   "block.colisao-cobblemon.cut_obstacle": "Arbusto de Corte",
   "block.colisao-cobblemon.rock_smash": "Pedra Quebrável",
   "item.colisao-cobblemon.surf": "Surf",
-  "message.colisao-cobblemon.need_surf": "Você precisa de Surf!"
+  "message.colisao-cobblemon.need_surf": "Você precisa de Surf!",
+  "item.colisao-cobblemon.kanto_boulder_badge": "Insígnia da Rocha",
+  "item.colisao-cobblemon.kanto_cascade_badge": "Insígnia da Cascata",
+  "item.colisao-cobblemon.kanto_thunder_badge": "Insígnia do Trovão",
+  "item.colisao-cobblemon.kanto_rainbow_badge": "Insígnia do Arco-Íris",
+  "item.colisao-cobblemon.kanto_soul_badge": "Insígnia da Alma",
+  "item.colisao-cobblemon.kanto_marsh_badge": "Insígnia da Lama",
+  "item.colisao-cobblemon.kanto_volcando_badge": "Insígnia do Vulcão",
+  "item.colisao-cobblemon.kanto_earth_badge": "Insígnia da Terra",
+  "item.colisao-cobblemon.kanto_champion_badge": "Insígnia do Campeão",
+  "item.colisao-cobblemon.kanto_badge_case": "Estojo de Insígnias de Kanto",
+  "message.colisao-cobblemon.level_cap_limit": "Seu Pokemon está acima do limite de nível!",
+  "message.colisao-cobblemon.reached_level_cap_limit": "Seu Pokemon atingiu o limete de nível",
+  "message.colisao-cobblemon.battle_blocked": "Você não pode entrar em batalha por ter um Pokemon acima do limite de nível",
+  "message.colisao-cobblemon.badge_requirement": "Você deve derrotar %s para pegar essa insígnia!",
+  "message.colisao-cobblemon.trainer_defeated": "Você derrotou %s! Nova insígnia desbloqueada.",
+  "message.colisao-cobblemon.inventory_is_full": "Seu inventário está cheio! Item jogado no chão.",
+  "message.colisao-cobblemon.recover_badges": "Recuperar Insígnias"
 }
