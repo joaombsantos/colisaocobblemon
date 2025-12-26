@@ -1,9 +1,12 @@
 package me.marcronte.colisaocobblemon.client;
 
+import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
+import me.marcronte.colisaocobblemon.client.gui.BadgeCaseScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 
@@ -28,5 +31,8 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         }, HmManager.CUT_OBSTACLE);
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> -1, HmManager.CUT_OBSTACLE);
+
+
+        MenuScreens.register(ModScreenHandlers.KANTO_BADGE_CASE_MENU, BadgeCaseScreen::new);
     }
 }

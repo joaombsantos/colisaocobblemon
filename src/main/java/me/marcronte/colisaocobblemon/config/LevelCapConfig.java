@@ -24,6 +24,7 @@ public class LevelCapConfig {
 
     public int startLevel = 10;
     public Map<String, Integer> badges = new HashMap<>();
+    public Map<String, String> badgeRequirements = new HashMap<>();
 
     public static void register() {
         ServerLifecycleEvents.SERVER_STARTED.register(LevelCapConfig::load);
@@ -66,6 +67,16 @@ public class LevelCapConfig {
         badges.put("colisao-cobblemon:kanto_volcano_badge", 80);
         badges.put("colisao-cobblemon:kanto_earth_badge", 90);
         badges.put("colisao-cobblemon:kanto_champion_badge", 100);
+
+        badgeRequirements.put("colisao-cobblemon:kanto_boulder_badge", "GYM Leader Brock");
+        badgeRequirements.put("colisao-cobblemon:kanto_cascade_badge", "GYM Leader Misty");
+        badgeRequirements.put("colisao-cobblemon:kanto_thunder_badge", "GYM Leader Lt. Surge");
+        badgeRequirements.put("colisao-cobblemon:kanto_rainbow_badge", "GYM Leader Erika");
+        badgeRequirements.put("colisao-cobblemon:kanto_soul_badge", "GYM Leader Koga");
+        badgeRequirements.put("colisao-cobblemon:kanto_marsh_badge", "GYM Leader Sabrina");
+        badgeRequirements.put("colisao-cobblemon:kanto_volcano_badge", "GYM Leader Blaine");
+        badgeRequirements.put("colisao-cobblemon:kanto_earth_badge", "GYM Leader Giovani");
+        badgeRequirements.put("colisao-cobblemon:kanto_champion_badge", "Pokemon Champion Blue");
     }
 
     public static LevelCapConfig get() {
@@ -75,4 +86,6 @@ public class LevelCapConfig {
     public int getCapForBadge(String itemId) {
         return badges.getOrDefault(itemId, 0);
     }
+
+    public String getRequiredTrainer(String itemId) { return badgeRequirements.get(itemId); }
 }

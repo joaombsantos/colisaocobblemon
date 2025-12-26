@@ -1,8 +1,8 @@
 package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.config.LevelCapConfig;
-import me.marcronte.colisaocobblemon.features.badges.BadgeItems;
-import me.marcronte.colisaocobblemon.features.badges.LevelCapEvents;
+import me.marcronte.colisaocobblemon.features.badges.*;
+import me.marcronte.colisaocobblemon.network.BadgeNetwork;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -24,6 +24,12 @@ public class ColisaoCobblemon implements ModInitializer {
 		HmManager.register();
 		LevelCapConfig.register();
 		LevelCapEvents.register();
+		TrainerBattleEvents.register();
+		BadgePickupEvents.register();
+		BadgeInventoryCheck.register();
+		BadgeNetwork.register();
+		ModScreenHandlers.register();
+
 
 		// SERVER START CAPTURE
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);

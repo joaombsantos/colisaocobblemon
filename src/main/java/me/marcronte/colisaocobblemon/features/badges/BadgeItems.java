@@ -2,6 +2,7 @@ package me.marcronte.colisaocobblemon.features.badges;
 
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
 import me.marcronte.colisaocobblemon.ModItemGroup;
+import me.marcronte.colisaocobblemon.features.badgecase.BadgeCaseItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,7 +22,7 @@ public class BadgeItems {
 
     public static final Item KANTO_CHAMPION_BADGE = new Item(new Item.Properties().stacksTo(1));
 
-    public static final Item KANTO_BADGE_CASE = new Item(new Item.Properties().stacksTo(1));
+    public static final Item KANTO_BADGE_CASE = new BadgeCaseItem(new Item.Properties().stacksTo(1));
 
     public static void register() {
         registerItem("kanto_boulder_badge", KANTO_BOULDER_BADGE);
