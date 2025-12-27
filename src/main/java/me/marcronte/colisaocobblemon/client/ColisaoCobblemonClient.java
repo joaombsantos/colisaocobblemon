@@ -3,6 +3,8 @@ package me.marcronte.colisaocobblemon.client;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import me.marcronte.colisaocobblemon.client.gui.BadgeCaseScreen;
+import me.marcronte.colisaocobblemon.client.gui.PokeLootScreen;
+import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -32,7 +34,10 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> -1, HmManager.CUT_OBSTACLE);
 
+        // --- 3. GUI SCREENS ---
 
         MenuScreens.register(ModScreenHandlers.KANTO_BADGE_CASE_MENU, BadgeCaseScreen::new);
+        MenuScreens.register(ModScreenHandlers.POKE_LOOT_MENU, PokeLootScreen::new);
+        BlockRenderLayerMap.INSTANCE.putBlock(PokeLootRegistry.POKE_LOOT_BLOCK, RenderType.cutout());
     }
 }

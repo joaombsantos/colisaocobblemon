@@ -22,6 +22,10 @@ public class UndroppableItems {
     public static void register() {
         PlayerEvent.DROP_ITEM.register((player, itemEntity) -> {
 
+            if (player.isCreative()) {
+                return EventResult.pass();
+            }
+
             ItemStack stack = itemEntity.getItem();
             String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
 

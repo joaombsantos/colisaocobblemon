@@ -3,6 +3,8 @@ package me.marcronte.colisaocobblemon;
 import me.marcronte.colisaocobblemon.config.LevelCapConfig;
 import me.marcronte.colisaocobblemon.features.UndroppableItems;
 import me.marcronte.colisaocobblemon.features.badges.*;
+import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootNetwork;
+import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.network.BadgeNetwork;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
@@ -31,6 +33,8 @@ public class ColisaoCobblemon implements ModInitializer {
 		BadgeNetwork.register();
 		ModScreenHandlers.register();
 		UndroppableItems.register();
+		PokeLootRegistry.register();
+		PokeLootNetwork.register();
 
 
 		// SERVER START CAPTURE

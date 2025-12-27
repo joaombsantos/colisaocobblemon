@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "visible=true,facing=north": { "model": "colisao-cobblemon:block/poke_loot" },
+    "visible=true,facing=east":  { "model": "colisao-cobblemon:block/poke_loot", "y": 90 },
+    "visible=true,facing=south": { "model": "colisao-cobblemon:block/poke_loot", "y": 180 },
+    "visible=true,facing=west":  { "model": "colisao-cobblemon:block/poke_loot", "y": 270 },
+
+    "visible=false,facing=north": { "model": "colisao-cobblemon:block/poke_loot_invisible" },
+    "visible=false,facing=east":  { "model": "colisao-cobblemon:block/poke_loot_invisible", "y": 90 },
+    "visible=false,facing=south": { "model": "colisao-cobblemon:block/poke_loot_invisible", "y": 180 },
+    "visible=false,facing=west":  { "model": "colisao-cobblemon:block/poke_loot_invisible", "y": 270 }
+  }
+}

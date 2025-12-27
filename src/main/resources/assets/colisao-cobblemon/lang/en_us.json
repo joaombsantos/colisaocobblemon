@@ -21,5 +21,10 @@
   "message.colisao-cobblemon.trainer_defeated": "You defeated %s! Badge unlocked.",
   "message.colisao-cobblemon.inventory_is_full": "Your inventory is too full! Item dropped on the ground.",
   "message.colisao-cobblemon.recover_badges": "Recover Badges.",
-  "message.colisao-cobblemon.drop_item": "You cannot drop this item."
+  "message.colisao-cobblemon.drop_item": "You cannot drop this item.",
+  "message.colisao-cobblemon.visibility": "Visibility",
+  "block.colisao-cobblemon.poke_loot": "Poke Loot",
+  "message.colisao-cobblemon.poke_loot_get_item": "You got a %s",
+  "message.colisao-cobblemon.poke_loot_empty": "This loot is empty",
+  "message.colisao-cobblemon.poke_loot_already_got": "You already got this loot"
 }

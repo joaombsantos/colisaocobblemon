@@ -21,5 +21,10 @@
   "message.colisao-cobblemon.trainer_defeated": "Você derrotou %s! Nova insígnia desbloqueada.",
   "message.colisao-cobblemon.inventory_is_full": "Seu inventário está cheio! Item jogado no chão.",
   "message.colisao-cobblemon.recover_badges": "Recuperar Insígnias",
-  "message.colisao-cobblemon.drop_item": "Você não pode jogar esse item fora"
+  "message.colisao-cobblemon.drop_item": "Você não pode jogar esse item fora",
+  "message.colisao-cobblemon.visibility": "Visibilidade",
+  "block.colisao-cobblemon.poke_loot": "Poke Loot",
+  "message.colisao-cobblemon.poke_loot_get_item": "Você coletou um(a) %s",
+  "message.colisao-cobblemon.poke_loot_empty": "Essa recompensa está vazia",
+  "message.colisao-cobblemon.poke_loot_already_got": "Você já resgatou essa recompensa"
 }
