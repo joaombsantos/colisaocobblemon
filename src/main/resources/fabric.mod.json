@@ -14,6 +14,9 @@
 	"license": "CC0-1.0",
 	"icon": "assets/colisao-cobblemon/icon.png",
 	"environment": "*",
+	"mixins": [
+		"colisao-cobblemon.mixins.json"
+	],
 	"entrypoints": {
 		"main": [
 			"me.marcronte.colisaocobblemon.ColisaoCobblemon"

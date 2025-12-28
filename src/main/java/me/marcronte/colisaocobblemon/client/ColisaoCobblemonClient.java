@@ -5,6 +5,8 @@ import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import me.marcronte.colisaocobblemon.client.gui.BadgeCaseScreen;
 import me.marcronte.colisaocobblemon.client.gui.PokeLootScreen;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
+
+import me.marcronte.colisaocobblemon.network.BoostNetwork;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -13,6 +15,9 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 
 public class ColisaoCobblemonClient implements ClientModInitializer {
+
+    public static boolean isPlayerBoosting = false;
+
     @Override
     public void onInitializeClient() {
         // --- 1. Rendering ---
@@ -39,5 +44,11 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         MenuScreens.register(ModScreenHandlers.KANTO_BADGE_CASE_MENU, BadgeCaseScreen::new);
         MenuScreens.register(ModScreenHandlers.POKE_LOOT_MENU, PokeLootScreen::new);
         BlockRenderLayerMap.INSTANCE.putBlock(PokeLootRegistry.POKE_LOOT_BLOCK, RenderType.cutout());
+
+
+        // --- 4. BOOST PAD ---
+
+        BoostNetwork.registerClient();
+
     }
 }
