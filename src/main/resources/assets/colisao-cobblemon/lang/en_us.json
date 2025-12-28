@@ -27,5 +27,6 @@
   "message.colisao-cobblemon.poke_loot_get_item": "You got a %s",
   "message.colisao-cobblemon.poke_loot_empty": "This loot is empty",
   "message.colisao-cobblemon.poke_loot_already_got": "You already got this loot",
-  "block.colisao-cobblemon.boost_pad": "Boost Pad"
+  "block.colisao-cobblemon.boost_pad": "Boost Pad",
+  "message.colisao-cobblemon.need_saddle": "You need a Pokerider to ride this Pokémon!"
 }

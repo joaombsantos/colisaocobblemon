@@ -1,6 +1,7 @@
 package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.config.LevelCapConfig;
+import me.marcronte.colisaocobblemon.features.RideRequirement;
 import me.marcronte.colisaocobblemon.features.UndroppableItems;
 import me.marcronte.colisaocobblemon.features.badges.*;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadBlock;
@@ -41,6 +42,7 @@ public class ColisaoCobblemon implements ModInitializer {
 		BoostNetwork.registerCommon();
 		BoostPadBlock.register();
 		BoostPadHandler.register();
+		RideRequirement.register();
 
 
 		// SERVER START CAPTURE
