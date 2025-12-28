@@ -1,0 +1,8 @@
+ {
+   "variants": {
+     "facing=north": { "model": "colisao-cobblemon:block/boost_pad" },
+     "facing=east":  { "model": "colisao-cobblemon:block/boost_pad", "y": 90 },
+     "facing=south": { "model": "colisao-cobblemon:block/boost_pad", "y": 180 },
+     "facing=west":  { "model": "colisao-cobblemon:block/boost_pad", "y": 270 }
+   }
+ }

@@ -26,5 +26,6 @@
   "block.colisao-cobblemon.poke_loot": "Poke Loot",
   "message.colisao-cobblemon.poke_loot_get_item": "You got a %s",
   "message.colisao-cobblemon.poke_loot_empty": "This loot is empty",
-  "message.colisao-cobblemon.poke_loot_already_got": "You already got this loot"
+  "message.colisao-cobblemon.poke_loot_already_got": "You already got this loot",
+  "block.colisao-cobblemon.boost_pad": "Boost Pad"
 }
