@@ -28,5 +28,9 @@
   "message.colisao-cobblemon.poke_loot_empty": "This loot is empty",
   "message.colisao-cobblemon.poke_loot_already_got": "You already got this loot",
   "block.colisao-cobblemon.boost_pad": "Boost Pad",
-  "message.colisao-cobblemon.need_saddle": "You need a Pokerider to ride this Pokémon!"
+  "message.colisao-cobblemon.need_saddle": "You need a Pokerider to ride this Pokémon!",
+  "block.colisao-cobblemon.fade_block": "Fade Block",
+  "message.colisao-cobblemon.unlocked_path": "Unlocked path",
+  "message.colisao-cobblemon.wrong_key": "You're using the wrong key",
+  "message.colisao-cobblemon.config_fade_block": "Config Fade Block"
 }
