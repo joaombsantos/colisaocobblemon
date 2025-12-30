@@ -65,6 +65,15 @@ public class BadgeDataManager extends SavedData {
         });
 
         nbt.put("PlayerBadges", playersTag);
+
+        CompoundTag trainersTag = new CompoundTag();
+        defeatedTrainers.forEach((uuid, trainers) -> {
+            ListTag list = new ListTag();
+            trainers.forEach(trainer -> list.add(StringTag.valueOf(trainer)));
+            trainersTag.put(uuid.toString(), list);
+        });
+        nbt.put("DefeatedTrainers", trainersTag);
+
         return nbt;
     }
 
@@ -72,7 +81,7 @@ public class BadgeDataManager extends SavedData {
         BadgeDataManager state = new BadgeDataManager();
         CompoundTag playersTag = tag.getCompound("PlayerBadges");
 
-        for (String uuidString : playersTag.getAllKeys()) { // getKeys -> getAllKeys
+        for (String uuidString : playersTag.getAllKeys()) {
             try {
                 UUID uuid = UUID.fromString(uuidString);
                 ListTag list = playersTag.getList(uuidString, Tag.TAG_STRING);

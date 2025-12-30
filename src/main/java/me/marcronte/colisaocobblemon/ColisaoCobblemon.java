@@ -6,6 +6,7 @@ import me.marcronte.colisaocobblemon.features.UndroppableItems;
 import me.marcronte.colisaocobblemon.features.badges.*;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadBlock;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadHandler;
+import me.marcronte.colisaocobblemon.features.fadeblock.*;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootNetwork;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.network.BadgeNetwork;
@@ -17,32 +18,45 @@ import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class ColisaoCobblemon implements ModInitializer {
 	public static final String MOD_ID = "colisao-cobblemon";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	private static MinecraftServer serverInstance;
+
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Inicializando Colisao Cobblemon...");
 
 		// INITIALIZE MODULES
 		ModItemGroup.register();
+
+		// Badges & Level Cap
 		BadgeItems.register();
-		HmManager.register();
-		LevelCapConfig.register();
-		LevelCapEvents.register();
-		TrainerBattleEvents.register();
 		BadgePickupEvents.register();
 		BadgeInventoryCheck.register();
 		BadgeNetwork.register();
+		LevelCapConfig.register();
+		LevelCapEvents.register();
+		TrainerBattleEvents.register();
+
+		// Features Diversas
+		HmManager.register();
 		ModScreenHandlers.register();
 		UndroppableItems.register();
+		RideRequirement.register();
+
+		// PokeLoot
 		PokeLootRegistry.register();
 		PokeLootNetwork.register();
+
+		// Boost Pad
 		BoostNetwork.registerCommon();
 		BoostPadBlock.register();
 		BoostPadHandler.register();
-		RideRequirement.register();
+
+		// Fade Block
+		FadeBlockRegistry.register();
 
 
 		// SERVER START CAPTURE
@@ -54,4 +68,5 @@ public class ColisaoCobblemon implements ModInitializer {
 	public static MinecraftServer getServer() {
 		return serverInstance;
 	}
+
 }

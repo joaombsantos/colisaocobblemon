@@ -28,5 +28,9 @@
   "message.colisao-cobblemon.poke_loot_empty": "Essa recompensa está vazia",
   "message.colisao-cobblemon.poke_loot_already_got": "Você já resgatou essa recompensa",
   "block.colisao-cobblemon.boost_pad": "Boost Pad",
-  "message.colisao-cobblemon.need_saddle": "Você precisa de um Pokerider para montar neste Pokémon!"
+  "message.colisao-cobblemon.need_saddle": "Você precisa de um Pokerider para montar neste Pokémon!",
+  "block.colisao-cobblemon.fade_block": "Bloco Sumidor",
+  "message.colisao-cobblemon.unlocked_path": "Caminho desbloqueado",
+  "message.colisao-cobblemon.wrong_key": "Você está usando a chave errada",
+  "message.colisao-cobblemon.config_fade_block": "Configurar Bloco Sumidor"
 }

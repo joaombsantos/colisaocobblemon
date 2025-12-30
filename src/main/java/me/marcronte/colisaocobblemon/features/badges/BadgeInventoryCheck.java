@@ -21,8 +21,11 @@ public class BadgeInventoryCheck {
         TickEvent.PLAYER_POST.register(player -> {
 
             if (player.tickCount % 20 != 0) return;
+
             if (!(player instanceof ServerPlayer serverPlayer)) return;
             if (serverPlayer.isCreative()) return;
+
+            if (serverPlayer.tickCount < 100) return;
 
             MinecraftServer server = ColisaoCobblemon.getServer();
             if (server == null) return;
@@ -42,23 +45,22 @@ public class BadgeInventoryCheck {
     private static void checkItem(ServerPlayer player, ItemStack stack, int slotIndex, MinecraftServer server, Set<String> foundBadges) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
 
-        boolean isBadge = LevelCapConfig.get().badges.containsKey(itemId);
+        if (!LevelCapConfig.get().badges.containsKey(itemId)) {
+            return;
+        }
 
-        if (isBadge) {
-            // --- 1. DOUBLE CHECK ---
-            if (foundBadges.contains(itemId)) {
-                player.getInventory().setItem(slotIndex, ItemStack.EMPTY);
-                return;
-            } else {
-                foundBadges.add(itemId);
-
-                if (stack.getCount() > 1) {
-                    stack.setCount(1);
-                }
+        // --- 1. DOUBLE CHECK (Remove Duplicatas) ---
+        if (foundBadges.contains(itemId)) {
+            player.getInventory().setItem(slotIndex, ItemStack.EMPTY);
+            return;
+        } else {
+            foundBadges.add(itemId);
+            if (stack.getCount() > 1) {
+                stack.setCount(1);
             }
         }
 
-        // --- 2. REQUISITES VERIFICATION (Hot Potato) ---
+        // --- 2. REQUISITES VERIFICATION (Quem é o dono?) ---
         String requiredTrainer = LevelCapConfig.get().getRequiredTrainer(itemId);
 
         if (requiredTrainer != null) {
@@ -67,12 +69,11 @@ public class BadgeInventoryCheck {
             if (!dataManager.hasDefeated(player.getUUID(), requiredTrainer)) {
                 ItemStack toDrop = stack.copy();
                 toDrop.setCount(1);
-
                 player.getInventory().setItem(slotIndex, ItemStack.EMPTY);
 
                 ItemEntity itemEntity = player.drop(toDrop, true);
                 if (itemEntity != null) {
-                    itemEntity.setPickUpDelay(40);
+                    itemEntity.setPickUpDelay(100);
                 }
 
                 player.displayClientMessage(
