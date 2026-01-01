@@ -30,12 +30,21 @@ public class FadeBlockRegistry {
                     .isViewBlocking((state, world, pos) -> false)
     );
 
+    // KEYS
+    public static final Item SECRET_KEY = new Item(new Item.Properties().stacksTo(1));
+    public static final Item CARD_KEY = new Item(new Item.Properties().stacksTo(1));
+    public static final Item LIFT_KEY = new Item(new Item.Properties().stacksTo(1));
+
     public static BlockEntityType<FadeBlockEntity> FADE_BLOCK_ENTITY;
 
     public static void register() {
         Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "fade_block"), FADE_BLOCK);
 
         Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "fade_block"), new BlockItem(FADE_BLOCK, new Item.Properties()));
+
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "secret_key"), SECRET_KEY);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "card_key"), CARD_KEY);
+        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "lift_key"), LIFT_KEY);
 
         FADE_BLOCK_ENTITY = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
@@ -45,7 +54,12 @@ public class FadeBlockRegistry {
 
         FadeBlock.ENTITY_TYPE = FADE_BLOCK_ENTITY;
 
-        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> entries.accept(FADE_BLOCK));
+        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> {
+            entries.accept(FADE_BLOCK);
+            entries.accept(SECRET_KEY);
+            entries.accept(CARD_KEY);
+            entries.accept(LIFT_KEY);
+        });
 
         FadeNetwork.registerCommon();
 

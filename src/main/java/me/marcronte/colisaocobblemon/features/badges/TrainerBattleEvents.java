@@ -38,17 +38,26 @@ public class TrainerBattleEvents {
 
                             String trainerName = loser.getName().getString();
 
-                            if (!dataManager.hasDefeated(player.getUUID(), trainerName)) {
-                                dataManager.addDefeatedTrainer(player.getUUID(), trainerName);
+                            boolean isValidGymLeader = false;
+                            for (String requiredName : LevelCapConfig.get().badgeRequirements.values()) {
+                                if (requiredName.equalsIgnoreCase(trainerName)) {
+                                    isValidGymLeader = true;
+                                    break;
+                                }
+                            }
 
-                                player.displayClientMessage(
-                                        Component.translatable("message.colisao-cobblemon.trainer_defeated", trainerName)
-                                                .withStyle(ChatFormatting.GREEN),
-                                        true
-                                );
+                            if (isValidGymLeader) {
+                                if (!dataManager.hasDefeated(player.getUUID(), trainerName)) {
+                                    dataManager.addDefeatedTrainer(player.getUUID(), trainerName);
 
-                                giveBadgeReward(player, trainerName);
+                                    player.displayClientMessage(
+                                            Component.translatable("message.colisao-cobblemon.trainer_defeated", trainerName)
+                                                    .withStyle(ChatFormatting.GREEN),
+                                            true
+                                    );
 
+                                    giveBadgeReward(player, trainerName);
+                                }
                             }
                         }
                     }

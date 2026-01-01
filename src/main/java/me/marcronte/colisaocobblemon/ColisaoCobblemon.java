@@ -6,7 +6,9 @@ import me.marcronte.colisaocobblemon.features.UndroppableItems;
 import me.marcronte.colisaocobblemon.features.badges.*;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadBlock;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadHandler;
+import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
 import me.marcronte.colisaocobblemon.features.fadeblock.*;
+import me.marcronte.colisaocobblemon.features.eventblock.EventBattleHandler;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootNetwork;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.network.BadgeNetwork;
@@ -57,6 +59,10 @@ public class ColisaoCobblemon implements ModInitializer {
 
 		// Fade Block
 		FadeBlockRegistry.register();
+
+		// Event Block
+		EventBlockRegistry.register();
+		EventBattleHandler.register();
 
 
 		// SERVER START CAPTURE

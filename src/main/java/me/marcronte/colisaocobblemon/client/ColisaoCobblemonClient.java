@@ -1,13 +1,17 @@
 package me.marcronte.colisaocobblemon.client;
 
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
+import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
+import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockade;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeBlock;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeNetwork;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
+import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.client.gui.BadgeCaseScreen;
 import me.marcronte.colisaocobblemon.client.gui.PokeLootScreen;
+import me.marcronte.colisaocobblemon.client.gui.PokemonBlockadeScreen;
 import me.marcronte.colisaocobblemon.client.gui.FadeBlockScreen;
-import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
+import me.marcronte.colisaocobblemon.client.renderer.PokemonBlockadeRenderer;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -16,6 +20,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,6 +66,7 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         MenuScreens.register(ModScreenHandlers.POKE_LOOT_MENU, PokeLootScreen::new);
         BlockRenderLayerMap.INSTANCE.putBlock(PokeLootRegistry.POKE_LOOT_BLOCK, RenderType.cutout());
         MenuScreens.register(ModScreenHandlers.FADE_BLOCK_MENU, FadeBlockScreen::new);
+        MenuScreens.register(ModScreenHandlers.POKEMON_BLOCKADE_MENU, PokemonBlockadeScreen::new);
 
 
         // --- 4. CLIENT REGISTERS ---
@@ -77,12 +83,14 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
                 if (client.level.isLoaded(pos)) {
                     BlockState currentState = client.level.getBlockState(pos);
 
-                    if (currentState.getBlock() instanceof FadeBlock) {
+                    if (currentState.getBlock() instanceof FadeBlock || currentState.getBlock() instanceof PokemonBlockade) {
                         client.level.setBlock(pos, Blocks.AIR.defaultBlockState(), 4);
                     }
                 }
             }
         });
+
+        BlockEntityRenderers.register(EventBlockRegistry.POKEMON_BLOCKADE_ENTITY, PokemonBlockadeRenderer::new);
 
     }
 }

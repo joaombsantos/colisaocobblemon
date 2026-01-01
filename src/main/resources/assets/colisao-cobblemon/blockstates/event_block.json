@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "colisao-cobblemon:block/event_block"
+    }
+  }
+}
