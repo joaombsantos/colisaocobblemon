@@ -14,14 +14,18 @@ import org.jetbrains.annotations.NotNull;
 public class FadeBlockMenu extends AbstractContainerMenu {
 
     public final Container container;
+    public final BlockPos pos; // NOVO: Armazena a posição
 
+    // Client
     public FadeBlockMenu(int syncId, Inventory playerInventory, BlockPos pos) {
-        this(syncId, playerInventory, new SimpleContainer(1));
+        this(syncId, playerInventory, new SimpleContainer(1), pos);
     }
 
-    public FadeBlockMenu(int syncId, Inventory playerInventory, Container container) {
+    // Server
+    public FadeBlockMenu(int syncId, Inventory playerInventory, Container container, BlockPos pos) {
         super(ModScreenHandlers.FADE_BLOCK_MENU, syncId);
         this.container = container;
+        this.pos = pos;
         checkContainerSize(container, 1);
         container.startOpen(playerInventory.player);
 

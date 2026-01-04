@@ -64,6 +64,9 @@ public class ColisaoCobblemon implements ModInitializer {
 		EventBlockRegistry.register();
 		EventBattleHandler.register();
 
+		// Items
+		ModItems.register();
+
 
 		// SERVER START CAPTURE
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);

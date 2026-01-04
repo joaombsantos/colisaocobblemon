@@ -33,11 +33,16 @@
   "message.colisao-cobblemon.unlocked_path": "Caminho desbloqueado",
   "message.colisao-cobblemon.wrong_key": "Você está usando a chave errada",
   "message.colisao-cobblemon.config_fade_block": "Configurar Bloco Sumidor",
-  "item.colisao-cobblemon.secret_key": "Chave Secreta",
   "item.colisao-cobblemon.card_key": "Cartão Chave",
+  "item.colisao-cobblemon.coin_case": "Caixa de Moedas",
+  "item.colisao-cobblemon.golden_teeth": "Dentes Dourados",
   "item.colisao-cobblemon.lift_key": "Chave do Elevador",
+  "item.colisao-cobblemon.oak_parcel": "Entrega do Carvalho",
+  "item.colisao-cobblemon.secret_key": "Chave Secreta",
+  "item.colisao-cobblemon.ss_ticket": "Passagem S.S.",
+  "item.colisao-cobblemon.tea": "Chá",
   "block.colisao-cobblemon.event_block": "Bloco de Evento",
-  "item.colisao-cobblemon.silph_scope": "Silph Scope",
+  "item.colisao-cobblemon.silph_scope": "Lentes Silph",
   "item.colisao-cobblemon.poke_flute": "Flauta Pokemon",
   "message.colisao-cobblemon.event_settings": "Configurações de Evento",
   "message.colisao-cobblemon.pokemon_already_active": "Esse Pokemon está batalhando",
@@ -46,5 +51,6 @@
   "message.colisao-cobblemon.save": "Salvar",
   "message.colisao-cobblemon.event_config": "ADMIN: Configure o bloco (Shift + Clique Direito)",
   "message.colisao-cobblemon.not_capturable": "Você não pode capturar este Pokemon!",
-  "message.colisao-cobblemon.saved_settings": "Configurações salvas!"
+  "message.colisao-cobblemon.saved_settings": "Configurações salvas!",
+  "item.colisao-cobblemon.running_shoes": "Tênis de Corrida"
 }

@@ -1,9 +1,9 @@
 package me.marcronte.colisaocobblemon.features.eventblock;
 
+import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.entity.PoseType;
-
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.ChatFormatting;
@@ -98,6 +98,7 @@ public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreen
         this.checkMessage = checkMsg;
         this.wakeMessage = wakeMsg;
         this.hitboxSize = Math.max(1, Math.min(5, size));
+
 
         setChanged();
         if (level != null) {
@@ -255,8 +256,15 @@ public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreen
         }
     }
 
+    public static void clientTick(Level level, BlockPos pos, BlockState state, PokemonBlockadeEntity entity) {
+        if (entity.getClientFakeEntity() != null) {
+            entity.clientFakeEntity.tick();
+        }
+    }
+
     private PokemonEntity clientFakeEntity;
     private String lastCheckedProps = "";
+
 
     @Nullable
     public PokemonEntity getClientFakeEntity() {
@@ -264,31 +272,30 @@ public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreen
 
         if (!this.pokemonProperties.equals(lastCheckedProps)) {
             this.lastCheckedProps = this.pokemonProperties;
-            try {
-                this.clientFakeEntity = PokemonProperties.Companion.parse(this.pokemonProperties, " ", "=").createEntity(this.level);
 
-                if (this.clientFakeEntity != null) {
-                    this.clientFakeEntity.setNoAi(true);
-                    this.clientFakeEntity.setSilent(true);
-                    this.clientFakeEntity.setNoGravity(true);
+            try {
+                String[] parts = this.pokemonProperties.split("[ =]");
+                String speciesName = parts.length > 0 ? parts[0].toLowerCase() : "";
+
+                if (PokemonSpecies.getByName(speciesName) == null) {
+                    this.clientFakeEntity = null;
+                } else {
+                    this.clientFakeEntity = PokemonProperties.Companion.parse(this.pokemonProperties, " ", "=").createEntity(this.level);
+
+                    if (this.clientFakeEntity != null) {
+                        this.clientFakeEntity.setNoAi(true);
+                        this.clientFakeEntity.setSilent(true);
+                        this.clientFakeEntity.setNoGravity(true);
+
+                        if (speciesName.equals("snorlax")) {
+                            this.clientFakeEntity.getEntityData().set(PokemonEntity.getPOSE_TYPE(), PoseType.SLEEP);
+                        }
+                    }
                 }
             } catch (Exception e) {
                 this.clientFakeEntity = null;
             }
         }
-
-        if (this.clientFakeEntity != null) {
-            String species = this.clientFakeEntity.getPokemon().getSpecies().getName().toLowerCase();
-
-            // Set a special pose to a specific Pokémon
-            if (species.equals("snorlax")) {
-                try {
-                    this.clientFakeEntity.getEntityData().set(PokemonEntity.getPOSE_TYPE(), PoseType.SLEEP);
-                } catch (Exception ignored) {
-                }
-            }
-        }
-
         return this.clientFakeEntity;
     }
 }

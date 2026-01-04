@@ -37,6 +37,13 @@ public class FadeBlockEntity extends BlockEntity implements ExtendedScreenHandle
         return inventory.getItem(0);
     }
 
+    public void toggleVisibility() {
+        if (level != null) {
+            boolean current = getBlockState().getValue(FadeBlock.VISIBLE);
+            level.setBlock(worldPosition, getBlockState().setValue(FadeBlock.VISIBLE, !current), 3);
+        }
+    }
+
     @Override
     public BlockPos getScreenOpeningData(ServerPlayer player) {
         return this.worldPosition;
@@ -50,7 +57,7 @@ public class FadeBlockEntity extends BlockEntity implements ExtendedScreenHandle
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
-        return new FadeBlockMenu(syncId, playerInventory, this.inventory);
+        return new FadeBlockMenu(syncId, playerInventory, this.inventory, this.worldPosition);
     }
 
     // --- Save ---

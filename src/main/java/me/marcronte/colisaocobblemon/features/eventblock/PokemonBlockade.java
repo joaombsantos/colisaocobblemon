@@ -143,8 +143,9 @@ public class PokemonBlockade extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide) return null;
-
+        if (level.isClientSide) {
+            return createTickerHelper(type, EventBlockRegistry.POKEMON_BLOCKADE_ENTITY, PokemonBlockadeEntity::clientTick);
+        }
         return createTickerHelper(type, EventBlockRegistry.POKEMON_BLOCKADE_ENTITY, PokemonBlockadeEntity::serverTick);
     }
 }

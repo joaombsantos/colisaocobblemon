@@ -33,9 +33,14 @@
   "message.colisao-cobblemon.unlocked_path": "Unlocked path",
   "message.colisao-cobblemon.wrong_key": "You're using the wrong key",
   "message.colisao-cobblemon.config_fade_block": "Config Fade Block",
-  "item.colisao-cobblemon.secret_key": "Secret Key",
   "item.colisao-cobblemon.card_key": "Card Key",
+  "item.colisao-cobblemon.coin_case": "Coin Case",
+  "item.colisao-cobblemon.golden_teeth": "Golden Teeth",
   "item.colisao-cobblemon.lift_key": "Lift Key",
+  "item.colisao-cobblemon.oak_parcel": "Oak's Parcel",
+  "item.colisao-cobblemon.secret_key": "Secret Key",
+  "item.colisao-cobblemon.ss_ticket": "S.S. Ticket",
+  "item.colisao-cobblemon.tea": "Tea",
   "block.colisao-cobblemon.event_block": "Event Block",
   "item.colisao-cobblemon.silph_scope": "Silph Scope",
   "item.colisao-cobblemon.poke_flute": "Poke Flute",
@@ -46,5 +51,6 @@
   "message.colisao-cobblemon.save": "Save",
   "message.colisao-cobblemon.event_config": "ADMIN: Config the block (Shift + Right-Click)",
   "message.colisao-cobblemon.not_capturable": "You cannot capture this Pokemon",
-  "message.colisao-cobblemon.saved_settings": "Saved Settings!"
+  "message.colisao-cobblemon.saved_settings": "Saved Settings!",
+  "item.colisao-cobblemon.running_shoes": "Running Shoes"
 }

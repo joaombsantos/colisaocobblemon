@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "colisao-cobblemon:block/fade_block" }
+    "visible=true": {
+      "model": "colisao-cobblemon:block/fade_block"
+    },
+    "visible=false": {
+      "model": "colisao-cobblemon:block/fade_block_invisible"
+    }
   }
 }

@@ -1,5 +1,6 @@
 package me.marcronte.colisaocobblemon.client;
 
+import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
 import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockade;
@@ -12,16 +13,22 @@ import me.marcronte.colisaocobblemon.client.gui.PokeLootScreen;
 import me.marcronte.colisaocobblemon.client.gui.PokemonBlockadeScreen;
 import me.marcronte.colisaocobblemon.client.gui.FadeBlockScreen;
 import me.marcronte.colisaocobblemon.client.renderer.PokemonBlockadeRenderer;
+import me.marcronte.colisaocobblemon.client.model.RunningShoesModel;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -38,6 +45,8 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
     public static void updateUnlockedBlocks(List<BlockPos> positions) {
         clientUnlockedBlocks.addAll(positions);
     }
+
+    private static RunningShoesModel runningShoesModel;
 
     @Override
     public void onInitializeClient() {
@@ -92,5 +101,33 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
         BlockEntityRenderers.register(EventBlockRegistry.POKEMON_BLOCKADE_ENTITY, PokemonBlockadeRenderer::new);
 
+
+
+        EntityModelLayerRegistry.registerModelLayer(RunningShoesModel.LAYER_LOCATION, RunningShoesModel::createBodyLayer);
+
+        ArmorRenderer.register((poseStack, multiBufferSource, itemStack, livingEntity, equipmentSlot, light, humanoidModel) -> {
+
+            if (runningShoesModel == null) {
+                runningShoesModel = new RunningShoesModel(Minecraft.getInstance().getEntityModels().bakeLayer(RunningShoesModel.LAYER_LOCATION));
+            }
+
+            humanoidModel.copyPropertiesTo(runningShoesModel);
+
+            runningShoesModel.right_leg.copyFrom(humanoidModel.rightLeg);
+            runningShoesModel.left_leg.copyFrom(humanoidModel.leftLeg);
+
+            runningShoesModel.setupAnim(livingEntity, 0, 0, 0, 0, 0);
+
+            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("colisao-cobblemon", "textures/models/armor/running_shoes.png");
+
+            runningShoesModel.renderToBuffer(
+                    poseStack,
+                    multiBufferSource.getBuffer(RenderType.armorCutoutNoCull(texture)),
+                    light,
+                    OverlayTexture.NO_OVERLAY,
+                    0xFFFFFFFF
+            );
+
+        }, ModItems.RUNNING_SHOES);
     }
 }
