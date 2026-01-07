@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=a,facing=north": { "model": "colisao-cobblemon:block/switch_statue" },
+    "type=a,facing=south": { "model": "colisao-cobblemon:block/switch_statue", "y": 180 },
+    "type=a,facing=west":  { "model": "colisao-cobblemon:block/switch_statue", "y": 270 },
+    "type=a,facing=east":  { "model": "colisao-cobblemon:block/switch_statue", "y": 90 },
+
+    "type=b,facing=north": { "model": "colisao-cobblemon:block/switch_statue_active" },
+    "type=b,facing=south": { "model": "colisao-cobblemon:block/switch_statue_active", "y": 180 },
+    "type=b,facing=west":  { "model": "colisao-cobblemon:block/switch_statue_active", "y": 270 },
+    "type=b,facing=east":  { "model": "colisao-cobblemon:block/switch_statue_active", "y": 90 }
+  }
+}

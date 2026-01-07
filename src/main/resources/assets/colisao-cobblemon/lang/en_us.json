@@ -52,5 +52,10 @@
   "message.colisao-cobblemon.event_config": "ADMIN: Config the block (Shift + Right-Click)",
   "message.colisao-cobblemon.not_capturable": "You cannot capture this Pokemon",
   "message.colisao-cobblemon.saved_settings": "Saved Settings!",
-  "item.colisao-cobblemon.running_shoes": "Running Shoes"
+  "item.colisao-cobblemon.running_shoes": "Running Shoes",
+  "block.colisao-cobblemon.state_block": "State Block",
+  "block.colisao-cobblemon.switch_statue": "Switch Statue",
+  "message.colisao-cobblemon.state_altered": "State altered to %s",
+  "message.colisao-cobblemon.activate_statue": "You activated the statue",
+  "message.colisao-cobblemon.deactivate_statue": "You deactivated the statue"
 }

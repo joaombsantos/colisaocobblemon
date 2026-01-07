@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "type=a": { "model": "colisao-cobblemon:block/state_block" },
+    "type=b": { "model": "colisao-cobblemon:block/state_block" }
+  }
+}

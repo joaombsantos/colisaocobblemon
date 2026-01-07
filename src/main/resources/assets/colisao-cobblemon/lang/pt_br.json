@@ -52,5 +52,10 @@
   "message.colisao-cobblemon.event_config": "ADMIN: Configure o bloco (Shift + Clique Direito)",
   "message.colisao-cobblemon.not_capturable": "Você não pode capturar este Pokemon!",
   "message.colisao-cobblemon.saved_settings": "Configurações salvas!",
-  "item.colisao-cobblemon.running_shoes": "Tênis de Corrida"
+  "item.colisao-cobblemon.running_shoes": "Tênis de Corrida",
+  "block.colisao-cobblemon.state_block": "Bloco de Estados",
+  "block.colisao-cobblemon.switch_statue": "Estátua de Troca",
+  "message.colisao-cobblemon.state_altered": "Estado alterado para %s",
+  "message.colisao-cobblemon.activate_statue": "Você ativou a estátua",
+  "message.colisao-cobblemon.deactivate_statue": "Você desativou a estátua"
 }

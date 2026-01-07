@@ -1,5 +1,6 @@
 package me.marcronte.colisaocobblemon.client;
 
+import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
@@ -12,9 +13,12 @@ import me.marcronte.colisaocobblemon.client.gui.BadgeCaseScreen;
 import me.marcronte.colisaocobblemon.client.gui.PokeLootScreen;
 import me.marcronte.colisaocobblemon.client.gui.PokemonBlockadeScreen;
 import me.marcronte.colisaocobblemon.client.gui.FadeBlockScreen;
-import me.marcronte.colisaocobblemon.client.renderer.PokemonBlockadeRenderer;
+import me.marcronte.colisaocobblemon.client.renderer.*;
 import me.marcronte.colisaocobblemon.client.model.RunningShoesModel;
+import me.marcronte.colisaocobblemon.features.switchstate.SwitchNetwork;
+import me.marcronte.colisaocobblemon.features.switchstate.SwitchStateRegistry;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -129,5 +133,24 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
             );
 
         }, ModItems.RUNNING_SHOES);
+
+
+        ModelLoadingPlugin.register(context -> context.addModels(
+                ResourceLocation.fromNamespaceAndPath("colisao-cobblemon", "block/switch_statue"),
+                ResourceLocation.fromNamespaceAndPath("colisao-cobblemon", "block/switch_statue_active")
+        ));
+
+        BlockEntityRendererRegistry.register(
+                SwitchStateRegistry.STATE_BLOCK_BE,
+                StateBlockRenderer::new
+        );
+
+        BlockEntityRendererRegistry.register(
+                SwitchStateRegistry.SWITCH_STATUE_BE,
+                SwitchStatueRenderer::new
+        );
+
+        SwitchNetwork.registerClient();
+
     }
 }
