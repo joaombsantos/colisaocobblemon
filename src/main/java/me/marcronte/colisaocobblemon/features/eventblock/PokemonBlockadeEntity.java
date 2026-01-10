@@ -88,7 +88,7 @@ public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreen
     public boolean isCatchable() { return catchable; }
     public String getCheckMessage() { return checkMessage; }
     public String getWakeMessage() { return wakeMessage; }
-    public int getHitboxSize() { return hitboxSize; } // Novo Getter
+    public int getHitboxSize() { return hitboxSize; }
     public ItemStack getRequiredKeyItem() { return inventory.getItem(0); }
 
     public void setConfig(String props, String id, boolean catchable, String checkMsg, String wakeMsg, int size) {
@@ -97,7 +97,7 @@ public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreen
         this.catchable = catchable;
         this.checkMessage = checkMsg;
         this.wakeMessage = wakeMsg;
-        this.hitboxSize = Math.max(1, Math.min(5, size));
+        this.hitboxSize = Math.max(1, Math.min(11, size)); //Hitbox limit
 
 
         setChanged();

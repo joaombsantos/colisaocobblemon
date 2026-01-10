@@ -12,8 +12,10 @@ import me.marcronte.colisaocobblemon.features.eventblock.EventBattleHandler;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootNetwork;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.features.switchstate.*;
+import me.marcronte.colisaocobblemon.features.teleportblock.TeleportRegistry;
 import me.marcronte.colisaocobblemon.network.BadgeNetwork;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
+import me.marcronte.colisaocobblemon.network.TeleportNetwork;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -71,6 +73,11 @@ public class ColisaoCobblemon implements ModInitializer {
 		// State Block Mechanic
 		SwitchStateRegistry.register();
 		SwitchNetwork.registerCommon();
+
+		// Teleport Block
+		TeleportRegistry.register();
+		TeleportNetwork.registerCommon();
+		TeleportNetwork.registerServerReceiver();
 
 
 		// SERVER START CAPTURE

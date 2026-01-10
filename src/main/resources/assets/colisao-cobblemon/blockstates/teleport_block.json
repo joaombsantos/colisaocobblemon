@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "colisao-cobblemon:block/teleport_block"
+    }
+  }
+}

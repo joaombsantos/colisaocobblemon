@@ -117,18 +117,25 @@ public class PokemonBlockade extends BaseEntityBlock {
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        ServerLevel serverLevel = (ServerLevel) level;
         ServerPlayer serverPlayer = (ServerPlayer) player;
 
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof PokemonBlockadeEntity blockade) {
 
-            // Admin
             if (player.isCreative() && player.isCrouching()) {
                 player.openMenu(blockade);
                 return InteractionResult.CONSUME;
             }
 
+            if (EventBlockData.get(serverLevel).isCompleted(serverPlayer.getUUID(), blockade.getEventId())) {
+                serverPlayer.connection.send(new ClientboundBlockUpdatePacket(pos, Blocks.AIR.defaultBlockState()));
+                return InteractionResult.CONSUME;
+            }
+
             ItemStack requiredKey = blockade.getRequiredKeyItem();
+
             if (requiredKey.isEmpty()) {
                 blockade.activateBattle(serverPlayer);
                 return InteractionResult.SUCCESS;

@@ -68,7 +68,7 @@ public class PokemonBlockadeScreen extends AbstractContainerScreen<PokemonBlocka
         this.wakeMessageField.setMaxLength(256);
         this.addRenderableWidget(this.wakeMessageField);
 
-        // 6. Hitbox Size (NOVO)
+        // 6. Hitbox Size
         this.hitboxSizeField = new EditBox(this.font, this.leftPos + 25, this.topPos + 72, 15, 14, Component.literal("Size"));
         this.hitboxSizeField.setMaxLength(1);
         this.addRenderableWidget(this.hitboxSizeField);

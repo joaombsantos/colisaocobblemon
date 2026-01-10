@@ -10,7 +10,7 @@
   "item.colisao-cobblemon.kanto_rainbow_badge": "Insígnia do Arco-Íris",
   "item.colisao-cobblemon.kanto_soul_badge": "Insígnia da Alma",
   "item.colisao-cobblemon.kanto_marsh_badge": "Insígnia da Lama",
-  "item.colisao-cobblemon.kanto_volcando_badge": "Insígnia do Vulcão",
+  "item.colisao-cobblemon.kanto_volcano_badge": "Insígnia do Vulcão",
   "item.colisao-cobblemon.kanto_earth_badge": "Insígnia da Terra",
   "item.colisao-cobblemon.kanto_champion_badge": "Insígnia do Campeão",
   "item.colisao-cobblemon.kanto_badge_case": "Estojo de Insígnias de Kanto",
@@ -49,6 +49,7 @@
   "message.colisao-cobblemon.not_able_to_battle": "Você não consegue batalhar com este Pokemon",
   "message.colisao-cobblemon.capturable": "Capturável?",
   "message.colisao-cobblemon.save": "Salvar",
+  "message.colisao-cobblemon.cancel": "Cancelar",
   "message.colisao-cobblemon.event_config": "ADMIN: Configure o bloco (Shift + Clique Direito)",
   "message.colisao-cobblemon.not_capturable": "Você não pode capturar este Pokemon!",
   "message.colisao-cobblemon.saved_settings": "Configurações salvas!",
@@ -57,5 +58,8 @@
   "block.colisao-cobblemon.switch_statue": "Estátua de Troca",
   "message.colisao-cobblemon.state_altered": "Estado alterado para %s",
   "message.colisao-cobblemon.activate_statue": "Você ativou a estátua",
-  "message.colisao-cobblemon.deactivate_statue": "Você desativou a estátua"
+  "message.colisao-cobblemon.deactivate_statue": "Você desativou a estátua",
+  "block.colisao-cobblemon.teleport_block": "Bloco de Teleporte",
+  "message.colisao-cobblemon.updated_teleport": "Teleporte Atualizado",
+  "message.colisao-cobblemon.teleport_configs": "Configurações de Teleporte"
 }

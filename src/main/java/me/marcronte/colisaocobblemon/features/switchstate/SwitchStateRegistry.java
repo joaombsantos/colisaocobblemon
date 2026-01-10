@@ -15,7 +15,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class SwitchStateRegistry {
 
-    public static final Block STATE_BLOCK = new StateBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion());
+    public static final Block STATE_BLOCK = new StateBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
+            .strength(-1.0F, 3600000.0F)
+            .noOcclusion()
+            .isValidSpawn((state, world, pos, entity) -> false)
+            .isSuffocating((state, world, pos) -> false)
+            .isViewBlocking((state, world, pos) -> false)
+    );
     public static final Block SWITCH_STATUE = new SwitchStatueBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).noOcclusion());
 
     public static final BlockItem STATE_BLOCK_ITEM = new BlockItem(STATE_BLOCK, new Item.Properties());

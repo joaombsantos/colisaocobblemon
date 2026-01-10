@@ -21,7 +21,7 @@ public class PokemonBlockadeMenu extends AbstractContainerMenu {
     public final boolean loadedCatchable;
     public final String loadedCheckMessage;
     public final String loadedWakeMessage;
-    public final int loadedHitboxSize; // NOVO
+    public final int loadedHitboxSize;
 
     public PokemonBlockadeMenu(int syncId, Inventory playerInventory, PokemonBlockadeEntity.OpeningData data) {
         this(syncId, playerInventory, new SimpleContainer(1), data);
@@ -36,7 +36,7 @@ public class PokemonBlockadeMenu extends AbstractContainerMenu {
         this.loadedCatchable = data.catchable();
         this.loadedCheckMessage = data.checkMessage();
         this.loadedWakeMessage = data.wakeMessage();
-        this.loadedHitboxSize = data.hitboxSize(); // CARREGA
+        this.loadedHitboxSize = data.hitboxSize();
 
         checkContainerSize(container, 1);
         container.startOpen(playerInventory.player);
