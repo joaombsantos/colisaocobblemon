@@ -3,16 +3,13 @@ package me.marcronte.colisaocobblemon.client;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
+import me.marcronte.colisaocobblemon.client.gui.*;
 import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
 import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockade;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeBlock;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeNetwork;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
-import me.marcronte.colisaocobblemon.client.gui.BadgeCaseScreen;
-import me.marcronte.colisaocobblemon.client.gui.PokeLootScreen;
-import me.marcronte.colisaocobblemon.client.gui.PokemonBlockadeScreen;
-import me.marcronte.colisaocobblemon.client.gui.FadeBlockScreen;
 import me.marcronte.colisaocobblemon.client.renderer.*;
 import me.marcronte.colisaocobblemon.client.model.RunningShoesModel;
 import me.marcronte.colisaocobblemon.features.switchstate.SwitchNetwork;
@@ -152,5 +149,10 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
         SwitchNetwork.registerClient();
 
+
+    }
+
+    public static void openTeleportScreen(BlockPos pos) {
+        Minecraft.getInstance().setScreen(new TeleportConfigScreen(pos));
     }
 }

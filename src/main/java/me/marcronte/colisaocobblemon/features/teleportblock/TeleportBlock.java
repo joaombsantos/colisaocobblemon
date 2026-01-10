@@ -1,10 +1,9 @@
 package me.marcronte.colisaocobblemon.features.teleportblock;
 
 import com.mojang.serialization.MapCodec;
-import me.marcronte.colisaocobblemon.client.gui.TeleportConfigScreen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -25,9 +24,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
+
 public class TeleportBlock extends BaseEntityBlock {
     public static final MapCodec<TeleportBlock> CODEC = simpleCodec(TeleportBlock::new);
-
     private static final VoxelShape SHAPE = Block.box(0.1, 0.1, 0.1, 15.9, 15.9, 15.9);
 
     public TeleportBlock(Properties properties) {
@@ -43,7 +42,6 @@ public class TeleportBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new TeleportBlockEntity(pos, state); }
-
 
     @Override
     public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -65,18 +63,15 @@ public class TeleportBlock extends BaseEntityBlock {
         }
     }
 
-
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.isCreative() && level.isClientSide) {
-            openScreen(pos);
+
+            me.marcronte.colisaocobblemon.client.ColisaoCobblemonClient.openTeleportScreen(pos);
+
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    private void openScreen(BlockPos pos) {
-        Minecraft.getInstance().setScreen(new TeleportConfigScreen(pos));
     }
 
     public static int propagateSettings(Level level, BlockPos currentPos, BlockPos destPos, float yaw, float pitch, Set<BlockPos> visited) {
@@ -86,9 +81,7 @@ public class TeleportBlock extends BaseEntityBlock {
         BlockEntity be = level.getBlockEntity(currentPos);
         if (be instanceof TeleportBlockEntity teleBe) {
             teleBe.setDestination(destPos, yaw, pitch, level);
-
             int updated = 1;
-
             for (Direction dir : Direction.values()) {
                 BlockPos neighborPos = currentPos.relative(dir);
                 if (level.getBlockState(neighborPos).getBlock() instanceof TeleportBlock) {
