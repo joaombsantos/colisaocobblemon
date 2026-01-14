@@ -16,7 +16,18 @@ public class UndroppableItems {
             "minecraft:shears",
             "minecraft:netherite_pickaxe",
             "colisao-cobblemon:surf",
-            "colisao-cobblemon:kanto_badge_case"
+            "colisao-cobblemon:kanto_badge_case",
+            "colisao-cobblemon:card_key",
+            "colisao-cobblemon:coin_case",
+            "colisao-cobblemon:golden_teeth",
+            "colisao-cobblemon:lift_key",
+            "colisao-cobblemon:oak_parcel",
+            "colisao-cobblemon:secret_key",
+            "colisao-cobblemon:ss_ticket",
+            "colisao-cobblemon:tea",
+            "colisao-cobblemon:poke_flute",
+            "colisao-cobblemon:silph_scope",
+            "colisao-cobblemon:running_shoes"
     );
 
     public static void register() {

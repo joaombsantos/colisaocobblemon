@@ -144,13 +144,12 @@ public class FadeBlock extends BaseEntityBlock {
         }
     }
 
-    // --- LIBERAÇÃO INICIAL (COM SOM E EFEITOS) ---
     private void unlockChainReaction(ServerLevel level, BlockPos startPos, ServerPlayer player) {
         FadeBlockData data = FadeBlockData.get(level);
 
         Set<BlockPos> visited = new HashSet<>();
         Queue<BlockPos> queue = new LinkedList<>();
-        List<BlockPos> newlyUnlocked = new LinkedList<>(); // Lista para enviar ao cliente
+        List<BlockPos> newlyUnlocked = new LinkedList<>();
 
         queue.add(startPos);
         visited.add(startPos);
@@ -188,6 +187,29 @@ public class FadeBlock extends BaseEntityBlock {
                 FadeNetwork.sendSync(player, newlyUnlocked);
             }
         });
+    }
+
+    public static int propagateKey(Level level, BlockPos currentPos, ItemStack keyStack, Set<BlockPos> visited) {
+        if (visited.contains(currentPos)) return 0;
+        visited.add(currentPos);
+
+        BlockEntity be = level.getBlockEntity(currentPos);
+        if (be instanceof FadeBlockEntity fadeBe) {
+            fadeBe.inventory.setItem(0, keyStack.copy());
+            fadeBe.setChanged();
+            level.sendBlockUpdated(currentPos, level.getBlockState(currentPos), level.getBlockState(currentPos), 3);
+
+            int updated = 1;
+
+            for (Direction dir : Direction.values()) {
+                BlockPos neighborPos = currentPos.relative(dir);
+                if (level.getBlockState(neighborPos).getBlock() instanceof FadeBlock) {
+                    updated += propagateKey(level, neighborPos, keyStack, visited);
+                }
+            }
+            return updated;
+        }
+        return 0;
     }
 
     @Override

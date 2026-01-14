@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class FadeBlockMenu extends AbstractContainerMenu {
 
     public final Container container;
-    public final BlockPos pos; // NOVO: Armazena a posição
+    public final BlockPos pos;
 
     // Client
     public FadeBlockMenu(int syncId, Inventory playerInventory, BlockPos pos) {

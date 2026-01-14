@@ -19,7 +19,10 @@ import me.marcronte.colisaocobblemon.network.TeleportNetwork;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +82,16 @@ public class ColisaoCobblemon implements ModInitializer {
 		TeleportNetwork.registerCommon();
 		TeleportNetwork.registerServerReceiver();
 
+		// Creative only Sign edit
+		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+			if (!player.isCreative()) {
+				var state = world.getBlockState(hitResult.getBlockPos());
+				if (state.is(BlockTags.SIGNS) || state.is(BlockTags.ALL_HANGING_SIGNS)) {
+					return InteractionResult.FAIL;
+				}
+			}
+			return InteractionResult.PASS;
+		});
 
 		// SERVER START CAPTURE
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);

@@ -55,6 +55,9 @@ public class BoostPadHandler {
             if (data.direction == direction) return;
         }
 
+        alignPlayerCenter(player);
+        player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
+
         BOOSTING_PLAYERS.put(player.getUUID(), new BoostData(direction));
 
         applyZeroJumpAttribute(player);
@@ -85,13 +88,23 @@ public class BoostPadHandler {
         BlockState stateBelow = level.getBlockState(belowPos);
 
         if (stateCurrent.getBlock() instanceof BoostPadBlock) {
-            startBoosting(player, stateCurrent.getValue(BoostPadBlock.FACING));
+            if (isNearCenter(player, currentPos)) {
+                startBoosting(player, stateCurrent.getValue(BoostPadBlock.FACING));
+            }
             return;
         }
 
         if (stateBelow.getBlock() instanceof BoostPadBlock) {
-            startBoosting(player, stateBelow.getValue(BoostPadBlock.FACING));
+            if (isNearCenter(player, belowPos)) {
+                startBoosting(player, stateBelow.getValue(BoostPadBlock.FACING));
+            }
         }
+    }
+
+    private static boolean isNearCenter(Player player, BlockPos pos) {
+        double centerX = pos.getX() + 0.5;
+        double centerZ = pos.getZ() + 0.5;
+        return player.distanceToSqr(centerX, player.getY(), centerZ) < 0.25; // Tolerance 0.5
     }
 
     private static void handlePlayerTick(Player player) {
@@ -125,6 +138,7 @@ public class BoostPadHandler {
             if (newDir != data.direction) {
                 data.direction = newDir;
                 alignPlayerCenter(player);
+                player.setDeltaMovement(0, player.getDeltaMovement().y, 0);
             }
         }
 
@@ -152,7 +166,6 @@ public class BoostPadHandler {
         player.hurtMarked = true;
 
         removeZeroJumpAttribute(player);
-
         alignPlayerCenter(player);
 
         if (player instanceof ServerPlayer serverPlayer) {
@@ -161,10 +174,8 @@ public class BoostPadHandler {
     }
 
     private static void alignPlayerCenter(Player player) {
-        player.teleportTo(player.blockPosition().getX() + 0.5, player.getY(), player.blockPosition().getZ() + 0.5);
+        player.moveTo(player.blockPosition().getX() + 0.5, player.getY(), player.blockPosition().getZ() + 0.5, player.getYRot(), player.getXRot());
     }
-
-    // --- AUXILIAR METHODS ---
 
     private static void applyZeroJumpAttribute(Player player) {
         AttributeInstance attribute = player.getAttribute(Attributes.JUMP_STRENGTH);

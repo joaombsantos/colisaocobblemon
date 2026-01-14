@@ -44,6 +44,7 @@ public class FadeBlockEntity extends BlockEntity implements ExtendedScreenHandle
         }
     }
 
+
     @Override
     public BlockPos getScreenOpeningData(ServerPlayer player) {
         return this.worldPosition;

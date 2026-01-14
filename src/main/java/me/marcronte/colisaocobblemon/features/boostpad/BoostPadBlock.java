@@ -33,7 +33,7 @@ public class BoostPadBlock extends Block {
 
     public static final MapCodec<BoostPadBlock> CODEC = simpleCodec(BoostPadBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
+    private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
 
     public static final BoostPadBlock BLOCK = new BoostPadBlock(BlockBehaviour.Properties.of().strength(1.5f).noOcclusion());
     public static final Item ITEM = new BlockItem(BLOCK, new Item.Properties());
@@ -50,9 +50,7 @@ public class BoostPadBlock extends Block {
     }
 
     @Override
-    protected @NotNull MapCodec<? extends Block> codec() {
-        return CODEC;
-    }
+    protected @NotNull MapCodec<? extends Block> codec() { return CODEC; }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -83,8 +81,20 @@ public class BoostPadBlock extends Block {
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         if (!level.isClientSide && entity instanceof Player player) {
-            Direction direction = state.getValue(FACING);
-            BoostPadHandler.startBoosting(player, direction);
+
+            double centerX = pos.getX() + 0.5;
+            double centerZ = pos.getZ() + 0.5;
+
+            double distSq = player.distanceToSqr(centerX, player.getY(), centerZ);
+
+            // Tolerance 0.5
+            if (distSq < 0.25) {
+                player.moveTo(centerX, player.getY(), centerZ, player.getYRot(), player.getXRot());
+                player.setDeltaMovement(0, 0, 0);
+
+                Direction direction = state.getValue(FACING);
+                BoostPadHandler.startBoosting(player, direction);
+            }
         }
         super.stepOn(level, pos, state, entity);
     }
