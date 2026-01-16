@@ -11,6 +11,7 @@
   "mixins": [
   ],
   "client": [
-    "client.BoostPlayerMixin"
+    "client.BoostPlayerMixin",
+    "client.EntriesScrollingWidgetMixin"
   ]
 }

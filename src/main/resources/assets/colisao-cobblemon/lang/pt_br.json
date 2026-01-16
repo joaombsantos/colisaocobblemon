@@ -64,5 +64,19 @@
   "message.colisao-cobblemon.deactivate_statue": "Você desativou a estátua",
   "block.colisao-cobblemon.teleport_block": "Bloco de Teleporte",
   "message.colisao-cobblemon.updated_teleport": "Teleporte Atualizado",
-  "message.colisao-cobblemon.teleport_configs": "Configurações de Teleporte"
+  "message.colisao-cobblemon.teleport_configs": "Configurações de Teleporte",
+  "message.colisao-cobblemon.elite_four_too_far": "§c§l[Elite 4] §r§cVocê se afastou demais! Desafio reiniciado.",
+  "message.colisao-cobblemon.elite_four_goto_start":  "§7Volte ao início.",
+  "message.colisao-cobblemon.elite_four_cannot_challenge": "§cVocê não pode desafiar ",
+  "message.colisao-cobblemon.elite_four_beat_first": "§7Derrote primeiro: %s",
+  "message.colisao-cobblemon.elite_four_follow_order":  "§7Siga a ordem correta!",
+  "message.colisao-cobblemon.elite_four_lost": "§c§lDERROTA NA ELITE 4!",
+  "message.colisao-cobblemon.elite_four_lost_to":  "§cVocê perdeu para %s",
+  "message.colisao-cobblemon.elite_four_progress_reset":  "§7Seu progresso foi reiniciado.",
+  "message.colisao-cobblemon.elite_four_victory":  "§a§lVitória! §r§aProgresso salvo.",
+  "message.colisao-cobblemon.elite_four_next": "§7Próximo: §e",
+  "message.colisao-cobblemon.elite_four_champion":  "§6§lPARABÉNS! CAMPEÃO DA LIGA!",
+  "message.colisao-cobblemon.generation_command": "§aLimite de Geração definido para: §eGen %n",
+  "message.colisao-cobblemon.genlimit_blocked": "§cBloqueado: %s",
+  "message.colisao-cobblemon.genlimit_evolution_cancelled": "§cA evolução foi cancelada por não resultar em Pokémon da geração!"
 }

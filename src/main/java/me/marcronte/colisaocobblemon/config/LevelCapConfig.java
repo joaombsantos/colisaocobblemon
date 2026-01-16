@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.storage.LevelResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +29,10 @@ public class LevelCapConfig {
     }
 
     public static void load(MinecraftServer server) {
-        Path worldDir = server.getWorldPath(LevelResource.ROOT);
-        File file = worldDir.resolve("cobblemon_level_cap.json").toFile();
+        if (ColisaoSettingsManager.getSettingsFolder() == null) {
+            ColisaoSettingsManager.init(server);
+        }
+        File file = new File(ColisaoSettingsManager.getSettingsFolder(), "cobblemon_level_cap.json");
 
         if (!file.exists()) {
             INSTANCE = new LevelCapConfig();

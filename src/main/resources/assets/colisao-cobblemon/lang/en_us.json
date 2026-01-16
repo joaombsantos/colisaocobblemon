@@ -64,5 +64,20 @@
   "message.colisao-cobblemon.deactivate_statue": "You deactivated the statue",
   "block.colisao-cobblemon.teleport_block": "Teleport Block",
   "message.colisao-cobblemon.updated_teleport": "Updated Teleport",
-  "message.colisao-cobblemon.teleport_configs": "Teleport Configs"
+  "message.colisao-cobblemon.teleport_configs": "Teleport Configs",
+  "message.colisao-cobblemon.elite_four_too_far": "§c§l[Elite 4] §r§cYou are too far away! Elite Four restarted.",
+  "message.colisao-cobblemon.elite_four_goto_start":  "§7Go back to start.",
+  "message.colisao-cobblemon.elite_four_cannot_challenge": "§cYou cannot challenge: %s",
+  "message.colisao-cobblemon.elite_four_beat_first": "§7Beat first: %s",
+  "message.colisao-cobblemon.elite_four_follow_order": "§7Follow the correct order!",
+  "message.colisao-cobblemon.elite_four_lost": "§c§lDEFEAT ON ELITE 4!",
+  "message.colisao-cobblemon.elite_four_lost_to":  "§cYou lost to %s",
+  "message.colisao-cobblemon.elite_four_progress_reset":  "§7Your progress was restarted.",
+  "message.colisao-cobblemon.elite_four_victory":  "§a§lVictory! §r§aSaved progress.",
+  "message.colisao-cobblemon.elite_four_next": "§7Next: §e%s",
+  "message.colisao-cobblemon.elite_four_champion":  "§6§lCONGRATULATIONS! YOU ARE THE LEAGUE CHAMPION!",
+  "message.colisao-cobblemon.generation_command": "§aGeneration limit set to: §eGen %d",
+  "message.colisao-cobblemon.genlimit_blocked": "§cBlocked: %s",
+  "message.colisao-cobblemon.genlimit_evolution_cancelled": "§cThe evolution was cancelled due to not result in a Pokémon of this generation!"
+
 }

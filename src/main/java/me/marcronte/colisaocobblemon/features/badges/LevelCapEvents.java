@@ -137,7 +137,5 @@ public class LevelCapEvents {
                 }
             }
         });
-
-        //TODO Check badges on badge case
     }
 }
