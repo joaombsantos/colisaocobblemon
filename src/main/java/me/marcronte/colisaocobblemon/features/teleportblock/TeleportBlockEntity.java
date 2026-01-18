@@ -12,7 +12,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class TeleportBlockEntity extends BlockEntity {
 
@@ -20,6 +23,8 @@ public class TeleportBlockEntity extends BlockEntity {
     private float targetYaw;
     private float targetPitch;
     private String targetDimension;
+
+    private static final Map<UUID, Long> COOLDOWNS = new HashMap<>();
 
     public TeleportBlockEntity(BlockPos pos, BlockState blockState) {
         super(TeleportRegistry.TELEPORT_BLOCK_BE, pos, blockState);
@@ -36,6 +41,20 @@ public class TeleportBlockEntity extends BlockEntity {
     public void tryTeleport(net.minecraft.world.entity.Entity entity) {
         if (targetPos == null || entity.level().isClientSide) return;
 
+        long now = entity.level().getGameTime();
+        UUID uuid = entity.getUUID();
+
+        if (now % 1200 == 0) {
+            COOLDOWNS.entrySet().removeIf(entry -> now - entry.getValue() > 100);
+        }
+
+        if (COOLDOWNS.containsKey(uuid)) {
+            long lastTime = COOLDOWNS.get(uuid);
+            if (now - lastTime < 40) {
+                return;
+            }
+        }
+
         if (entity instanceof net.minecraft.world.entity.player.Player p && p.isCreative() && p.isCrouching()) return;
 
         if (entity.level() instanceof ServerLevel serverLevel) {
@@ -43,6 +62,8 @@ public class TeleportBlockEntity extends BlockEntity {
             ServerLevel destLevel = serverLevel.getServer().getLevel(dimKey);
 
             if (destLevel != null) {
+                COOLDOWNS.put(uuid, now);
+
                 entity.teleportTo(
                         destLevel,
                         targetPos.getX() + 0.5,
