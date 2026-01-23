@@ -73,6 +73,8 @@ public class RouteFishingHandler {
                     entity.addTag("ball_restriction:" + entry.specific_pokeball);
                 }
 
+                entity.setUUID(java.util.UUID.randomUUID());
+
                 entity.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, player.position());
 
                 level.addFreshEntity(entity);

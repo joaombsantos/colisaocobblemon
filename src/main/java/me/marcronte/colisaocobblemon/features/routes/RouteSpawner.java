@@ -105,7 +105,7 @@ public class RouteSpawner {
                     entity.addTag("ball_restriction:" + entry.specific_pokeball);
                 }
 
-                level.addFreshEntity(entity);
+                entity.setUUID(java.util.UUID.randomUUID());
 
                 level.addFreshEntity(entity);
             }
