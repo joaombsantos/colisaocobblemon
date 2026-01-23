@@ -81,7 +81,7 @@ public class FadeNetwork {
 
                     int count = FadeBlock.propagateKey(level, payload.pos(), keyStack, new java.util.HashSet<>());
 
-                    player.displayClientMessage(Component.translatable("message.colisao-cobblemon.spread_blocks" + count + "message.colisao-cobblemon.blocks"), true);
+                    player.displayClientMessage(Component.translatable("message.colisao-cobblemon.spread_blocks", count ,"message.colisao-cobblemon.blocks"), true);
                 }
             }
         }));

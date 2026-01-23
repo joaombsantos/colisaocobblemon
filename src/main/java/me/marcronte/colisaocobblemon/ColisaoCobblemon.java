@@ -1,8 +1,11 @@
 package me.marcronte.colisaocobblemon;
 
-import dev.architectury.networking.NetworkManager;
+import com.cobblemon.mod.common.entity.npc.NPCEntity;
+import me.marcronte.colisaocobblemon.commands.ColisaoCommand;
+import me.marcronte.colisaocobblemon.commands.SpawnNpcCommand;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
 import me.marcronte.colisaocobblemon.config.GenerationConfig;
+import me.marcronte.colisaocobblemon.features.CaptureRestrictionHandler;
 import me.marcronte.colisaocobblemon.features.RideRequirement;
 import me.marcronte.colisaocobblemon.features.UndroppableItems;
 import me.marcronte.colisaocobblemon.features.badges.*;
@@ -14,8 +17,12 @@ import me.marcronte.colisaocobblemon.features.fadeblock.*;
 import me.marcronte.colisaocobblemon.features.eventblock.EventBattleHandler;
 import me.marcronte.colisaocobblemon.features.genlimit.GenerationCommand;
 import me.marcronte.colisaocobblemon.features.genlimit.GenerationLimiter;
+import me.marcronte.colisaocobblemon.features.npcs.NpcInteractionHandler;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootNetwork;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
+import me.marcronte.colisaocobblemon.features.routes.RouteNetwork;
+import me.marcronte.colisaocobblemon.features.routes.RouteSpawner;
+import me.marcronte.colisaocobblemon.features.routes.RouteTracker;
 import me.marcronte.colisaocobblemon.features.switchstate.*;
 import me.marcronte.colisaocobblemon.features.teleportblock.TeleportRegistry;
 import me.marcronte.colisaocobblemon.network.BadgeNetwork;
@@ -26,13 +33,11 @@ import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.BlockTags;
@@ -104,7 +109,22 @@ public class ColisaoCobblemon implements ModInitializer {
 		GenLimitNetwork.registerCommon();
 
 		// Gen Command
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> GenerationCommand.register(dispatcher));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			GenerationCommand.register(dispatcher);
+			ColisaoCommand.register(dispatcher);
+			SpawnNpcCommand.register(dispatcher);
+		});
+
+
+		// NPCs
+		NpcInteractionHandler.register();
+
+		AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+			if (entity instanceof NPCEntity && entity.isInvulnerable()) {
+				return InteractionResult.FAIL;
+			}
+			return InteractionResult.PASS;
+		});
 
 		// Creative only Sign edit
 		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
@@ -116,6 +136,12 @@ public class ColisaoCobblemon implements ModInitializer {
 			}
 			return InteractionResult.PASS;
 		});
+
+		// Route Mechanic
+		RouteNetwork.register();
+		RouteSpawner.register();
+		RouteTracker.register();
+		CaptureRestrictionHandler.register();
 
         ServerLifecycleEvents.SERVER_STARTING.register(ColisaoSettingsManager::init);
 

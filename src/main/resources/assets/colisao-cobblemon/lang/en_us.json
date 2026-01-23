@@ -24,7 +24,7 @@
   "message.colisao-cobblemon.drop_item": "You cannot drop this item.",
   "message.colisao-cobblemon.visibility": "Visibility",
   "message.colisao-cobblemon.spread": "Spread",
-  "message.colisao-cobblemon.spread_blocks": "Key propagated to ",
+  "message.colisao-cobblemon.spread_blocks": "Key propagated to %d",
   "message.colisao-cobblemon.blocks": " Blocks",
   "block.colisao-cobblemon.poke_loot": "Poke Loot",
   "message.colisao-cobblemon.poke_loot_get_item": "You got a %s",
@@ -78,6 +78,15 @@
   "message.colisao-cobblemon.elite_four_champion":  "§6§lCONGRATULATIONS! YOU ARE THE LEAGUE CHAMPION!",
   "message.colisao-cobblemon.generation_command": "§aGeneration limit set to: §eGen %d",
   "message.colisao-cobblemon.genlimit_blocked": "§cBlocked: %s",
-  "message.colisao-cobblemon.genlimit_evolution_cancelled": "§cThe evolution was cancelled due to not result in a Pokémon of this generation!"
+  "message.colisao-cobblemon.genlimit_evolution_cancelled": "§cThe evolution was cancelled due to not result in a Pokémon of this generation!",
+
+  "item.colisao-cobblemon.route_tool": "Route Tool",
+  "message.colisao-cobblemon.route_entered": "Entered: %s",
+  "message.colisao-cobblemon.route_leaving": "Leaving: %s",
+  "message.colisao-cobblemon.restricted_capture": "§cFail! You must use: §e%s",
+  "message.colisao-cobblemon.route_created": "Success! You created the route: %s",
+  "message.colisao-cobblemon.route_created_error": "Error! You must select two points with the Route Tool",
+  "message.colisao-cobblemon.route_settings": "Route Settings",
+  "message.colisao-cobblemon.route_name": "Route Name"
 
 }

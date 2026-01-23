@@ -17,6 +17,7 @@ import me.marcronte.colisaocobblemon.features.switchstate.SwitchNetwork;
 import me.marcronte.colisaocobblemon.features.switchstate.SwitchStateRegistry;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
 import me.marcronte.colisaocobblemon.network.GenLimitNetwork;
+import me.marcronte.colisaocobblemon.network.payloads.OpenRouteScreenPayload;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -153,11 +154,9 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         SwitchNetwork.registerClient();
         GenLimitNetwork.registerClient();
 
-        ClientPlayNetworking.registerGlobalReceiver(GenLimitPayload.ID, (payload, context) -> {
-            context.client().execute(() -> {
-                ClientGenLimit.setMaxGeneration(payload.limit());
-            });
-        });
+        ClientPlayNetworking.registerGlobalReceiver(GenLimitPayload.ID, (payload, context) -> context.client().execute(() -> ClientGenLimit.setMaxGeneration(payload.limit())));
+
+        ClientPlayNetworking.registerGlobalReceiver(OpenRouteScreenPayload.ID, (payload, context) -> context.client().execute(() -> context.client().setScreen(new RouteConfigScreen())));
 
 
     }

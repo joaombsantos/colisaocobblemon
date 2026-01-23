@@ -9,6 +9,8 @@
     "requireAnnotations": true
   },
   "mixins": [
+    "CobblemonHookMixin",
+    "PokeRodAccessor"
   ],
   "client": [
     "client.BoostPlayerMixin",

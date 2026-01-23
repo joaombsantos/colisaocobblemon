@@ -78,5 +78,14 @@
   "message.colisao-cobblemon.elite_four_champion":  "§6§lPARABÉNS! CAMPEÃO DA LIGA!",
   "message.colisao-cobblemon.generation_command": "§aLimite de Geração definido para: §eGen %n",
   "message.colisao-cobblemon.genlimit_blocked": "§cBloqueado: %s",
-  "message.colisao-cobblemon.genlimit_evolution_cancelled": "§cA evolução foi cancelada por não resultar em Pokémon da geração!"
+  "message.colisao-cobblemon.genlimit_evolution_cancelled": "§cA evolução foi cancelada por não resultar em Pokémon da geração!",
+
+  "item.colisao-cobblemon.route_tool": "Ferramenta de Rota",
+  "message.colisao-cobblemon.route_entered": "Entrou: %s",
+  "message.colisao-cobblemon.route_leaving": "Saindo: %s",
+  "message.colisao-cobblemon.restricted_capture": "§cFalha! Você deve usar: §e%s",
+  "message.colisao-cobblemon.route_created": "Sucesso! Você criou a rota: %s",
+  "message.colisao-cobblemon.route_created_error": "Erro! Você deve selecionar dois pontos com a Ferramente de Rota",
+  "message.colisao-cobblemon.route_settings": "Configurar Rotas",
+  "message.colisao-cobblemon.route_name": "Nome da Rota"
 }

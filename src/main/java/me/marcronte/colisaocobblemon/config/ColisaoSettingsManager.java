@@ -1,13 +1,11 @@
 package me.marcronte.colisaocobblemon.config;
 
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
+import me.marcronte.colisaocobblemon.features.routes.RouteCache;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 public class ColisaoSettingsManager {
 
@@ -21,29 +19,25 @@ public class ColisaoSettingsManager {
             settingsFolder.mkdirs();
         }
 
-        // TODO REMOVE THIS ON NEXT PATCH
-        migrateLevelCapFile(rootPath);
+        reload(server);
+    }
 
+    public static void reload(MinecraftServer server) {
         EliteFourConfig.load(server);
         GenerationConfig.load(server);
         LevelCapConfig.load(server);
+        RouteConfig.load(server);
+        NpcConfig.load(server);
+
+        if (server.overworld() != null) {
+            RouteCache.buildCache(server.overworld());
+            ColisaoCobblemon.LOGGER.info("Cache and Routes settings loaded.");
+        } else {
+            ColisaoCobblemon.LOGGER.info("Settings loaded (Route's Cache waiting for world to start).");
+        }
     }
 
     public static File getSettingsFolder() {
         return settingsFolder;
-    }
-
-    private static void migrateLevelCapFile(Path rootPath) {
-        File oldFile = rootPath.resolve("cobblemon_level_cap.json").toFile();
-        File newFile = new File(settingsFolder, "cobblemon_level_cap.json");
-
-        if (oldFile.exists() && !newFile.exists()) {
-            try {
-                Files.move(oldFile.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                ColisaoCobblemon.LOGGER.info("Migrado cobblemon_level_cap.json para a nova pasta.");
-            } catch (IOException e) {
-                ColisaoCobblemon.LOGGER.error("Erro na migração do Level Cap", e);
-            }
-        }
     }
 }
