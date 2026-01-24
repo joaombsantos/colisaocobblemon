@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Set;
@@ -37,28 +38,62 @@ public class UndroppableItems {
                 return EventResult.pass();
             }
 
-            ItemStack stack = itemEntity.getItem();
-            String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+            ItemStack stackToDrop = itemEntity.getItem();
+            Item itemType = stackToDrop.getItem();
+            String itemId = BuiltInRegistries.ITEM.getKey(itemType).toString();
 
             if (UNDROPPABLE_IDS.contains(itemId)) {
 
                 if (player instanceof ServerPlayer serverPlayer) {
-                    ItemStack toReturn = stack.copy();
 
-                    if (!serverPlayer.getInventory().add(toReturn)) {
-                        return EventResult.pass();
+                    itemEntity.setItem(ItemStack.EMPTY);
+                    itemEntity.discard();
+
+                    boolean alreadyHasItem = false;
+
+                    for (ItemStack invStack : serverPlayer.getInventory().items) {
+                        if (!invStack.isEmpty() && invStack.getItem() == itemType) {
+                            alreadyHasItem = true;
+                            break;
+                        }
+                    }
+                    if (!alreadyHasItem) {
+                        for (ItemStack invStack : serverPlayer.getInventory().offhand) {
+                            if (!invStack.isEmpty() && invStack.getItem() == itemType) {
+                                alreadyHasItem = true;
+                                break;
+                            }
+                        }
                     }
 
-                    serverPlayer.displayClientMessage(
-                            Component.translatable("message.colisao-cobblemon.drop_item")
-                                    .withStyle(ChatFormatting.RED),
-                            true
-                    );
+                    if (alreadyHasItem) {
+                        serverPlayer.displayClientMessage(
+                                Component.translatable("message.colisao-cobblemon.drop_item")
+                                        .withStyle(ChatFormatting.RED),
+                                true
+                        );
+                        serverPlayer.inventoryMenu.sendAllDataToRemote();
+                    } else {
+                        ItemStack toRestore = stackToDrop.copy();
 
-                    serverPlayer.inventoryMenu.sendAllDataToRemote();
+                        serverPlayer.getServer().execute(() -> {
+                            if (serverPlayer.isAlive()) {
+                                if (!serverPlayer.getInventory().add(toRestore)) {
+                                    serverPlayer.drop(toRestore, false);
+                                }
+
+                                serverPlayer.displayClientMessage(
+                                        Component.translatable("message.colisao-cobblemon.drop_item")
+                                                .withStyle(ChatFormatting.RED),
+                                        true
+                                );
+                                serverPlayer.inventoryMenu.sendAllDataToRemote();
+                            }
+                        });
+                    }
+
+                    return EventResult.interruptFalse();
                 }
-
-                return EventResult.interruptFalse();
             }
 
             return EventResult.pass();
