@@ -34,8 +34,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreenHandlerFactory<PokemonBlockadeEntity.OpeningData> {
+
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private String pokemonProperties = "snorlax level=30";
     private String eventId = "eventID";
@@ -205,18 +210,30 @@ public class PokemonBlockadeEntity extends BlockEntity implements ExtendedScreen
             level.addFreshEntity(pokeEntity);
             player.displayClientMessage(Component.literal(this.wakeMessage).withStyle(ChatFormatting.GOLD), true);
 
-            boolean started = pokeEntity.forceBattle(player);
-
-            if (!started) {
-                player.displayClientMessage(Component.translatable("message.colisao-cobblemon.not_able_to_battle").withStyle(ChatFormatting.RED), true);
-                pokeEntity.discard();
-            } else {
+            scheduler.schedule(() -> {
                 if (player.getServer() != null) {
                     player.getServer().execute(() -> {
-                        player.connection.send(new ClientboundBlockUpdatePacket(this.worldPosition, Blocks.AIR.defaultBlockState()));
+
+                        if (player.isRemoved() || !player.isAlive()) {
+                            pokeEntity.discard();
+                            return;
+                        }
+
+                        if (!pokeEntity.isAlive()) {
+                            return;
+                        }
+
+                        boolean started = pokeEntity.forceBattle(player);
+
+                        if (!started) {
+                            player.displayClientMessage(Component.translatable("message.colisao-cobblemon.not_able_to_battle").withStyle(ChatFormatting.RED), true);
+                            pokeEntity.discard();
+                        } else {
+                            player.connection.send(new ClientboundBlockUpdatePacket(this.worldPosition, Blocks.AIR.defaultBlockState()));
+                        }
                     });
                 }
-            }
+            }, 500, TimeUnit.MILLISECONDS);
 
         } catch (Exception e) {
             ColisaoCobblemon.LOGGER.error("Error when start a battle on {}", this.worldPosition, e);
