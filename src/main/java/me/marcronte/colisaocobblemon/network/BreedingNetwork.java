@@ -368,7 +368,7 @@ public class BreedingNetwork {
                     String moveId = movesList.getString(i);
 
                     if (moveId.equals("EMPTY")) {
-                        p.getMoveSet().getMoves().set(i, null);
+                        p.getMoveSet().getMoves().add(null);
                     } else {
                         MoveTemplate template = Moves.getByName(moveId);
                         if (template != null) {
@@ -381,12 +381,13 @@ public class BreedingNetwork {
                                     break;
                                 }
                             }
-
                             if (!knowsMove) {
                                 p.getBenchedMoves().add(new BenchedMove(template, 0));
                             }
 
-                            p.getMoveSet().getMoves().set(i, move);
+                            p.getMoveSet().getMoves().add(move);
+                        } else {
+                            p.getMoveSet().getMoves().add(null);
                         }
                     }
                 }
