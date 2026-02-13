@@ -24,7 +24,6 @@ public class HmManager {
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).noCollission()
     );
 
-    public static final Item SURF = new Item(new Item.Properties().stacksTo(1));
 
     public static void register() {
 
@@ -36,13 +35,10 @@ public class HmManager {
         Registry.register(BuiltInRegistries.BLOCK, rockId, ROCK_SMASH);
         Registry.register(BuiltInRegistries.ITEM, rockId, new BlockItem(ROCK_SMASH, new Item.Properties()));
 
-        ResourceLocation surfId = ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "surf");
-        Registry.register(BuiltInRegistries.ITEM, surfId, SURF);
 
         ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> {
             entries.accept(CUT_OBSTACLE);
             entries.accept(ROCK_SMASH);
-            entries.accept(SURF);
         });
 
         SurfHandler.register();

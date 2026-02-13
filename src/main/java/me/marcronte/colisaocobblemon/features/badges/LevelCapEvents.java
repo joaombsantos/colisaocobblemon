@@ -2,6 +2,7 @@ package me.marcronte.colisaocobblemon.features.badges;
 
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.battles.model.actor.BattleActor;
+import com.cobblemon.mod.common.api.events.pokemon.interaction.ExperienceCandyUseEvent;
 import com.cobblemon.mod.common.api.storage.party.PlayerPartyStore;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.pokemon.Pokemon;
@@ -10,12 +11,69 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.Item;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class LevelCapEvents {
 
+    private static final Map<String, Integer> CANDY_XP_VALUES = new HashMap<>();
+    static {
+        CANDY_XP_VALUES.put("cobblemon:exp_candy_xs", 100);
+        CANDY_XP_VALUES.put("cobblemon:exp_candy_s", 800);
+        CANDY_XP_VALUES.put("cobblemon:exp_candy_m", 3000);
+        CANDY_XP_VALUES.put("cobblemon:exp_candy_l", 10000);
+        CANDY_XP_VALUES.put("cobblemon:exp_candy_xl", 30000);
+    }
+
     public static void register() {
+
+        // --- 0. BLOCK EXP CANDY USAGE ---
+        CobblemonEvents.EXPERIENCE_CANDY_USE_PRE.subscribe(event -> {
+            ServerPlayer player = event.getPlayer();
+            if (player == null || player.isCreative()) return;
+
+            Pokemon pokemon = event.getPokemon();
+            int cap = LevelCapCalculator.getPlayerLevelCap(player);
+
+            if (pokemon.getLevel() >= cap) {
+                cancelAndNotify(event, player);
+                return;
+            }
+
+            Item candyItem = event.getItem();
+            String itemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(candyItem).toString();
+
+            if (itemId.contains("rare_candy")) {
+                if (pokemon.getLevel() + 1 > cap) {
+                    cancelAndNotify(event, player);
+                }
+                return;
+            }
+
+            int candyXp = CANDY_XP_VALUES.getOrDefault(itemId, 0);
+
+            if (candyXp == 0) {
+                if (itemId.contains("_xs")) candyXp = 100;
+                else if (itemId.contains("_xl")) candyXp = 30000;
+                else if (itemId.contains("_l")) candyXp = 10000;
+                else if (itemId.contains("_m")) candyXp = 3000;
+                else if (itemId.contains("_s")) candyXp = 800;
+            }
+
+            if (candyXp > 0) {
+                int currentXp = pokemon.getExperience();
+                int projectedXp = currentXp + candyXp;
+
+                int xpForLevelAboveCap = pokemon.getExperienceGroup().getExperience(cap + 1);
+
+                if (projectedXp >= xpForLevelAboveCap) {
+                    cancelAndNotify(event, player);
+                }
+            }
+        });
 
         // --- 1. BLOCK XP GAIN ---
         CobblemonEvents.EXPERIENCE_GAINED_EVENT_PRE.subscribe(event -> {
@@ -137,5 +195,16 @@ public class LevelCapEvents {
                 }
             }
         });
+    }
+
+    private static void cancelAndNotify(ExperienceCandyUseEvent.Pre event, ServerPlayer player) {
+        event.cancel();
+        player.displayClientMessage(
+                Component.translatable("message.colisao-cobblemon.reached_level_cap_limit")
+                        .withStyle(ChatFormatting.RED),
+                true
+        );
+
+        player.inventoryMenu.sendAllDataToRemote();
     }
 }

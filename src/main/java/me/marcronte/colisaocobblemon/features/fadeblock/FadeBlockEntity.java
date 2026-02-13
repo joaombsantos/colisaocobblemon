@@ -65,7 +65,6 @@ public class FadeBlockEntity extends BlockEntity implements ExtendedScreenHandle
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        // Save item on it's inventory
         if (!inventory.getItem(0).isEmpty()) {
             tag.put("KeyItem", inventory.getItem(0).save(registries));
         }

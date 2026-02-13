@@ -1,7 +1,7 @@
 package me.marcronte.colisaocobblemon.client;
 
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
-import me.marcronte.colisaocobblemon.GenLimitPayload;
+import me.marcronte.colisaocobblemon.network.payloads.GenLimitPayload;
 import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.client.gui.*;
@@ -9,6 +9,7 @@ import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
 import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockade;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeBlock;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeNetwork;
+import me.marcronte.colisaocobblemon.features.hms.FlashItem;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.client.renderer.*;
@@ -17,6 +18,7 @@ import me.marcronte.colisaocobblemon.features.switchstate.SwitchNetwork;
 import me.marcronte.colisaocobblemon.features.switchstate.SwitchStateRegistry;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
 import me.marcronte.colisaocobblemon.network.GenLimitNetwork;
+import me.marcronte.colisaocobblemon.network.payloads.BreedingSyncPayload;
 import me.marcronte.colisaocobblemon.network.payloads.OpenRouteScreenPayload;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -31,9 +33,11 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -51,7 +55,7 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         clientUnlockedBlocks.addAll(positions);
     }
 
-    private static RunningShoesModel runningShoesModel;
+    private static RunningShoesModel<LivingEntity> runningShoesModel;
 
     @Override
     public void onInitializeClient() {
@@ -113,7 +117,7 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         ArmorRenderer.register((poseStack, multiBufferSource, itemStack, livingEntity, equipmentSlot, light, humanoidModel) -> {
 
             if (runningShoesModel == null) {
-                runningShoesModel = new RunningShoesModel(Minecraft.getInstance().getEntityModels().bakeLayer(RunningShoesModel.LAYER_LOCATION));
+                runningShoesModel = new RunningShoesModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(RunningShoesModel.LAYER_LOCATION));
             }
 
             humanoidModel.copyPropertiesTo(runningShoesModel);
@@ -134,6 +138,9 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
             );
 
         }, ModItems.RUNNING_SHOES);
+
+        ItemProperties.register(ModItems.FLASH_HM, ResourceLocation.parse("colisao-cobblemon:active"),
+                (stack, level, entity, seed) -> FlashItem.isActive(stack) ? 1.0F : 0.0F);
 
 
         ModelLoadingPlugin.register(context -> context.addModels(
@@ -158,6 +165,16 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(OpenRouteScreenPayload.ID, (payload, context) -> context.client().execute(() -> context.client().setScreen(new RouteConfigScreen())));
 
+        ClientPlayNetworking.registerGlobalReceiver(BreedingSyncPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new BreedingScreen(
+                payload.mother(),
+                payload.father(),
+                payload.motherSpecies(),
+                payload.fatherSpecies(),
+                payload.startTime(),
+                payload.totalDuration(),
+                payload.active(),
+                payload.ready()
+        ))));
 
     }
 

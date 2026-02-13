@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.client.gui.pokedex.widgets.EntriesScrollingWidget;
 import me.marcronte.colisaocobblemon.client.ClientGenLimit;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,6 +15,7 @@ import java.util.Collection;
 @Mixin(EntriesScrollingWidget.class)
 public class EntriesScrollingWidgetMixin {
 
+    @Unique
     private static int getGen(int dex) {
         if (dex <= 151) return 1;
         if (dex <= 251) return 2;
@@ -38,7 +40,6 @@ public class EntriesScrollingWidgetMixin {
         entries.removeIf(entry -> {
             var species = PokemonSpecies.getByIdentifier(entry.getSpeciesId());
             if (species != null) {
-                // Se pedir argumento, use (false) ou ()
                 return getGen(species.getNationalPokedexNumber()) > limit;
             }
             return false;

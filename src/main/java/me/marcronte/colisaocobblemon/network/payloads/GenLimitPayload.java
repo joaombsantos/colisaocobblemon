@@ -1,5 +1,6 @@
-package me.marcronte.colisaocobblemon;
+package me.marcronte.colisaocobblemon.network.payloads;
 
+import me.marcronte.colisaocobblemon.ColisaoCobblemon;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

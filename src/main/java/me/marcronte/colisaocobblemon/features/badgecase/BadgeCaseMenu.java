@@ -84,7 +84,6 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
         this.addSlot(new Slot(container, index, x, y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                // Só aceita a insígnia correta para este slot
                 Item requiredBadge = BadgeCaseData.getBadgeForSlot(index);
                 return requiredBadge != null && stack.is(requiredBadge);
             }
@@ -97,7 +96,6 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
             @Override
             public void setChanged() {
                 super.setChanged();
-                // Sincroniza Level Cap ao modificar slot (apenas servidor e se não estiver carregando)
                 if (!isLoading && !playerInventory.player.level().isClientSide && hasItem()) {
                     syncLevelCapData((ServerPlayer) playerInventory.player, getItem());
                 }

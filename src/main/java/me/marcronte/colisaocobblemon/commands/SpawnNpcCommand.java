@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +48,7 @@ public class SpawnNpcCommand {
 
             NPCClass casualClass = NPCClasses.INSTANCE.getByName("casual");
             if (casualClass == null) casualClass = NPCClasses.INSTANCE.getByName("standard");
-            if (casualClass == null) casualClass = NPCClasses.INSTANCE.random();
+            if (casualClass == null) casualClass = NPCClasses.random();
             npc.setNpc(casualClass);
 
             npc.setPos(source.getPosition());
@@ -60,7 +61,7 @@ public class SpawnNpcCommand {
             npc.setPersistenceRequired();
 
             if (npc.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
-                npc.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.0);
+                Objects.requireNonNull(npc.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(0.0);
             }
 
             npc.setMovable(false);

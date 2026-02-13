@@ -16,6 +16,10 @@ public class UndroppableItems {
     private static final Set<String> UNDROPPABLE_IDS = Set.of(
             "minecraft:shears",
             "minecraft:netherite_pickaxe",
+            "minecraft:trial_key",
+            "minecraft:lapis_lazuli",
+            "minecraft:netherite_ingot",
+            "minecraft:fermented_spider_eye",
             "colisao-cobblemon:surf",
             "colisao-cobblemon:kanto_badge_case",
             "colisao-cobblemon:card_key",

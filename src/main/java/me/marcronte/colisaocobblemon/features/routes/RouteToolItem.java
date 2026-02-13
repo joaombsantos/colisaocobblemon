@@ -52,7 +52,6 @@ public class RouteToolItem extends Item {
                 RouteNetwork.openRouteScreen((ServerPlayer) player);
             }
         } else {
-            // Direito normal: Define Posição 2 (No ar ou bloco)
             Selection sel = SELECTIONS.computeIfAbsent(player.getUUID(), k -> new Selection());
             sel.pos2 = player.blockPosition();
             player.displayClientMessage(Component.literal("§bPos2: " + sel.pos2.toShortString()), true);

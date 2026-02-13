@@ -1,5 +1,6 @@
 package me.marcronte.colisaocobblemon.features.hms;
 
+import me.marcronte.colisaocobblemon.ModItems;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ public class SurfHandler {
             if (player.isCreative() || player.isSpectator()) continue;
 
             UUID playerId = player.getUUID();
-            boolean isInWater = player.isInWater(); // isTouchingWater -> isInWater
+            boolean isInWater = player.isInWater();
 
             // --- PLAYER ON WATER ---
             if (isInWater) {
@@ -128,6 +129,6 @@ public class SurfHandler {
 
     private static boolean hasSurfItem(ServerPlayer player) {
         Inventory inv = player.getInventory();
-        return inv.contains(HmManager.SURF.getDefaultInstance());
+        return inv.contains(ModItems.SURF.getDefaultInstance());
     }
 }

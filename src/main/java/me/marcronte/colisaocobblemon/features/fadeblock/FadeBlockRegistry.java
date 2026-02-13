@@ -30,17 +30,6 @@ public class FadeBlockRegistry {
                     .isViewBlocking((state, world, pos) -> false)
     );
 
-    // KEYS
-    public static final Item CARD_KEY = new Item(new Item.Properties().stacksTo(1));
-    public static final Item COIN_CASE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item GOLDEN_TEETH = new Item(new Item.Properties().stacksTo(1));
-    public static final Item LIFT_KEY = new Item(new Item.Properties().stacksTo(1));
-    public static final Item OAK_PARCEL = new Item(new Item.Properties().stacksTo(1));
-    public static final Item SECRET_KEY = new Item(new Item.Properties().stacksTo(1));
-    public static final Item SS_TICKET = new Item(new Item.Properties().stacksTo(1));
-    public static final Item TEA = new Item(new Item.Properties().stacksTo(1));
-
-
     public static BlockEntityType<FadeBlockEntity> FADE_BLOCK_ENTITY;
 
     public static void register() {
@@ -48,14 +37,6 @@ public class FadeBlockRegistry {
 
         Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "fade_block"), new BlockItem(FADE_BLOCK, new Item.Properties()));
 
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "card_key"), CARD_KEY);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "coin_case"), COIN_CASE);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "golden_teeth"), GOLDEN_TEETH);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "lift_key"), LIFT_KEY);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "oak_parcel"), OAK_PARCEL);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "secret_key"), SECRET_KEY);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "ss_ticket"), SS_TICKET);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "tea"), TEA);
 
         FADE_BLOCK_ENTITY = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
@@ -67,14 +48,6 @@ public class FadeBlockRegistry {
 
         ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> {
             entries.accept(FADE_BLOCK);
-            entries.accept(CARD_KEY);
-            entries.accept(COIN_CASE);
-            entries.accept(GOLDEN_TEETH);
-            entries.accept(LIFT_KEY);
-            entries.accept(OAK_PARCEL);
-            entries.accept(SECRET_KEY);
-            entries.accept(SS_TICKET);
-            entries.accept(TEA);
         });
 
         FadeNetwork.registerCommon();

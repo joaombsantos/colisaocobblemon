@@ -1,7 +1,9 @@
 package me.marcronte.colisaocobblemon;
 
 import com.cobblemon.mod.common.entity.npc.NPCEntity;
+import me.marcronte.colisaocobblemon.commands.BreedingCommand;
 import me.marcronte.colisaocobblemon.commands.ColisaoCommand;
+import me.marcronte.colisaocobblemon.commands.LevelCapCommand;
 import me.marcronte.colisaocobblemon.commands.SpawnNpcCommand;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
 import me.marcronte.colisaocobblemon.config.GenerationConfig;
@@ -25,10 +27,11 @@ import me.marcronte.colisaocobblemon.features.routes.RouteSpawner;
 import me.marcronte.colisaocobblemon.features.routes.RouteTracker;
 import me.marcronte.colisaocobblemon.features.switchstate.*;
 import me.marcronte.colisaocobblemon.features.teleportblock.TeleportRegistry;
-import me.marcronte.colisaocobblemon.network.BadgeNetwork;
-import me.marcronte.colisaocobblemon.network.BoostNetwork;
-import me.marcronte.colisaocobblemon.network.GenLimitNetwork;
-import me.marcronte.colisaocobblemon.network.TeleportNetwork;
+import me.marcronte.colisaocobblemon.network.*;
+import me.marcronte.colisaocobblemon.network.payloads.BreedingButtonPayload;
+import me.marcronte.colisaocobblemon.network.payloads.BreedingSelectPayload;
+import me.marcronte.colisaocobblemon.network.payloads.BreedingSyncPayload;
+import me.marcronte.colisaocobblemon.network.payloads.GenLimitPayload;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -60,7 +63,7 @@ public class ColisaoCobblemon implements ModInitializer {
 		ModItemGroup.register();
 
 		// Badges & Level Cap
-		BadgeItems.register();
+		//BadgeItems.register();
 		BadgePickupEvents.register();
 		BadgeInventoryCheck.register();
 		BadgeNetwork.register();
@@ -90,7 +93,7 @@ public class ColisaoCobblemon implements ModInitializer {
 		EventBattleHandler.register();
 
 		// Items
-		ModItems.register();
+		ModItems.registerModItems();
 
 		// State Block Mechanic
 		SwitchStateRegistry.register();
@@ -108,11 +111,13 @@ public class ColisaoCobblemon implements ModInitializer {
 		GenerationLimiter.register();
 		GenLimitNetwork.registerCommon();
 
-		// Gen Command
+		// Commands
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			GenerationCommand.register(dispatcher);
 			ColisaoCommand.register(dispatcher);
 			SpawnNpcCommand.register(dispatcher);
+			BreedingCommand.register(dispatcher);
+			LevelCapCommand.register(dispatcher);
 		});
 
 
@@ -142,6 +147,13 @@ public class ColisaoCobblemon implements ModInitializer {
 		RouteSpawner.register();
 		RouteTracker.register();
 		CaptureRestrictionHandler.register();
+
+
+		// Breeding
+		PayloadTypeRegistry.playS2C().register(BreedingSyncPayload.ID, BreedingSyncPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(BreedingButtonPayload.ID, BreedingButtonPayload.CODEC);
+		PayloadTypeRegistry.playC2S().register(BreedingSelectPayload.ID, BreedingSelectPayload.CODEC);
+		BreedingNetwork.register();
 
         ServerLifecycleEvents.SERVER_STARTING.register(ColisaoSettingsManager::init);
 

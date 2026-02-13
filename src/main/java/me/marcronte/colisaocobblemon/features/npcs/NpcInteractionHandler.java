@@ -78,9 +78,7 @@ public class NpcInteractionHandler {
         DialogueAction action;
 
         if (!isRepeatable && alreadyInteracted) {
-            action = (dialogue, value) -> {
-                dialogue.close();
-            };
+            action = (dialogue, value) -> dialogue.close();
         } else {
             action = (dialogue, value) -> {
                 runCommands(player, data);
@@ -207,7 +205,7 @@ public class NpcInteractionHandler {
                 (active, value) -> { }
         );
 
-        DialogueManager.INSTANCE.startDialogue(player, npc, dialogue);
+        DialogueManager.startDialogue(player, npc, dialogue);
     }
 
     private static void runCommands(ServerPlayer player, NpcData data) {

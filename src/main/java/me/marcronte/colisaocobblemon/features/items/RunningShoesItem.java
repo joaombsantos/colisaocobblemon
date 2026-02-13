@@ -24,6 +24,7 @@ public class RunningShoesItem extends ArmorItem{
 
             if (boots.getItem() == this) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 10, 0, false, false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.SATURATION, 10, 0, false, false, false));
             }
         }
     }

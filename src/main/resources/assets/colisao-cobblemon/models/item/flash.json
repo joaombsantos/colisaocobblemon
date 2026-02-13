@@ -1,0 +1,14 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "colisao-cobblemon:item/flash_deactivate"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "colisao-cobblemon:active": 1.0
+      },
+      "model": "colisao-cobblemon:item/flash_on"
+    }
+  ]
+}

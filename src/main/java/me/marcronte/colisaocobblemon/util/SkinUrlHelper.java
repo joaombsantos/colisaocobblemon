@@ -53,7 +53,6 @@ public class SkinUrlHelper {
                     isSlim = "slim".equalsIgnoreCase(modelStr);
                 }
 
-                // 3. Agendar na Thread do Servidor
                 if (npc.getServer() != null) {
                     boolean finalIsSlim = isSlim;
                     npc.getServer().execute(() -> callNativeLoadTexture(npc, textureUrl, finalIsSlim));
@@ -73,7 +72,6 @@ public class SkinUrlHelper {
             Object modelType = null;
             Object[] constants = enumClass.getEnumConstants();
 
-            // Lógica de seleção de modelo mais robusta
             for (Object obj : constants) {
                 String name = obj.toString().toUpperCase();
                 if (isSlim) {
@@ -104,7 +102,6 @@ public class SkinUrlHelper {
         try {
             Method method = npc.getClass().getMethod("loadTextureFromGameProfileName", String.class);
             method.invoke(npc, nick);
-            // Atualização visual
             npc.setInvisible(true);
             npc.setInvisible(false);
         } catch (Exception e) {

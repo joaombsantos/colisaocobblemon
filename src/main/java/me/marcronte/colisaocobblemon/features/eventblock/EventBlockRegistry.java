@@ -33,17 +33,11 @@ public class EventBlockRegistry {
                     .isViewBlocking((state, world, pos) -> false)
     );
 
-    public static final Item POKE_FLUTE = new Item(new Item.Properties().stacksTo(1));
-    public static final Item SILPH_SCOPE = new Item(new Item.Properties().stacksTo(1));
-
     public static BlockEntityType<PokemonBlockadeEntity> POKEMON_BLOCKADE_ENTITY;
 
     public static void register() {
         Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "event_block"), EVENT_BLOCK);
         Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "event_block"), new BlockItem(EVENT_BLOCK, new Item.Properties()));
-
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_flute"), POKE_FLUTE);
-        Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "silph_scope"), SILPH_SCOPE);
 
         POKEMON_BLOCKADE_ENTITY = Registry.register(
                 BuiltInRegistries.BLOCK_ENTITY_TYPE,
@@ -52,11 +46,7 @@ public class EventBlockRegistry {
         );
         PokemonBlockade.ENTITY_TYPE = POKEMON_BLOCKADE_ENTITY;
 
-        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> {
-            entries.accept(EVENT_BLOCK);
-            entries.accept(POKE_FLUTE);
-            entries.accept(SILPH_SCOPE);
-        });
+        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> entries.accept(EVENT_BLOCK));
 
         EventBattleHandler.register();
         EventNetwork.registerCommon();

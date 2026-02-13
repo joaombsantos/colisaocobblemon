@@ -38,8 +38,6 @@ public class TeleportRegistry {
                 BlockEntityType.Builder.of(TeleportBlockEntity::new, TELEPORT_BLOCK).build(null)
         );
 
-        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> {
-            entries.accept(TELEPORT_BLOCK);
-        });
+        ItemGroupEvents.modifyEntriesEvent(ModItemGroup.COLISAO_GROUP_KEY).register(entries -> entries.accept(TELEPORT_BLOCK));
     }
 }
