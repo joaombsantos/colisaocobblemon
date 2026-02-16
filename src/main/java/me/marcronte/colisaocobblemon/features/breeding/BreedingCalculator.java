@@ -151,7 +151,13 @@ public class BreedingCalculator {
     }
 
     private static void inheritAbility(Pokemon child, Pokemon mother, Pokemon father) {
-        AbilityTemplate motherTemplate = mother.getAbility().getTemplate();
+        Pokemon sourceParent = mother;
+        if (mother.getSpecies().getName().equalsIgnoreCase("ditto")) {
+            sourceParent = father;
+        }
+
+        AbilityTemplate sourceTemplate = sourceParent.getAbility().getTemplate();
+
         AbilityPool pool = child.getForm().getAbilities();
 
         List<PotentialAbility> allPotentials = new ArrayList<>();
@@ -170,22 +176,22 @@ public class BreedingCalculator {
 
         Random rand = new Random();
 
-        boolean motherHasHidden = hiddenInChild != null && hiddenInChild.getTemplate().equals(motherTemplate);
-        boolean motherHasNormal = normalAbilities.contains(motherTemplate);
+        boolean sourceHasHidden = hiddenInChild != null && hiddenInChild.getTemplate().equals(sourceTemplate);
 
-        boolean passMotherAbility = rand.nextInt(100) < 60;
+        boolean sourceHasNormal = normalAbilities.contains(sourceTemplate);
 
-        if (passMotherAbility) {
-            if (motherHasHidden) {
-                child.updateAbility(new Ability(motherTemplate, false, Priority.LOW));
+        boolean passAbility = rand.nextInt(100) < 60;
+
+        if (passAbility) {
+            if (sourceHasHidden) {
+                child.updateAbility(new Ability(sourceTemplate, false, Priority.LOW));
                 return;
             }
-            else if (motherHasNormal) {
-                child.updateAbility(new Ability(motherTemplate, false, Priority.NORMAL));
+            else if (sourceHasNormal) {
+                child.updateAbility(new Ability(sourceTemplate, false, Priority.NORMAL));
                 return;
             }
         }
-
 
         if (!normalAbilities.isEmpty()) {
             AbilityTemplate selected = normalAbilities.get(rand.nextInt(normalAbilities.size()));
