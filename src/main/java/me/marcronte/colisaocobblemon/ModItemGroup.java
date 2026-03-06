@@ -24,6 +24,13 @@ public class ModItemGroup {
                 // --- ADMIN ITEMS ---
                 entries.accept(ModItems.ROUTE_TOOL);
 
+                // --- BACKPACKs ---
+                entries.accept(ModItems.PIKACHU_BACKPACK);
+                entries.accept(ModItems.GRENINJA_BACKPACK);
+                entries.accept(ModItems.GARCHOMP_BACKPACK);
+                entries.accept(ModItems.DARKRAI_BACKPACK);
+                entries.accept(ModItems.RAYQUAZA_BACKPACK);
+
                 // --- KEY ITEMS ---
                 entries.accept(ModItems.RUNNING_SHOES);
                 entries.accept(ModItems.KANTO_BADGE_CASE);
@@ -37,6 +44,13 @@ public class ModItemGroup {
                 entries.accept(ModItems.SILPH_SCOPE);
                 entries.accept(ModItems.SS_TICKET);
                 entries.accept(ModItems.TEA);
+
+                // --- ITEMS ---
+                entries.accept(ModItems.QUEST_BOOK);
+                entries.accept(ModItems.POKEMON_PICKAXE);
+
+                // --- BLOCKS ---
+                entries.accept(ModItems.MINING_BLOCK_ITEM);
 
                 // --- HMs ---
                 entries.accept(ModItems.SURF);

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "colisao-cobblemon:block/mining_block"
+    }
+  }
+}

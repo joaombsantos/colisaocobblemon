@@ -18,6 +18,8 @@ public class TeleportNetwork {
 
     public static final ResourceLocation SET_TELEPORT_ID = ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "set_teleport");
 
+    public static final ResourceLocation SET_LINK_ID = ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "set_teleport_link");
+
     public record SetTeleportPayload(BlockPos blockPos, int targetX, int targetY, int targetZ, float targetYaw) implements CustomPacketPayload {
         public static final Type<SetTeleportPayload> TYPE = new Type<>(SET_TELEPORT_ID);
 
@@ -32,8 +34,19 @@ public class TeleportNetwork {
         @Override public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
+    public record SetLinkIdPayload(BlockPos blockPos, String linkId) implements CustomPacketPayload {
+        public static final Type<SetLinkIdPayload> TYPE = new Type<>(SET_LINK_ID);
+        public static final StreamCodec<RegistryFriendlyByteBuf, SetLinkIdPayload> CODEC = StreamCodec.composite(
+                BlockPos.STREAM_CODEC, SetLinkIdPayload::blockPos,
+                ByteBufCodecs.STRING_UTF8, SetLinkIdPayload::linkId,
+                SetLinkIdPayload::new
+        );
+        @Override public @NotNull Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
     public static void registerCommon() {
         PayloadTypeRegistry.playC2S().register(SetTeleportPayload.TYPE, SetTeleportPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(SetLinkIdPayload.TYPE, SetLinkIdPayload.CODEC);
     }
 
     public static void registerServerReceiver() {
@@ -52,6 +65,17 @@ public class TeleportNetwork {
                             new java.util.HashSet<>()
                     );
 
+                    player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.colisao-cobblemon.updated_teleport"), true);
+                }
+            }
+        }));
+
+        ServerPlayNetworking.registerGlobalReceiver(SetLinkIdPayload.TYPE, (payload, context) -> context.server().execute(() -> {
+            ServerPlayer player = context.player();
+            if (player.isCreative()) {
+                BlockState state = player.level().getBlockState(payload.blockPos());
+                if (state.getBlock() instanceof TeleportBlock) {
+                    TeleportBlock.propagateId(player.level(), payload.blockPos(), payload.linkId(), new java.util.HashSet<>());
                     player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.colisao-cobblemon.updated_teleport"), true);
                 }
             }

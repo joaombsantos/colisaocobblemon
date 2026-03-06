@@ -84,6 +84,8 @@
   "message.colisao-cobblemon.deactivate_statue": "You deactivated the statue",
 
   "block.colisao-cobblemon.teleport_block": "Teleport Block",
+  "block.colisao-cobblemon.teleport_hub": "Teleport Hub",
+  "block.colisao-cobblemon.teleport_spoke": "Teleport Spoke",
   "message.colisao-cobblemon.updated_teleport": "Updated Teleport",
   "message.colisao-cobblemon.teleport_configs": "Teleport Configs",
 
@@ -144,5 +146,51 @@
   "message.colisao-cobblemon.pokemon_sent_pc": "%s was sent to your PC.",
   "gui.colisao-cobblemon.breeding_breed": "Breed",
   "gui.colisao-cobblemon.breeding_father": "FATHER",
-  "gui.colisao-cobblemon.breeding_mother": "MOTHER"
+  "gui.colisao-cobblemon.breeding_mother": "MOTHER",
+
+  "item.colisao-cobblemon.quest_book": "Quest Book",
+  "gui.colisao-cobblemon.quest_log": "Quest Log",
+  "gui.colisao-cobblemon.quest_tab.daily": "Dailies",
+  "gui.colisao-cobblemon.quest_tab.normal": "Quests",
+  "gui.colisao-cobblemon.quest_tab.lines": "Quest Lines",
+  "gui.colisao-cobblemon.quest_back": "< Back",
+
+
+  "item.colisao-cobblemon.pokemon_pickaxe": "Pokemon Pickaxe",
+  "block.colisao-cobblemon.mining_block": "Mining Block",
+  "message.colisao-cobblemon.invalid_profession": "Invalid Profession! Chose between: aventureiro, engenheiro, estilista, professor.",
+  "message.colisao-cobblemon.player_already_has_profession": "You already have a profession! Abandon your current one to pick another.",
+  "message.colisao-cobblemon.chosed_profession": "%s profession defined to %s",
+  "message.colisao-cobblemon.player_chosed_profession": "§aCongratulations! Your new profession is §l%s",
+  "message.colisao-cobblemon.player_reseted_profession": "%s has abandoned it's profession",
+  "message.colisao-cobblemon.player_abandoned_profession": "§cYou've abandoned your profession and your progress",
+  "message.colisao-cobblemon.player_dont_have_profession": "§cYou don't have a profession! Find an Instructor to choose one.",
+  "message.colisao-cobblemon.player_error_loading_profession": "§cInternal error! Profession Settings not loaded",
+  "gui.colisao-cobblemon.profession_menu": "Profession Menu",
+  "message.colisao-cobblemon.player_need_profession_xp": "§cYou need %d XP in this rank to craft this.",
+  "message.colisao-cobblemon.player_need_materials": "§cYou don't have %dx %s.",
+  "message.colisao-cobblemon.profession_rank_up": "§a§lCongratulations! §eYou've been promoted to %s!",
+  "message.colisao-cobblemon.max_rank": "§a§lCongratulations! You've mastered this profession!",
+  "message.colisao-cobblemon.profession_earned_xp": "§b+ %d Profession XP",
+  "message.colisao-cobblemon.professor_harvested": "§aYou harvested %dx %s!",
+  "gui.colisao-cobblemon.click_to_fabric": "Click to fabric!",
+  "message.colisao-cobblemon.pokemon_stylist_not_compatible": "§cPokemon on selected slot is not compatible with this addon!",
+  "message.colisao-cobblemon.pokemon_applied_addon": "§d✨ A new addon was applied on your %s!",
+  "message.colisao-cobblemon.must_be_stylist": "§cExclusive command! You must be a Stylist to confection Pokémon addons.",
+  "message.colisao-cobblemon.opening_stylist": "§dOpening Stylist table...",
+  "message.colisao-cobblemon.must_be_professor": "§cExclusive command! You must be a Professor to plant berries.",
+  "message.colisao-cobblemon.opening_plantation": "§dOpening your plantation...",
+  "gui.colisao-cobblemon.plantation": "Plantation",
+  "gui.colisao-cobblemon.stylist_menu": "Stylist Menu",
+  "message.colisao-cobblemon.pokemon_pickaxe_must_be_engineer": "§cThis pickaxe is too heavy and difficult to handle! Only an Engineer can hold it.",
+  "message.colisao-cobblemon.must_have_pokemon_pickaxe": "§cYou need a Pokemon Pickaxe to extract ores from this block.",
+  "message.colisao-cobblemon.mining_block_cooldown": "§eThis block still don't have any ores formed. Check again in %d minutes.",
+
+
+  "item.colisao-cobblemon.pikachu_backpack": "Pikachu Backpack",
+  "item.colisao-cobblemon.greninja_backpack": "Greninja Backpack",
+  "item.colisao-cobblemon.garchomp_backpack": "Garchomp Backpack",
+  "item.colisao-cobblemon.darkrai_backpack": "Darkrai Backpack",
+  "item.colisao-cobblemon.rayquaza_backpack": "Rayquaza Backpack"
+
 }

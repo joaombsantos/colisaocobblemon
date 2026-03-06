@@ -90,7 +90,24 @@ public class RouteSpawner {
             boolean isShiny = RANDOM.nextInt(8192) == 0;
             int levelNum = entry.min_lvl + RANDOM.nextInt(entry.max_lvl - entry.min_lvl + 1);
 
-            String properties = entry.species + " level=" + levelNum;
+            String speciesStr = entry.species;
+            String aspectProperty = "";
+
+            if (speciesStr.contains("-")) {
+                String[] parts = speciesStr.split("-", 2);
+                speciesStr = parts[0];
+                String regionName = parts[1].toLowerCase();
+
+                switch (regionName) {
+                    case "alola": aspectProperty = " alolan"; break;
+                    case "galar": aspectProperty = " galarian"; break;
+                    case "hisui": aspectProperty = " hisuian"; break;
+                    case "paldea": aspectProperty = " paldean"; break;
+                    default: aspectProperty = " " + regionName; break;
+                }
+            }
+
+            String properties = speciesStr + aspectProperty + " level=" + levelNum;
             if (isShiny) properties += " shiny";
 
             PokemonEntity entity = PokemonProperties.Companion.parse(properties, " ", "=").createEntity(level);
@@ -110,6 +127,7 @@ public class RouteSpawner {
                 level.addFreshEntity(entity);
             }
         } catch (Exception e) {
+            ColisaoCobblemon.LOGGER.error("Error when spawining Route Pokemon: " + entry.species, e);
         }
     }
 }

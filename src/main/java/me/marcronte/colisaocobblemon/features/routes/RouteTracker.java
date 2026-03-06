@@ -32,24 +32,24 @@ public class RouteTracker {
         String lastRoute = LAST_KNOWN_ROUTE.get(player.getUUID());
 
         if (currentRoute != null && !currentRoute.equals(lastRoute)) {
-            player.displayClientMessage(
+            /*player.displayClientMessage(
                     Component.translatable("message.colisao-cobblemon.route_entered", currentRoute).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
                     true
-            );
+            );*/
             LAST_KNOWN_ROUTE.put(player.getUUID(), currentRoute);
         }
         else if (currentRoute == null && lastRoute != null) {
-            player.displayClientMessage(
+            /*player.displayClientMessage(
                     Component.translatable("message.colisao-cobblemon.route_leaving", lastRoute).withStyle(ChatFormatting.GRAY),
                     true
-            );
+            );*/
             LAST_KNOWN_ROUTE.put(player.getUUID(), null);
         }
         else if (currentRoute != null && lastRoute != null && !currentRoute.equals(lastRoute)) {
-            player.displayClientMessage(
+            /*player.displayClientMessage(
                     Component.translatable("message.colisao-cobblemon.route_entered", currentRoute).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD),
                     true
-            );
+            );*/
             LAST_KNOWN_ROUTE.put(player.getUUID(), currentRoute);
         }
     }

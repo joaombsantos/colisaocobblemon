@@ -28,6 +28,9 @@ public class ColisaoSettingsManager {
         LevelCapConfig.load(server);
         RouteConfig.load(server);
         NpcConfig.load(server);
+        ProfessionsCraftsConfig.load(server);
+        ProfessionsPerksConfig.load(server);
+        PokemonDropConfig.load(server);
 
         if (server.overworld() != null) {
             RouteCache.buildCache(server.overworld());

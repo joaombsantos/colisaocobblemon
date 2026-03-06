@@ -1,6 +1,7 @@
 package me.marcronte.colisaocobblemon.features.teleportblock;
 
 import com.mojang.serialization.MapCodec;
+import me.marcronte.colisaocobblemon.client.ColisaoCobblemonClient;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -23,13 +24,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-
 public class TeleportBlock extends BaseEntityBlock {
-    public static final MapCodec<TeleportBlock> CODEC = simpleCodec(TeleportBlock::new);
+    public static final MapCodec<TeleportBlock> CODEC = simpleCodec(props -> new TeleportBlock(props, TeleportType.STATIC));
     private static final VoxelShape SHAPE = Block.box(0.1, 0.1, 0.1, 15.9, 15.9, 15.9);
 
-    public TeleportBlock(Properties properties) {
+    private final TeleportType type;
+
+    public TeleportBlock(Properties properties, TeleportType type) {
         super(properties);
+        this.type = type;
+    }
+
+    public TeleportType getType() {
+        return this.type;
     }
 
     @Override
@@ -65,9 +72,11 @@ public class TeleportBlock extends BaseEntityBlock {
     @Override
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.isCreative() && level.isClientSide) {
-
-            me.marcronte.colisaocobblemon.client.ColisaoCobblemonClient.openTeleportScreen(pos);
-
+            if (this.type == TeleportType.STATIC) {
+                ColisaoCobblemonClient.openTeleportScreen(pos);
+            } else {
+                ColisaoCobblemonClient.openTeleportIdScreen(pos, this.type);
+            }
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -78,13 +87,32 @@ public class TeleportBlock extends BaseEntityBlock {
         visited.add(currentPos);
 
         BlockEntity be = level.getBlockEntity(currentPos);
-        if (be instanceof TeleportBlockEntity teleBe) {
+        if (be instanceof TeleportBlockEntity teleBe && teleBe.type == TeleportType.STATIC) {
             teleBe.setDestination(destPos, yaw, pitch, level);
             int updated = 1;
             for (Direction dir : Direction.values()) {
                 BlockPos neighborPos = currentPos.relative(dir);
                 if (level.getBlockState(neighborPos).getBlock() instanceof TeleportBlock) {
                     updated += propagateSettings(level, neighborPos, destPos, yaw, pitch, visited);
+                }
+            }
+            return updated;
+        }
+        return 0;
+    }
+
+    public static int propagateId(Level level, BlockPos currentPos, String id, Set<BlockPos> visited) {
+        if (visited.contains(currentPos)) return 0;
+        visited.add(currentPos);
+
+        BlockEntity be = level.getBlockEntity(currentPos);
+        if (be instanceof TeleportBlockEntity teleBe && teleBe.type != TeleportType.STATIC) {
+            teleBe.setLinkId(id);
+            int updated = 1;
+            for (Direction dir : Direction.values()) {
+                BlockPos neighborPos = currentPos.relative(dir);
+                if (level.getBlockState(neighborPos).getBlock() instanceof TeleportBlock) {
+                    updated += propagateId(level, neighborPos, id, visited);
                 }
             }
             return updated;

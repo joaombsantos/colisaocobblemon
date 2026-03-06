@@ -2,6 +2,7 @@ package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.features.badgecase.BadgeCaseMenu;
 import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockadeMenu;
+import me.marcronte.colisaocobblemon.features.items.backpack.BackpackMenu;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootMenu;
 import me.marcronte.colisaocobblemon.features.fadeblock.FadeBlockMenu;
 import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockadeEntity;
@@ -28,6 +29,12 @@ public class ModScreenHandlers {
 
     public static final MenuType<PokemonBlockadeMenu> POKEMON_BLOCKADE_MENU = new ExtendedScreenHandlerType<>(
             PokemonBlockadeMenu::new, PokemonBlockadeEntity.OpeningData.CODEC
+    );
+
+    public static final MenuType<BackpackMenu> BACKPACK_MENU = Registry.register(
+            BuiltInRegistries.MENU,
+            ResourceLocation.parse("colisao-cobblemon:backpack"),
+            new ExtendedScreenHandlerType<>(BackpackMenu::new, BackpackMenu.Payload.CODEC)
     );
 
     public static void register() {

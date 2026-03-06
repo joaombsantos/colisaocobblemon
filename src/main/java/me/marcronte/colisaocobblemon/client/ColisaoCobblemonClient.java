@@ -1,7 +1,7 @@
 package me.marcronte.colisaocobblemon.client;
 
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
-import me.marcronte.colisaocobblemon.network.payloads.GenLimitPayload;
+import me.marcronte.colisaocobblemon.network.payloads.*;
 import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.client.gui.*;
@@ -18,8 +18,6 @@ import me.marcronte.colisaocobblemon.features.switchstate.SwitchNetwork;
 import me.marcronte.colisaocobblemon.features.switchstate.SwitchStateRegistry;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
 import me.marcronte.colisaocobblemon.network.GenLimitNetwork;
-import me.marcronte.colisaocobblemon.network.payloads.BreedingSyncPayload;
-import me.marcronte.colisaocobblemon.network.payloads.OpenRouteScreenPayload;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -176,9 +174,31 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
                 payload.ready()
         ))));
 
+        ClientPlayNetworking.registerGlobalReceiver(QuestBookPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new QuestBookScreen(payload.quests()))));
+
+        ClientPlayNetworking.registerGlobalReceiver(ProfessionCraftPayloads.OpenMenuPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new ProfessionCraftingUI(payload))));
+
+        ClientPlayNetworking.registerGlobalReceiver(ProfessionCraftPayloads.SyncExpPayload.ID, (payload, context) -> context.client().execute(() -> {
+            if (Minecraft.getInstance().screen instanceof ProfessionTradeScreen screen) {
+                screen.updateExp(payload.newExp());
+            }
+        }));
+
+        ClientPlayNetworking.registerGlobalReceiver(PlantationPayloads.SyncPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new PlantationScreen(payload))));
+
+        ClientPlayNetworking.registerGlobalReceiver(StylistPayloads.OpenMenuPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new StylistMenuScreen(payload))));
+
+        ClientPlayNetworking.registerGlobalReceiver(StylistPayloads.OpenCraftPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new StylistCraftScreen(payload))));
+
+        MenuScreens.register(ModScreenHandlers.BACKPACK_MENU, BackpackScreen::new);
+
     }
 
     public static void openTeleportScreen(BlockPos pos) {
         Minecraft.getInstance().setScreen(new TeleportConfigScreen(pos));
+    }
+
+    public static void openTeleportIdScreen(net.minecraft.core.BlockPos pos, me.marcronte.colisaocobblemon.features.teleportblock.TeleportType type) {
+        Minecraft.getInstance().setScreen(new me.marcronte.colisaocobblemon.client.gui.TeleportIdConfigScreen(pos, type));
     }
 }

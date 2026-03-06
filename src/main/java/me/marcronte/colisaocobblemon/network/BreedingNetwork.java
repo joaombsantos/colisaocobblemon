@@ -137,6 +137,14 @@ public class BreedingNetwork {
                     tag.putInt("IV_SPD", child.getIvs().getOrDefault(Stats.SPECIAL_DEFENCE));
                     tag.putInt("IV_SPE", child.getIvs().getOrDefault(Stats.SPEED));
 
+                    List<String> moveNames = new java.util.ArrayList<>();
+                    for (Move move : child.getMoveSet().getMoves()) {
+                        if (move != null) {
+                            moveNames.add(move.getTemplate().getName().toLowerCase().replace(" ", "_"));
+                        }
+                    }
+                    tag.putString("Moves", String.join(",", moveNames));
+
                     int cycles = child.getSpecies().getEggCycles();
                     if (cycles <= 0) cycles = 20;
                     int eggCycles = 100;
@@ -255,6 +263,12 @@ public class BreedingNetwork {
         }
         tag.put("BenchedMovesBackup", benchedList);
 
+        ListTag aspectsList = new ListTag();
+        for (String aspect : pokemon.getAspects()) {
+            aspectsList.add(StringTag.valueOf(aspect));
+        }
+        tag.put("AspectsBackup", aspectsList);
+
         return tag;
     }
 
@@ -340,6 +354,22 @@ public class BreedingNetwork {
             p.getEvs().set(Stats.SPECIAL_ATTACK, t.getInt("SPA"));
             p.getEvs().set(Stats.SPECIAL_DEFENCE, t.getInt("SPD"));
             p.getEvs().set(Stats.SPEED, t.getInt("SPE"));
+        }
+
+        if (tag.contains("AspectsBackup")) {
+            ListTag aspectsList = (ListTag) tag.get("AspectsBackup");
+            if (aspectsList != null) {
+                for (int i = 0; i < aspectsList.size(); i++) {
+                    String aspect = aspectsList.getString(i);
+                    try {
+                        if (!p.getAspects().contains(aspect)) {
+                            p.getAspects().add(aspect);
+                        }
+                    } catch (Exception e) {
+                        PokemonProperties.Companion.parse(aspect).apply(p);
+                    }
+                }
+            }
         }
 
         p.getMoveSet().getMoves().clear();

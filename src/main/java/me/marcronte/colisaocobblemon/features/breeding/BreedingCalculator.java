@@ -5,6 +5,9 @@ import com.cobblemon.mod.common.api.abilities.Ability;
 import com.cobblemon.mod.common.api.abilities.AbilityPool;
 import com.cobblemon.mod.common.api.abilities.AbilityTemplate;
 import com.cobblemon.mod.common.api.abilities.PotentialAbility;
+import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.api.moves.MoveTemplate;
+import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.cobblemon.mod.common.api.pokemon.evolution.Evolution;
@@ -14,6 +17,7 @@ import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import me.marcronte.colisaocobblemon.ModItems;
+import me.marcronte.colisaocobblemon.config.GenerationConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -52,12 +56,22 @@ public class BreedingCalculator {
         Species childSpecies = determineChildSpecies(mother, father);
         if (childSpecies == null) return null;
 
-        Pokemon offspring = childSpecies.create(1);
+        // NOVO: Calcula os movimentos herdados ANTES de criar o corpo do Pokémon!
+        List<String> startingMoves = calculateInheritedMoves(childSpecies, mother, father);
+
+        // Monta o "DNA" do filhote. Ex: "eevee level=1 moves=tackle,wish,yawn"
+        StringBuilder dna = new StringBuilder(childSpecies.getName().toLowerCase());
+        dna.append(" level=1");
+        if (!startingMoves.isEmpty()) {
+            dna.append(" moves=").append(String.join(",", startingMoves));
+        }
+
+        // Cria o Pokémon usando a fábrica nativa do Cobblemon, já com os golpes certos!
+        Pokemon offspring = PokemonProperties.Companion.parse(dna.toString()).create();
 
         inheritNature(offspring, mother, father);
         inheritAbility(offspring, mother, father);
         inheritIVs(offspring, mother, father);
-
         rollShiny(offspring, mother, father);
 
         offspring.setCaughtBall(mother.getCaughtBall());
@@ -100,10 +114,12 @@ public class BreedingCalculator {
 
     private static Species determineChildSpecies(Pokemon mother, Pokemon father) {
         Species current = mother.getSpecies();
+
         while (current.getPreEvolution() != null) {
             current = current.getPreEvolution().getSpecies();
         }
         Species baseSpecies = current;
+        Species resultSpecies = baseSpecies;
 
         for (Map.Entry<Item, String> entry : INCENSE_BABIES.entrySet()) {
             String babyName = entry.getValue();
@@ -117,16 +133,37 @@ public class BreedingCalculator {
                     Collection<Evolution> evos = baseSpecies.getStandardForm().getEvolutions();
                     if (!evos.isEmpty()) {
                         Evolution firstEvo = evos.iterator().next();
-
                         String speciesStr = Objects.requireNonNull(firstEvo.getResult().getSpecies());
                         Species evoSpecies = PokemonSpecies.getByName(speciesStr);
-
-                        if (evoSpecies != null) return evoSpecies;
+                        if (evoSpecies != null) {
+                            resultSpecies = evoSpecies;
+                        }
                     }
                 }
+                break;
             }
         }
-        return baseSpecies;
+
+        int limit = GenerationConfig.get().max_generation;
+
+        while (resultSpecies != null && getGenFromDex(resultSpecies.getNationalPokedexNumber()) > limit) {
+
+            Collection<Evolution> evos = resultSpecies.getStandardForm().getEvolutions();
+            if (evos != null && !evos.isEmpty()) {
+                Evolution firstEvo = evos.iterator().next();
+                String speciesStr = firstEvo.getResult().getSpecies();
+
+                if (speciesStr != null) {
+                    resultSpecies = PokemonSpecies.getByName(speciesStr);
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        return resultSpecies;
     }
 
     private static boolean isHolding(Pokemon p, Item item) {
@@ -276,6 +313,84 @@ public class BreedingCalculator {
         }
     }
 
+    private static List<String> calculateInheritedMoves(Species childSpecies, Pokemon mother, Pokemon father) {
+        Set<String> motherMoves = getKnownMoveNames(mother);
+        Set<String> fatherMoves = getKnownMoveNames(father);
+
+        List<MoveTemplate> inheritedMoves = new ArrayList<>();
+        var learnset = childSpecies.getStandardForm().getMoves();
+
+        for (List<MoveTemplate> movesAtLevel : learnset.getLevelUpMoves().values()) {
+            for (MoveTemplate template : movesAtLevel) {
+                String moveName = template.getName().toLowerCase();
+                if (motherMoves.contains(moveName) && fatherMoves.contains(moveName)) {
+                    if (!inheritedMoves.contains(template)) inheritedMoves.add(template);
+                }
+            }
+        }
+
+        for (MoveTemplate template : learnset.getEggMoves()) {
+            String moveName = template.getName().toLowerCase();
+            if (motherMoves.contains(moveName) || fatherMoves.contains(moveName)) {
+                if (!inheritedMoves.contains(template)) inheritedMoves.add(template);
+            }
+        }
+
+        if (inheritedMoves.isEmpty()) return new ArrayList<>();
+
+        List<MoveTemplate> finalMoves = new ArrayList<>();
+        List<MoveTemplate> lvl1Moves = learnset.getLevelUpMoves().get(1);
+        if (lvl1Moves != null) {
+            finalMoves.addAll(lvl1Moves);
+        }
+
+        for (MoveTemplate template : inheritedMoves) {
+            finalMoves.removeIf(m -> m.getName().equalsIgnoreCase(template.getName()));
+            finalMoves.add(template);
+        }
+
+        if (finalMoves.size() > 4) {
+            finalMoves = finalMoves.subList(finalMoves.size() - 4, finalMoves.size());
+        }
+
+        List<String> moveNames = new ArrayList<>();
+        for (MoveTemplate tmpl : finalMoves) {
+            moveNames.add(tmpl.getName().toLowerCase().replace(" ", "_"));
+        }
+
+        return moveNames;
+    }
+
+    private static Set<String> getKnownMoveNames(Pokemon pokemon) {
+        Set<String> possibleMoves = new HashSet<>();
+
+        for (Move move : pokemon.getMoveSet().getMoves()) {
+            if (move != null) possibleMoves.add(move.getTemplate().getName().toLowerCase());
+        }
+
+        Species currentSpecies = pokemon.getSpecies();
+        while (currentSpecies != null) {
+            var learnset = currentSpecies.getStandardForm().getMoves();
+
+            for (Map.Entry<Integer, List<MoveTemplate>> entry : learnset.getLevelUpMoves().entrySet()) {
+                if (pokemon.getLevel() >= entry.getKey()) {
+                    for (MoveTemplate tmpl : entry.getValue()) possibleMoves.add(tmpl.getName().toLowerCase());
+                }
+            }
+
+            for (MoveTemplate tmpl : learnset.getEggMoves()) possibleMoves.add(tmpl.getName().toLowerCase());
+            for (MoveTemplate tmpl : learnset.getTmMoves()) possibleMoves.add(tmpl.getName().toLowerCase());
+
+            if (currentSpecies.getPreEvolution() != null) {
+                currentSpecies = currentSpecies.getPreEvolution().getSpecies();
+            } else {
+                currentSpecies = null;
+            }
+        }
+
+        return possibleMoves;
+    }
+
     private static Stats getPowerItemStat(ItemStack stack) {
         if (stack.isEmpty()) return null;
         String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
@@ -288,5 +403,17 @@ public class BreedingCalculator {
         int chance = 4096;
 
         child.setShiny(rand.nextInt(chance) == 0);
+    }
+
+    private static int getGenFromDex(int dex) {
+        if (dex <= 151) return 1;
+        if (dex <= 251) return 2;
+        if (dex <= 386) return 3;
+        if (dex <= 493) return 4;
+        if (dex <= 649) return 5;
+        if (dex <= 721) return 6;
+        if (dex <= 809) return 7;
+        if (dex <= 905) return 8;
+        return 9;
     }
 }

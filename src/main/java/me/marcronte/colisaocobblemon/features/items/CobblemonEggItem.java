@@ -90,6 +90,11 @@ public class CobblemonEggItem extends Item {
             PokemonProperties.Companion.parse("ability=" + abilityName).apply(pokemon);
         }
 
+        String movesString = tag.getString("Moves");
+        if (!movesString.isEmpty()) {
+            PokemonProperties.Companion.parse("moves=" + movesString).apply(pokemon);
+        }
+
         boolean isShiny = tag.getBoolean("IsShiny");
         pokemon.setShiny(isShiny);
 

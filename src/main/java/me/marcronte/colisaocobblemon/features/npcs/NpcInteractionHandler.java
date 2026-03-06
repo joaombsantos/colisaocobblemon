@@ -10,6 +10,8 @@ import com.cobblemon.mod.common.api.dialogue.input.DialogueOptionSetInput;
 import com.cobblemon.mod.common.entity.npc.NPCEntity;
 import me.marcronte.colisaocobblemon.config.NpcConfig;
 import me.marcronte.colisaocobblemon.data.QuestProgressData;
+import me.marcronte.colisaocobblemon.features.npcs.quest.QuestCounterData;
+import me.marcronte.colisaocobblemon.features.npcs.quest.QuestObjectiveRegistry;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -61,8 +63,91 @@ public class NpcInteractionHandler {
     private static void handleInteraction(ServerPlayer player, NpcData data, ServerLevel level, NPCEntity npcEntity) {
         if ("quest".equalsIgnoreCase(data.type)) {
             handleQuestUI(player, data, level, npcEntity);
+        } else if ("questline".equalsIgnoreCase(data.type)) {
+            handleQuestLineUI(player, data, level, npcEntity);
         } else {
             handleDialogUI(player, data, level, npcEntity);
+        }
+    }
+
+    private static void handleQuestLineUI(ServerPlayer player, NpcData data, ServerLevel level, NPCEntity npcEntity) {
+        QuestProgressData progress = QuestProgressData.get(level);
+
+        if (data.quest_line == null || data.quest_line.isEmpty()) return;
+
+        int currentIndex = -1;
+        for (int i = 0; i < data.quest_line.size(); i++) {
+            String stageId = data.npc_id + "_stage_" + i;
+
+            if (progress.canDoQuest(player.getUUID(), stageId, 0)) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        if (currentIndex == -1) {
+            String finishMsg = (data.questline_finished != null) ? data.questline_finished : "Obrigado por toda a ajuda!";
+            openCobblemonUI(player, npcEntity, data.npc_name, finishMsg, "Fechar", (d, v) -> d.close());
+            return;
+        }
+
+        NpcData.QuestNode currentNode = data.quest_line.get(currentIndex);
+        String stageId = data.npc_id + "_stage_" + currentIndex;
+
+        String objType = (currentNode.objective_type != null) ? currentNode.objective_type : "item";
+        String objTarget = (currentNode.objective_target != null) ? currentNode.objective_target : currentNode.quest_item;
+        int amount = currentNode.quest_amount;
+        QuestObjectiveRegistry.QuestObjective objective = QuestObjectiveRegistry.getObjective(objType);
+
+        if (objective.canComplete(player, objTarget, amount, stageId)) {
+            String buttonLabel = (currentNode.deliver_quest != null && !currentNode.deliver_quest.isEmpty()) ? currentNode.deliver_quest : "Entregar";
+
+            DialogueAction completeAction = (dialogue, value) -> {
+                if (objective.canComplete(player, objTarget, amount, stageId)) {
+
+                    objective.onComplete(player, objTarget, amount, stageId);
+
+                    progress.completeQuest(player.getUUID(), stageId);
+                    runCommands(player, currentNode.commands);
+
+                    String completeMsg = (currentNode.quest_complete != null) ? currentNode.quest_complete : "Feito!";
+                    openCobblemonUI(player, npcEntity, data.npc_name, completeMsg, "Próximo", (d, v) -> d.close());
+                } else {
+                    dialogue.close();
+                }
+            };
+
+            openCobblemonUI(player, npcEntity, data.npc_name, currentNode.quest_delivery, buttonLabel, completeAction);
+
+        } else {
+            boolean isInProgress = progress.hasStartedQuest(player.getUUID(), stageId);
+
+            if (isInProgress) {
+                String buttonLabel = "Vou buscar";
+                String text = currentNode.quest_in_progress != null ? currentNode.quest_in_progress : "Ainda não concluiu?";
+
+                text += objective.getProgressText(player, objTarget, amount, stageId);
+
+                openCobblemonUI(player, npcEntity, data.npc_name, text, buttonLabel, (d, v) -> d.close());
+
+            } else {
+                String buttonLabel = (currentNode.quest_accept != null && !currentNode.quest_accept.isEmpty()) ? currentNode.quest_accept : "Aceitar";
+
+                DialogueAction acceptAction = (dialogue, value) -> {
+                    progress.startQuest(player.getUUID(), stageId);
+
+                    if (objType.startsWith("defeat")) {
+                        QuestCounterData.get(level).clearCount(player.getUUID(), stageId);
+                    }
+
+                    dialogue.close();
+                };
+
+                String text = currentNode.give_quest;
+                text += objective.getProgressText(player, objTarget, amount, stageId);
+
+                openCobblemonUI(player, npcEntity, data.npc_name, text, buttonLabel, acceptAction);
+            }
         }
     }
 
@@ -81,7 +166,7 @@ public class NpcInteractionHandler {
             action = (dialogue, value) -> dialogue.close();
         } else {
             action = (dialogue, value) -> {
-                runCommands(player, data);
+                runCommands(player, data.commands);
 
                 if (!isRepeatable) {
                     progress.completeQuest(player.getUUID(), data.npc_id);
@@ -101,53 +186,41 @@ public class NpcInteractionHandler {
             String msg = (data.quest_cooldown_hours > 0)
                     ? (data.cooldown_message != null ? data.cooldown_message : "Volte mais tarde.")
                     : data.quest_complete;
-
             openCobblemonUI(player, npcEntity, data.npc_name, msg, "Fechar", (d, v) -> d.close());
             return;
         }
 
-        Item requiredItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(data.quest_item));
-        int count = 0;
-        for (ItemStack stack : player.getInventory().items) {
-            if (stack.getItem() == requiredItem) count += stack.getCount();
-        }
+        String objType = (data.objective_type != null) ? data.objective_type : "item";
+        String objTarget = (data.objective_target != null) ? data.objective_target : data.quest_item;
+        int amount = data.quest_amount;
+        QuestObjectiveRegistry.QuestObjective objective = QuestObjectiveRegistry.getObjective(objType);
 
-        if (count >= data.quest_amount) {
+        if (objective.canComplete(player, objTarget, amount, data.npc_id)) {
             String buttonLabel = (data.deliver_quest != null && !data.deliver_quest.isEmpty()) ? data.deliver_quest : "Entregar";
 
             DialogueAction completeAction = (dialogue, value) -> {
-                int currentCount = 0;
-                for (ItemStack stack : player.getInventory().items) {
-                    if (stack.getItem() == requiredItem) currentCount += stack.getCount();
-                }
+                if (objective.canComplete(player, objTarget, amount, data.npc_id)) {
 
-                if (currentCount >= data.quest_amount) {
-                    int remaining = data.quest_amount;
-                    for (int i = 0; i < player.getInventory().items.size(); i++) {
-                        ItemStack stack = player.getInventory().items.get(i);
-                        if (stack.getItem() == requiredItem) {
-                            int take = Math.min(stack.getCount(), remaining);
-                            stack.shrink(take);
-                            remaining -= take;
-                            if (remaining <= 0) break;
-                        }
-                    }
+                    objective.onComplete(player, objTarget, amount, data.npc_id);
                     progress.completeQuest(player.getUUID(), data.npc_id);
-                    runCommands(player, data);
+                    runCommands(player, data.commands);
+
+                    String completeMsg = (data.quest_complete != null) ? data.quest_complete : "Feito!";
+                    openCobblemonUI(player, npcEntity, data.npc_name, completeMsg, "Fechar", (d, v) -> d.close());
+                } else {
+                    dialogue.close();
                 }
-                dialogue.close();
             };
 
             openCobblemonUI(player, npcEntity, data.npc_name, data.quest_delivery, buttonLabel, completeAction);
 
         } else {
-
             boolean isInProgress = progress.hasStartedQuest(player.getUUID(), data.npc_id);
 
             if (isInProgress) {
-                String buttonLabel = "Vou buscar";
-                String text = data.quest_in_progress != null ? data.quest_in_progress : "Ainda não trouxe o que pedi?";
-                text += "\n\n(Falta: " + data.quest_amount + "x " + requiredItem.getDescription().getString() + ")";
+                String buttonLabel = "Vou continuar";
+                String text = data.quest_in_progress != null ? data.quest_in_progress : "Ainda não concluiu?";
+                text += objective.getProgressText(player, objTarget, amount, data.npc_id);
 
                 openCobblemonUI(player, npcEntity, data.npc_name, text, buttonLabel, (d, v) -> d.close());
 
@@ -156,12 +229,13 @@ public class NpcInteractionHandler {
 
                 DialogueAction acceptAction = (dialogue, value) -> {
                     progress.startQuest(player.getUUID(), data.npc_id);
+                    if (objType.startsWith("defeat")) {
+                        QuestCounterData.get(level).clearCount(player.getUUID(), data.npc_id);
+                    }
                     dialogue.close();
                 };
 
-                String text = data.give_quest;
-                text += "\n\n(Requer: " + data.quest_amount + "x " + requiredItem.getDescription().getString() + ")";
-
+                String text = data.give_quest + objective.getProgressText(player, objTarget, amount, data.npc_id);
                 openCobblemonUI(player, npcEntity, data.npc_name, text, buttonLabel, acceptAction);
             }
         }
@@ -208,9 +282,9 @@ public class NpcInteractionHandler {
         DialogueManager.startDialogue(player, npc, dialogue);
     }
 
-    private static void runCommands(ServerPlayer player, NpcData data) {
-        if (data.commands == null) return;
-        for (String cmd : data.commands) {
+    private static void runCommands(ServerPlayer player, List<String> commands) {
+        if (commands == null) return;
+        for (String cmd : commands) {
             String parsedCmd = cmd.replace("{player}", player.getGameProfile().getName());
             Objects.requireNonNull(player.getServer()).getCommands().performPrefixedCommand(
                     player.getServer().createCommandSourceStack().withPermission(4).withSuppressedOutput(),

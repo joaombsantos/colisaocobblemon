@@ -205,7 +205,7 @@ public class BreedingScreen extends Screen {
         graphics.drawCenteredString(font, timeText, x + 128, y + 45, color);
 
         if (remaining <= 0 && !isReadyServer) {
-            graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.breeding.waiting"), x + 128, y + 55, 0xAAAAAA);
+            graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.waiting"), x + 128, y + 55, 0xAAAAAA);
         }
     }
 

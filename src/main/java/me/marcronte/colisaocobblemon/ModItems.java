@@ -1,19 +1,33 @@
 package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.features.badgecase.BadgeCaseItem;
+import me.marcronte.colisaocobblemon.features.blocks.MiningBlock;
 import me.marcronte.colisaocobblemon.features.hms.FlashItem;
 import me.marcronte.colisaocobblemon.features.items.CobblemonEggItem;
+import me.marcronte.colisaocobblemon.features.items.PokemonPickaxeItem;
+import me.marcronte.colisaocobblemon.features.items.QuestBookItem;
 import me.marcronte.colisaocobblemon.features.items.RunningShoesItem;
+import me.marcronte.colisaocobblemon.features.items.backpack.BackpackItem;
 import me.marcronte.colisaocobblemon.features.routes.RouteToolItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.block.Block;
 
 public class ModItems {
 
     // --- ADMIN ITEMS ---
     public static final Item ROUTE_TOOL = registerItem("route_tool", new RouteToolItem(new Item.Properties().stacksTo(1)));
+
+    // --- BACKPACKs ---
+    public static final Item PIKACHU_BACKPACK = registerItem("pikachu_backpack", new BackpackItem(18, new Item.Properties()));
+    public static final Item GRENINJA_BACKPACK = registerItem("greninja_backpack", new BackpackItem(27, new Item.Properties()));
+    public static final Item GARCHOMP_BACKPACK = registerItem("garchomp_backpack", new BackpackItem(36, new Item.Properties()));
+    public static final Item DARKRAI_BACKPACK = registerItem("darkrai_backpack", new BackpackItem(45, new Item.Properties()));
+    public static final Item RAYQUAZA_BACKPACK = registerItem("rayquaza_backpack", new BackpackItem(54, new Item.Properties()));
 
     // --- KEY ITEMS ---
     public static final Item KANTO_BADGE_CASE = registerItem("kanto_badge_case", new BadgeCaseItem(new Item.Properties().stacksTo(1)));
@@ -28,6 +42,18 @@ public class ModItems {
     public static final Item SILPH_SCOPE = registerItem("silph_scope", new Item(new Item.Properties().stacksTo(1)));
     public static final Item SS_TICKET = registerItem("ss_ticket", new Item(new Item.Properties().stacksTo(1)));
     public static final Item TEA = registerItem("tea", new Item(new Item.Properties().stacksTo(1)));
+
+    // --- ITEMS ---
+    public static final Item QUEST_BOOK = registerItem("quest_book", new QuestBookItem(new Item.Properties().stacksTo(1)));
+    public static final Item POKEMON_PICKAXE = registerItem("pokemon_pickaxe", new PokemonPickaxeItem(Tiers.IRON, new Item.Properties().stacksTo(1)));
+
+    // --- BLOCKS ---
+    public static final Block MINING_BLOCK = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "mining_block"),
+            new MiningBlock(Block.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops())
+    );
+    public static final Item MINING_BLOCK_ITEM = registerItem("mining_block", new BlockItem(MINING_BLOCK, new Item.Properties()));
 
     // HMs
     public static final Item SURF = registerItem("surf", new Item(new Item.Properties().stacksTo(1)));

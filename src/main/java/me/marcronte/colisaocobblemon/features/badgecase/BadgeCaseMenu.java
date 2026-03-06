@@ -221,10 +221,15 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
 
     private void syncLevelCapData(ServerPlayer player, ItemStack stack) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        String requiredTrainer = LevelCapConfig.get().getRequiredTrainer(itemId);
+
         if (LevelCapConfig.get().badges.containsKey(itemId)) {
             BadgeDataManager data = BadgeDataManager.getServerState(player.server);
-            if (!data.hasBadge(player.getUUID(), itemId)) {
-                data.addBadge(player.getUUID(), itemId);
+
+            if (requiredTrainer == null || data.hasDefeated(player.getUUID(), requiredTrainer)) {
+                if (!data.hasBadge(player.getUUID(), itemId)) {
+                    data.addBadge(player.getUUID(), itemId);
+                }
             }
         }
     }
