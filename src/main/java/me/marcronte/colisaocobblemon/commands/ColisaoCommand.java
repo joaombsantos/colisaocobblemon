@@ -3,7 +3,7 @@ package me.marcronte.colisaocobblemon.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import me.marcronte.colisaocobblemon.config.*;
-import me.marcronte.colisaocobblemon.features.routes.RouteCache;
+//import me.marcronte.colisaocobblemon.features.routes.RouteCache;
 import me.marcronte.colisaocobblemon.features.routes.RouteRegionData;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -66,11 +66,6 @@ public class ColisaoCommand {
             switch (type) {
                 case "route" -> {
                     RouteConfig.load(server);
-
-                    if (server.overworld() != null) {
-                        RouteCache.buildCache(server.overworld());
-                    }
-
                     context.getSource().sendSuccess(() -> Component.literal("§b[Colisao] §fRotas e Cache recarregados!"), true);
                 }
                 case "generation" -> {
@@ -106,10 +101,6 @@ public class ColisaoCommand {
             String removedRouteName = data.removeRegionAt(player.blockPosition());
 
             if (removedRouteName != null) {
-                if (player.serverLevel() != null) {
-                    RouteCache.buildCache(player.serverLevel());
-                }
-
                 context.getSource().sendSuccess(() -> Component.literal("§c[Colisao] Região da rota '" + removedRouteName + "' deletada com sucesso!"), true);
                 return 1;
             } else {

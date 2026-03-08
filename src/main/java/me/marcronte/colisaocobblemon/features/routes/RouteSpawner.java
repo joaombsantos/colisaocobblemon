@@ -6,9 +6,14 @@ import me.marcronte.colisaocobblemon.ColisaoCobblemon;
 import me.marcronte.colisaocobblemon.config.RouteConfig;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+
+import java.util.List;
 
 public class RouteSpawner {
 
@@ -52,28 +57,71 @@ public class RouteSpawner {
 
         for (RouteConfig.SpawnEntry entry : routeData.species) {
 
-            // 1. Check Chance
             if (RANDOM.nextFloat() * 100 > entry.chance) {
                 continue;
             }
 
-            // 2. Check Conditions
             if (!checkConditions(level, entry)) {
                 continue;
             }
 
-            // 3. Get from Cache
-            BlockPos spawnPos = RouteCache.getRandomPos(level, routeName, RANDOM);
+            BlockPos spawnPos = findSpawnPosNearPlayer(level, player, routeName, entry);
 
             if (spawnPos == null) {
-                ColisaoCobblemon.LOGGER.error("EMPTY CACHE or invalid Route on Cache for: {}. Verify if exist valid blocks (ex: minecraft:grass_block) inside the area.", routeName);
-                return;
+                continue;
             }
 
-            // Success
             spawnPokemon(level, spawnPos, entry);
             return;
         }
+    }
+
+    private static BlockPos findSpawnPosNearPlayer(ServerLevel level, ServerPlayer player, String routeName, RouteConfig.SpawnEntry entry) {
+        BlockPos playerPos = player.blockPosition();
+
+        for (int i = 0; i < 10; i++) {
+            int dx = RANDOM.nextInt(13) - 6; // -6 a +6
+            int dy = RANDOM.nextInt(7) - 3;  // -3 a +3
+            int dz = RANDOM.nextInt(13) - 6; // -6 a +6
+
+            if (Math.abs(dx) < 2 && Math.abs(dz) < 2) continue;
+
+            BlockPos targetPos = playerPos.offset(dx, dy, dz);
+
+            if (!routeName.equals(RouteRegionData.get(level).getRouteAt(targetPos))) {
+                continue;
+            }
+
+            if (isValidSpawnSpot(level, targetPos, entry.spawnsOn)) {
+                return targetPos;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isValidSpawnSpot(ServerLevel level, BlockPos pos, List<String> validBlocks) {
+        BlockState state = level.getBlockState(pos);
+        BlockState belowState = level.getBlockState(pos.below());
+
+        String stateId = BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
+        String belowId = BuiltInRegistries.BLOCK.getKey(belowState.getBlock()).toString();
+
+        if (validBlocks.contains(stateId)) {
+            if (state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty() || state.getFluidState().isSource()) {
+                return true;
+            }
+        }
+
+        if (validBlocks.contains(belowId)) {
+            if (state.getCollisionShape(level, pos, CollisionContext.empty()).isEmpty()) {
+                BlockState aboveState = level.getBlockState(pos.above());
+                if (aboveState.getCollisionShape(level, pos.above(), CollisionContext.empty()).isEmpty()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static boolean checkConditions(ServerLevel level, RouteConfig.SpawnEntry entry) {
@@ -127,7 +175,7 @@ public class RouteSpawner {
                 level.addFreshEntity(entity);
             }
         } catch (Exception e) {
-            ColisaoCobblemon.LOGGER.error("Error when spawining Route Pokemon: " + entry.species, e);
+            ColisaoCobblemon.LOGGER.error("Error when spawning Route Pokemon: " + entry.species, e);
         }
     }
 }

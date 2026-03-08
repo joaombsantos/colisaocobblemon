@@ -46,6 +46,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,11 +139,19 @@ public class ColisaoCobblemon implements ModInitializer {
             return InteractionResult.PASS;
         });
 
-        // Creative only Sign edit
+        // Creative only
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (!player.isCreative()) {
                 var state = world.getBlockState(hitResult.getBlockPos());
-                if (state.is(BlockTags.SIGNS) || state.is(BlockTags.ALL_HANGING_SIGNS)) {
+                boolean isRestricted = state.is(BlockTags.SIGNS)
+                        || state.is(BlockTags.ALL_HANGING_SIGNS)
+                        || state.is(BlockTags.TRAPDOORS)
+                        || state.is(Blocks.CRAFTING_TABLE)
+                        || state.is(Blocks.FURNACE)
+                        || state.is(Blocks.BREWING_STAND)
+                        || state.is(Blocks.CHEST)
+                        || state.is(Blocks.TRAPPED_CHEST);
+                if (isRestricted) {
                     return InteractionResult.FAIL;
                 }
             }

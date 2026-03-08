@@ -1,7 +1,6 @@
 package me.marcronte.colisaocobblemon.config;
 
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
-import me.marcronte.colisaocobblemon.features.routes.RouteCache;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import java.io.File;
@@ -33,7 +32,6 @@ public class ColisaoSettingsManager {
         PokemonDropConfig.load(server);
 
         if (server.overworld() != null) {
-            RouteCache.buildCache(server.overworld());
             ColisaoCobblemon.LOGGER.info("Cache and Routes settings loaded.");
         } else {
             ColisaoCobblemon.LOGGER.info("Settings loaded (Route's Cache waiting for world to start).");
