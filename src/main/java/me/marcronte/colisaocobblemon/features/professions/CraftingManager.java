@@ -24,7 +24,15 @@ public class CraftingManager {
 
         ProfessionsCraftsConfig.CraftData recipe = rankData.craft_list.get(payload.recipeIndex());
 
-        if (prof.progress < recipe.exp_needed && !prof.rank.equals(getNextRank(payload.rank()))) {
+        int playerRankVal = getRankValue(prof.rank);
+        int recipeRankVal = getRankValue(payload.rank());
+
+        if (playerRankVal < recipeRankVal) {
+            player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.player_need_profession_xp"));
+            return;
+        }
+
+        if (playerRankVal == recipeRankVal && prof.progress < recipe.exp_needed) {
             player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.player_need_profession_xp"));
             return;
         }
@@ -53,32 +61,32 @@ public class CraftingManager {
 
         if (prof.rank.equals(payload.rank())) {
 
-            if (prof.progress < recipe.limit_exp) {
+            int limit = recipe.limit_exp > 0 ? recipe.limit_exp : 100;
+
+            if (prof.progress < limit && prof.progress < 100) {
                 prof.progress += recipe.exp_reward;
 
                 if (prof.progress >= 100) {
-                    prof.progress -= 100;
-                    String currentRank = prof.rank;
-                    prof.rank = getNextRank(prof.rank);
-                    player.serverLevel().playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP, net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
 
-                    String rankUp = prof.rank;
-                    String[] parts = rankUp.split("_");
-
-                    String formated = parts[0].substring(0, 1).toUpperCase() +
-                            parts[0].substring(1) + " " +
-                            parts[1].toUpperCase();
-
-                    if (prof.rank.equals("rank_a") && currentRank.equals("rank_a")) {
+                    if (prof.rank.equals("rank_a")) {
+                        prof.progress = 100;
                         player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.max_rank"));
+                        ServerPlayNetworking.send(player, new ProfessionCraftPayloads.SyncExpPayload(prof.progress));
                     } else {
-                        player.sendSystemMessage(Component.translatable(("message.colisao-cobblemon.profession_rank_up"), formated));
-                    }
+                        prof.rank = getNextRank(prof.rank);
+                        prof.progress = 0;
 
-                    player.closeContainer();
+                        player.serverLevel().playSound(null, player.blockPosition(), net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP, net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
+
+                        String rankUp = prof.rank;
+                        String[] parts = rankUp.split("_");
+                        String formated = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1) + " " + parts[1].toUpperCase();
+
+                        player.sendSystemMessage(Component.translatable(("message.colisao-cobblemon.profession_rank_up"), formated));
+                        player.closeContainer();
+                    }
                 } else {
                     player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.profession_earned_xp", recipe.exp_reward));
-
                     ServerPlayNetworking.send(player, new ProfessionCraftPayloads.SyncExpPayload(prof.progress));
                 }
             }
@@ -117,6 +125,17 @@ public class CraftingManager {
             case "rank_c" -> "rank_b";
             case "rank_b" -> "rank_a";
             default -> current;
+        };
+    }
+
+    public static int getRankValue(String rank) {
+        return switch (rank) {
+            case "rank_e" -> 1;
+            case "rank_d" -> 2;
+            case "rank_c" -> 3;
+            case "rank_b" -> 4;
+            case "rank_a" -> 5;
+            default -> 0;
         };
     }
 }

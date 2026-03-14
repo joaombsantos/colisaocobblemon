@@ -103,7 +103,9 @@ public class ProfessionCraftingUI extends Screen {
                     return true;
                 }
 
-                Minecraft.getInstance().setScreen(new ProfessionTradeScreen(this.profession, ranks[i], this.currentExp, this.recipesJson));
+                int expToPass = (i < playerRankIndex) ? 100 : this.currentExp;
+
+                Minecraft.getInstance().setScreen(new ProfessionTradeScreen(this.profession, ranks[i], expToPass, this.recipesJson));
                 return true;
             }
         }
