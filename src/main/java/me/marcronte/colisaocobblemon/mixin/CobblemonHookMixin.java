@@ -2,11 +2,12 @@ package me.marcronte.colisaocobblemon.mixin;
 
 import com.cobblemon.mod.common.entity.fishing.PokeRodFishingBobberEntity;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.item.interactive.PokerodItem; // IMPORTAR A CLASSE DO ITEM
+import com.cobblemon.mod.common.item.interactive.PokerodItem;
 import me.marcronte.colisaocobblemon.features.routes.RouteFishingHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -24,19 +25,30 @@ public class CobblemonHookMixin {
         if (level.isClientSide) return;
 
         if (player.fishing != null) {
-            if (player.fishing instanceof PokeRodFishingBobberEntity bobber) {
+            Entity bobber = player.fishing;
 
-                PokeRodAccessor accessor = (PokeRodAccessor) (Object) bobber;
+            boolean isNearNpc = level.getEntities(bobber, bobber.getBoundingBox().inflate(2.0))
+                    .stream().anyMatch(e -> e.getTags().stream().anyMatch(tag -> tag.startsWith("colisao_npc:")));
+
+            if (isNearNpc) {
+                bobber.discard();
+                cir.setReturnValue(InteractionResultHolder.fail(player.getItemInHand(hand)));
+                return;
+            }
+
+            if (bobber instanceof PokeRodFishingBobberEntity cobbleBobber) {
+
+                PokeRodAccessor accessor = (PokeRodAccessor) (Object) cobbleBobber;
                 int countdown = accessor.getHookCountdown();
 
                 if (countdown > 0) {
                     if (player instanceof ServerPlayer serverPlayer) {
-                        PokemonEntity spawnedPokemon = RouteFishingHandler.tryFish(bobber, serverPlayer);
+                        PokemonEntity spawnedPokemon = RouteFishingHandler.tryFish(cobbleBobber, serverPlayer);
 
                         if (spawnedPokemon != null) {
                             accessor.setHookCountdown(0);
                             spawnedPokemon.forceBattle(serverPlayer);
-                            bobber.discard();
+                            cobbleBobber.discard();
                             cir.setReturnValue(InteractionResultHolder.success(player.getItemInHand(hand)));
                         }
                     }

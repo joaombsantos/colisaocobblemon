@@ -2,7 +2,6 @@
   "itemGroup.colisao-cobblemon.general": "Colisão Cobblemon",
 
   "message.colisao-cobblemon.inventory_is_full": "Your inventory is too full! Item dropped on the ground.",
-  "message.colisao-cobblemon.drop_item": "You cannot drop this item.",
   "message.colisao-cobblemon.visibility": "Visibility",
   "message.colisao-cobblemon.spread": "Spread",
   "message.colisao-cobblemon.blocks": " Blocks",

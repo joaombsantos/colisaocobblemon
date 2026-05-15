@@ -12,17 +12,15 @@ import me.marcronte.colisaocobblemon.config.NpcConfig;
 import me.marcronte.colisaocobblemon.data.QuestProgressData;
 import me.marcronte.colisaocobblemon.features.npcs.quest.QuestCounterData;
 import me.marcronte.colisaocobblemon.features.npcs.quest.QuestObjectiveRegistry;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
@@ -33,9 +31,20 @@ import java.util.Objects;
 public class NpcInteractionHandler {
 
     public static void register() {
+
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (hand == InteractionHand.OFF_HAND) return InteractionResult.PASS;
             if (world.isClientSide) return InteractionResult.PASS;
+
+            ItemStack itemInHand = player.getItemInHand(hand);
+            if (itemInHand.getItem() instanceof net.minecraft.world.item.FishingRodItem ||
+                    itemInHand.getItem() instanceof net.minecraft.world.item.LeadItem ||
+                    itemInHand.getItem() instanceof com.cobblemon.mod.common.item.interactive.PokerodItem) {
+
+                if (getNpcId(entity) != null) {
+                    return InteractionResult.FAIL;
+                }
+            }
 
             String npcId = getNpcId(entity);
             if (npcId == null) return InteractionResult.PASS;
@@ -48,6 +57,20 @@ public class NpcInteractionHandler {
             handleInteraction((ServerPlayer) player, data, (ServerLevel) world, npcEntity);
 
             return InteractionResult.SUCCESS;
+        });
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+
+                if (player.fishing != null) {
+                    Entity hooked = player.fishing.getHookedIn();
+
+                    if (hooked != null && getNpcId(hooked) != null) {
+
+                        player.fishing.discard();
+                    }
+                }
+            }
         });
     }
 

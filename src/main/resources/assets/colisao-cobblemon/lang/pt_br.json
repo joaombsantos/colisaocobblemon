@@ -2,7 +2,6 @@
   "itemGroup.colisao-cobblemon.general": "Colisão Cobblemon",
 
   "message.colisao-cobblemon.inventory_is_full": "Seu inventário está cheio! Item jogado no chão.",
-  "message.colisao-cobblemon.drop_item": "Você não pode jogar esse item fora",
   "message.colisao-cobblemon.visibility": "Visibilidade",
   "message.colisao-cobblemon.spread": "Espalhar",
   "message.colisao-cobblemon.blocks": " Blocos",

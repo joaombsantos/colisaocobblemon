@@ -6,7 +6,6 @@ import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
 import me.marcronte.colisaocobblemon.config.GenerationConfig;
 import me.marcronte.colisaocobblemon.features.CaptureRestrictionHandler;
 import me.marcronte.colisaocobblemon.features.RideRequirement;
-import me.marcronte.colisaocobblemon.features.UndroppableItems;
 import me.marcronte.colisaocobblemon.features.badges.*;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadBlock;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadHandler;
@@ -38,15 +37,12 @@ import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +61,6 @@ public class ColisaoCobblemon implements ModInitializer {
         ModItemGroup.register();
 
         // Badges & Level Cap
-        //BadgeItems.register();
         BadgePickupEvents.register();
         BadgeInventoryCheck.register();
         BadgeNetwork.register();
@@ -75,7 +70,6 @@ public class ColisaoCobblemon implements ModInitializer {
         // Features Diversas
         HmManager.register();
         ModScreenHandlers.register();
-        UndroppableItems.register();
         RideRequirement.register();
 
         // PokeLoot
@@ -125,7 +119,6 @@ public class ColisaoCobblemon implements ModInitializer {
             StylistCommand.register(dispatcher);
         });
 
-
         // NPCs
         NpcInteractionHandler.register();
         QuestObjectiveRegistry.register();
@@ -139,31 +132,11 @@ public class ColisaoCobblemon implements ModInitializer {
             return InteractionResult.PASS;
         });
 
-        // Creative only
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (!player.isCreative()) {
-                var state = world.getBlockState(hitResult.getBlockPos());
-                boolean isRestricted = state.is(BlockTags.SIGNS)
-                        || state.is(BlockTags.ALL_HANGING_SIGNS)
-                        || state.is(BlockTags.TRAPDOORS)
-                        || state.is(Blocks.CRAFTING_TABLE)
-                        || state.is(Blocks.FURNACE)
-                        || state.is(Blocks.BREWING_STAND)
-                        || state.is(Blocks.CHEST)
-                        || state.is(Blocks.TRAPPED_CHEST);
-                if (isRestricted) {
-                    return InteractionResult.FAIL;
-                }
-            }
-            return InteractionResult.PASS;
-        });
-
         // Route Mechanic
         RouteNetwork.register();
         RouteSpawner.register();
         RouteTracker.register();
         CaptureRestrictionHandler.register();
-
 
         // Breeding
         PayloadTypeRegistry.playS2C().register(BreedingSyncPayload.ID, BreedingSyncPayload.CODEC);
@@ -187,14 +160,11 @@ public class ColisaoCobblemon implements ModInitializer {
         PayloadTypeRegistry.playC2S().register(StylistPayloads.PerformApplyPayload.ID, StylistPayloads.PerformApplyPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(StylistPayloads.PerformApplyPayload.ID, (payload, context) -> context.server().execute(() -> StylistManager.handleApply(context.player(), payload)));
 
-
         ServerPlayNetworking.registerGlobalReceiver(ProfessionCraftPayloads.PerformCraftPayload.ID, (payload, context) -> context.server().execute(() -> CraftingManager.handleCraft(context.player(), payload)));
 
         PokemonCustomDropEvents.register();
 
-
         ServerLifecycleEvents.SERVER_STARTING.register(ColisaoSettingsManager::init);
-
 
         PayloadTypeRegistry.playS2C().register(GenLimitPayload.ID, GenLimitPayload.CODEC);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
