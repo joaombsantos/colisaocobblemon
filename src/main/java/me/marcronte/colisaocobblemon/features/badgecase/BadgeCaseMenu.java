@@ -2,12 +2,12 @@ package me.marcronte.colisaocobblemon.features.badgecase;
 
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
 import me.marcronte.colisaocobblemon.config.LevelCapConfig;
+import me.marcronte.colisaocobblemon.storage.BadgeCaseSavedData;
 import me.marcronte.colisaocobblemon.storage.BadgeDataManager;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -30,11 +30,13 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
     private final SimpleContainer container;
     private final Inventory playerInventory;
     private final InteractionHand hand;
+    private final boolean isVirtual;
     private boolean isLoading = false;
 
-    public record Payload(boolean isMainHand) {
+    public record Payload(boolean isMainHand, boolean isVirtual) {
         public static final StreamCodec<RegistryFriendlyByteBuf, Payload> CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, Payload::isMainHand,
+                ByteBufCodecs.BOOL, Payload::isVirtual,
                 Payload::new
         );
     }
@@ -43,29 +45,30 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
         super(ModScreenHandlers.KANTO_BADGE_CASE_MENU, syncId);
         this.playerInventory = playerInventory;
         this.hand = payload.isMainHand ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        this.isVirtual = payload.isVirtual();
 
         this.container = new SimpleContainer(9) {
             @Override
             public void setChanged() {
                 super.setChanged();
                 if (!isLoading && !playerInventory.player.level().isClientSide) {
-                    saveToNbt();
+                    saveData();
                 }
             }
         };
 
-        loadFromNbt();
+        loadData();
 
         // --- SLOTS BADGE CASE ---
-        addBadgeSlot(0, 15, 16);   // First
-        addBadgeSlot(1, 49, 16);   // Second
-        addBadgeSlot(2, 82, 16);   // Third
-        addBadgeSlot(3, 114, 16);  // Forth
-        addBadgeSlot(4, 15, 40);   // Fifth
-        addBadgeSlot(5, 49, 40);   // Sixth
-        addBadgeSlot(6, 82, 40);   // Seventh
-        addBadgeSlot(7, 114, 40);  // Eighth
-        addBadgeSlot(8, 145, 28);  // Champion
+        addBadgeSlot(0, 15, 16);
+        addBadgeSlot(1, 49, 16);
+        addBadgeSlot(2, 82, 16);
+        addBadgeSlot(3, 114, 16);
+        addBadgeSlot(4, 15, 40);
+        addBadgeSlot(5, 49, 40);
+        addBadgeSlot(6, 82, 40);
+        addBadgeSlot(7, 114, 40);
+        addBadgeSlot(8, 145, 28);
 
         // --- INVENTORY ITERATION ---
         for (int row = 0; row < 3; ++row) {
@@ -104,36 +107,32 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
     }
 
     private ItemStack getBadgeCaseStack() {
+        if (isVirtual || this.hand == null) return ItemStack.EMPTY;
         return playerInventory.player.getItemInHand(this.hand);
     }
 
     @Override
     public void removed(Player player) {
         if (!player.level().isClientSide) {
-            saveToNbt();
+            saveData();
         }
         super.removed(player);
     }
 
-    private void loadFromNbt() {
+    private void loadData() {
         isLoading = true;
         try {
-            ItemStack stack = getBadgeCaseStack();
-            if (stack.isEmpty()) return;
+            if (!playerInventory.player.level().isClientSide && playerInventory.player instanceof ServerPlayer serverPlayer) {
+                BadgeCaseSavedData data = BadgeCaseSavedData.get(serverPlayer.serverLevel());
+                ListTag listTag = data.getPlayerCase(serverPlayer.getUUID());
 
-            CustomData customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-            CompoundTag tag = customData.copyTag();
-
-            if (tag.contains("Items")) {
-                ListTag listTag = tag.getList("Items", Tag.TAG_COMPOUND);
                 container.clearContent();
-
                 for (int i = 0; i < listTag.size(); ++i) {
                     CompoundTag itemTag = listTag.getCompound(i);
                     int slot = itemTag.getByte("Slot") & 255;
 
                     if (slot >= 0 && slot < container.getContainerSize()) {
-                        ItemStack item = ItemStack.parseOptional(playerInventory.player.registryAccess(), itemTag);
+                        ItemStack item = ItemStack.parseOptional(serverPlayer.registryAccess(), itemTag);
                         container.setItem(slot, item);
                     }
                 }
@@ -143,32 +142,33 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
         }
     }
 
-    private void saveToNbt() {
-        if (playerInventory.player.level().isClientSide) return;
-
-        ItemStack stack = getBadgeCaseStack();
-        if (stack.isEmpty() || !(stack.getItem() instanceof BadgeCaseItem)) return;
+    private void saveData() {
+        if (playerInventory.player.level().isClientSide || !(playerInventory.player instanceof ServerPlayer serverPlayer)) return;
 
         ListTag listTag = new ListTag();
 
         for (int i = 0; i < container.getContainerSize(); ++i) {
             ItemStack item = container.getItem(i);
             if (!item.isEmpty()) {
-                CompoundTag itemTag = (CompoundTag) item.save(playerInventory.player.registryAccess());
+                CompoundTag itemTag = (CompoundTag) item.save(serverPlayer.registryAccess());
                 itemTag.putByte("Slot", (byte) i);
                 listTag.add(itemTag);
 
-                syncLevelCapData((ServerPlayer) playerInventory.player, item);
+                syncLevelCapData(serverPlayer, item);
             }
         }
 
-        CompoundTag rootTag = new CompoundTag();
-        rootTag.put("Items", listTag);
+        BadgeCaseSavedData data = BadgeCaseSavedData.get(serverPlayer.serverLevel());
+        data.setPlayerCase(serverPlayer.getUUID(), listTag);
 
-        CustomData newData = CustomData.of(rootTag);
-        stack.set(DataComponents.CUSTOM_DATA, newData);
-
-        playerInventory.setItem(hand == InteractionHand.MAIN_HAND ? playerInventory.selected : 40, stack);
+        if (!isVirtual) {
+            ItemStack stack = getBadgeCaseStack();
+            if (!stack.isEmpty() && stack.getItem() instanceof BadgeCaseItem) {
+                CompoundTag rootTag = new CompoundTag();
+                rootTag.put("Items", listTag);
+                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(rootTag));
+            }
+        }
     }
 
     public void recoverBadges(ServerPlayer player) {
@@ -192,10 +192,7 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
         }
 
         if (recoveredCount > 0) {
-            /*player.sendSystemMessage(Component.literal("Recovered " + recoveredCount + " lost badges."));*/
-            saveToNbt();
-        } else {
-            /*player.sendSystemMessage(Component.literal("No lost badge was found."));*/
+            saveData();
         }
     }
 
@@ -221,15 +218,12 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
 
     private void syncLevelCapData(ServerPlayer player, ItemStack stack) {
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        String requiredTrainer = LevelCapConfig.get().getRequiredTrainer(itemId);
 
         if (LevelCapConfig.get().badges.containsKey(itemId)) {
             BadgeDataManager data = BadgeDataManager.getServerState(player.server);
 
-            if (requiredTrainer == null || data.hasDefeated(player.getUUID(), requiredTrainer)) {
-                if (!data.hasBadge(player.getUUID(), itemId)) {
-                    data.addBadge(player.getUUID(), itemId);
-                }
+            if (!data.hasBadge(player.getUUID(), itemId)) {
+                data.addBadge(player.getUUID(), itemId);
             }
         }
     }
@@ -267,6 +261,8 @@ public class BadgeCaseMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
+        if (isVirtual) return true;
+
         ItemStack currentStack = player.getItemInHand(this.hand);
         return !currentStack.isEmpty() && currentStack.getItem() instanceof BadgeCaseItem;
     }

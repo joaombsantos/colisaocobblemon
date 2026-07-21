@@ -13,7 +13,7 @@ import me.marcronte.colisaocobblemon.features.hms.FlashItem;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.client.renderer.*;
-import me.marcronte.colisaocobblemon.client.model.RunningShoesModel;
+import me.marcronte.colisaocobblemon.client.model.*;
 import me.marcronte.colisaocobblemon.features.switchstate.SwitchNetwork;
 import me.marcronte.colisaocobblemon.features.switchstate.SwitchStateRegistry;
 import me.marcronte.colisaocobblemon.network.BoostNetwork;
@@ -24,7 +24,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -32,7 +31,6 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -83,13 +81,12 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(PokeLootRegistry.POKE_LOOT_BLOCK, RenderType.cutout());
         MenuScreens.register(ModScreenHandlers.FADE_BLOCK_MENU, FadeBlockScreen::new);
         MenuScreens.register(ModScreenHandlers.POKEMON_BLOCKADE_MENU, PokemonBlockadeScreen::new);
-
+        MenuScreens.register(ModScreenHandlers.HABITAT_MENU, HabitatScreen::new);
 
         // --- 4. CLIENT REGISTERS ---
 
         BoostNetwork.registerClient();
         FadeNetwork.registerClient();
-
 
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -111,31 +108,19 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
 
         EntityModelLayerRegistry.registerModelLayer(RunningShoesModel.LAYER_LOCATION, RunningShoesModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteBootsModel.LAYER_LOCATION, EternatiteBootsModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteLeggingsModel.LAYER_LOCATION, EternatiteLeggingsModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteChestplateModel.LAYER_LOCATION, EternatiteChestplateModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteHelmetModel.LAYER_LOCATION, EternatiteHelmetModel::createBodyLayer);
 
-        ArmorRenderer.register((poseStack, multiBufferSource, itemStack, livingEntity, equipmentSlot, light, humanoidModel) -> {
+        EntityModelLayerRegistry.registerModelLayer(EternatiteSwordModel.LAYER_LOCATION, EternatiteSwordModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteAxeModel.LAYER_LOCATION, EternatiteAxeModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatitePickaxeModel.LAYER_LOCATION, EternatitePickaxeModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteShovelModel.LAYER_LOCATION, EternatiteShovelModel::createBodyLayer);
+        EntityModelLayerRegistry.registerModelLayer(EternatiteHoeModel.LAYER_LOCATION, EternatiteHoeModel::createBodyLayer);
 
-            if (runningShoesModel == null) {
-                runningShoesModel = new RunningShoesModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(RunningShoesModel.LAYER_LOCATION));
-            }
-
-            humanoidModel.copyPropertiesTo(runningShoesModel);
-
-            runningShoesModel.right_leg.copyFrom(humanoidModel.rightLeg);
-            runningShoesModel.left_leg.copyFrom(humanoidModel.leftLeg);
-
-            runningShoesModel.setupAnim(livingEntity, 0, 0, 0, 0, 0);
-
-            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("colisao-cobblemon", "textures/models/armor/running_shoes.png");
-
-            runningShoesModel.renderToBuffer(
-                    poseStack,
-                    multiBufferSource.getBuffer(RenderType.armorCutoutNoCull(texture)),
-                    light,
-                    OverlayTexture.NO_OVERLAY,
-                    0xFFFFFFFF
-            );
-
-        }, ModItems.RUNNING_SHOES);
+        ModArmorRenderers.registerAll();
+        ModItemRenderers.registerAll();
 
         ItemProperties.register(ModItems.FLASH_HM, ResourceLocation.parse("colisao-cobblemon:active"),
                 (stack, level, entity, seed) -> FlashItem.isActive(stack) ? 1.0F : 0.0F);
@@ -173,6 +158,27 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
                 payload.active(),
                 payload.ready()
         ))));
+
+
+        ClientPlayNetworking.registerGlobalReceiver(ClanPayloads.OpenClanCreationPayload.ID, (payload, context) -> context.client().execute(() -> {
+            Minecraft.getInstance().setScreen(new ClanCreationScreen());
+        }));
+
+
+        ClientPlayNetworking.registerGlobalReceiver(ClanPayloads.OpenClanMenuPayload.ID, (payload, context) -> context.client().execute(() -> {
+            Minecraft.getInstance().setScreen(new ClanMenuScreen(
+                    payload.clanName(),
+                    payload.clanLevel(),
+                    payload.clanXp(),
+                    payload.clanXpNeeded(),
+                    payload.members(),
+                    payload.perks(),
+                    payload.missions(),
+                    payload.timeRemaining(),
+                    payload.nextResetTimestamp(),
+                    payload.isManager()
+            ));
+        }));
 
         ClientPlayNetworking.registerGlobalReceiver(QuestBookPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new QuestBookScreen(payload.quests()))));
 

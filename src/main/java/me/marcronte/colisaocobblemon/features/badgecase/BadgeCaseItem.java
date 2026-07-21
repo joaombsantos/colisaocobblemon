@@ -27,7 +27,7 @@ public class BadgeCaseItem extends Item {
             serverPlayer.openMenu(new ExtendedScreenHandlerFactory<BadgeCaseMenu.Payload>() {
                 @Override
                 public BadgeCaseMenu.Payload getScreenOpeningData(ServerPlayer player) {
-                    return new BadgeCaseMenu.Payload(hand == InteractionHand.MAIN_HAND);
+                    return new BadgeCaseMenu.Payload(hand == InteractionHand.MAIN_HAND, false);
                 }
 
                 @Override
@@ -37,7 +37,7 @@ public class BadgeCaseItem extends Item {
 
                 @Override
                 public @NotNull AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
-                    return new BadgeCaseMenu(syncId, inventory, new BadgeCaseMenu.Payload(hand == InteractionHand.MAIN_HAND));
+                    return new BadgeCaseMenu(syncId, inventory, new BadgeCaseMenu.Payload(hand == InteractionHand.MAIN_HAND, false));
                 }
             });
         }

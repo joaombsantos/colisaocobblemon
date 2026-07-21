@@ -47,7 +47,7 @@ public class PlantationScreen extends Screen {
             int slotY = startY + 47;
 
             if (i >= payload.unlockedSlots()) {
-                graphics.fill(slotX, slotY, slotX + 18, slotY + 18, 0xAA000000); // Fundo escurecido
+                graphics.fill(slotX, slotY, slotX + 18, slotY + 18, 0xAA000000);
                 graphics.drawCenteredString(this.font, "§c🔒", slotX + 9, slotY + 5, 0xFFFFFF);
                 continue;
             }

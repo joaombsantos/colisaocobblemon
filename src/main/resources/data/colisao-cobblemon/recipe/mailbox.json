@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RB ",
+    " L ",
+    " L "
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:red_concrete"
+    },
+    "L": {
+      "item": "minecraft:light_gray_concrete"
+    },
+    "B": {
+      "item": "minecraft:blue_concrete"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:mailbox",
+    "count": 1
+  }
+}

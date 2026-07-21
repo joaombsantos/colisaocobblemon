@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "II ",
+    " S ",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "colisao-cobblemon:eternatite_ingot"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:eternatite_hoe",
+    "count": 1
+  }
+}

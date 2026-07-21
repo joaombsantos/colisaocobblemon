@@ -1,6 +1,7 @@
 package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.features.badgecase.BadgeCaseMenu;
+import me.marcronte.colisaocobblemon.features.breeding.habitat.HabitatMenu;
 import me.marcronte.colisaocobblemon.features.eventblock.PokemonBlockadeMenu;
 import me.marcronte.colisaocobblemon.features.items.backpack.BackpackMenu;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootMenu;
@@ -37,10 +38,15 @@ public class ModScreenHandlers {
             new ExtendedScreenHandlerType<>(BackpackMenu::new, BackpackMenu.Payload.CODEC)
     );
 
+    public static final MenuType<HabitatMenu> HABITAT_MENU = new ExtendedScreenHandlerType<>(
+            HabitatMenu::new, BlockPos.STREAM_CODEC
+    );
+
     public static void register() {
         Registry.register(BuiltInRegistries.MENU, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "kanto_badge_case"), KANTO_BADGE_CASE_MENU);
         Registry.register(BuiltInRegistries.MENU, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_loot_menu"), POKE_LOOT_MENU);
         Registry.register(BuiltInRegistries.MENU, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "fade_block_menu"), FADE_BLOCK_MENU);
         Registry.register(BuiltInRegistries.MENU, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "pokemon_blockade_menu"), POKEMON_BLOCKADE_MENU);
+        Registry.register(BuiltInRegistries.MENU, ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "habitat_menu"), HABITAT_MENU);
     }
 }

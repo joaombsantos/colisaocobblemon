@@ -2,6 +2,7 @@ package me.marcronte.colisaocobblemon;
 
 import com.cobblemon.mod.common.entity.npc.NPCEntity;
 import me.marcronte.colisaocobblemon.commands.*;
+import me.marcronte.colisaocobblemon.placeholders.ModPlaceholders;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
 import me.marcronte.colisaocobblemon.config.GenerationConfig;
 import me.marcronte.colisaocobblemon.features.CaptureRestrictionHandler;
@@ -9,6 +10,10 @@ import me.marcronte.colisaocobblemon.features.RideRequirement;
 import me.marcronte.colisaocobblemon.features.badges.*;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadBlock;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadHandler;
+import me.marcronte.colisaocobblemon.features.clans.ClanMissionHandler;
+import me.marcronte.colisaocobblemon.features.clans.ClanPerkHandler;
+import me.marcronte.colisaocobblemon.features.clans.ClanScheduler;
+import me.marcronte.colisaocobblemon.features.drops.PokemonDropModifier;
 import me.marcronte.colisaocobblemon.features.elitefour.EliteFourHandler;
 import me.marcronte.colisaocobblemon.features.eventblock.EventBlockRegistry;
 import me.marcronte.colisaocobblemon.features.fadeblock.*;
@@ -34,15 +39,20 @@ import me.marcronte.colisaocobblemon.network.*;
 import me.marcronte.colisaocobblemon.network.payloads.*;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.levelgen.GenerationStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +99,7 @@ public class ColisaoCobblemon implements ModInitializer {
         EventBattleHandler.register();
 
         // Items
+        ModBlocks.registerModBlocks();
         ModItems.registerModItems();
 
         // State Block Mechanic
@@ -117,7 +128,13 @@ public class ColisaoCobblemon implements ModInitializer {
             ProfessionCommand.register(dispatcher);
             ProfessorCommand.register(dispatcher);
             StylistCommand.register(dispatcher);
+            BadgeCommand.register(dispatcher);
+            EndBattleCommand.register(dispatcher);
         });
+
+        ClanCommands.register();
+
+        PokemonDropModifier.register();
 
         // NPCs
         NpcInteractionHandler.register();
@@ -138,10 +155,19 @@ public class ColisaoCobblemon implements ModInitializer {
         RouteTracker.register();
         CaptureRestrictionHandler.register();
 
+        // Clan
+        ClanPayloads.register();
+        ClanNetwork.register();
+        ClanCommands.register();
+        ClanPerkHandler.register();
+        ClanMissionHandler.register();
+        ClanScheduler.register();
+
         // Breeding
         PayloadTypeRegistry.playS2C().register(BreedingSyncPayload.ID, BreedingSyncPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(BreedingButtonPayload.ID, BreedingButtonPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(BreedingSelectPayload.ID, BreedingSelectPayload.CODEC);
+        HabitatPayloads.registerC2S();
         BreedingNetwork.register();
 
         // Professions
@@ -173,6 +199,24 @@ public class ColisaoCobblemon implements ModInitializer {
         });
 
         PayloadTypeRegistry.playS2C().register(BackpackMenu.Payload.TYPE, BackpackMenu.Payload.CODEC);
+
+        String[] ores = {
+                "eternatite_ore",
+                "terastalite_ore"
+        };
+
+        for (String ore : ores) {
+            BiomeModifications.addFeature(
+                    BiomeSelectors.foundInOverworld(),
+                    GenerationStep.Decoration.UNDERGROUND_ORES,
+                    ResourceKey.create(
+                            Registries.PLACED_FEATURE,
+                            ResourceLocation.fromNamespaceAndPath("colisao-cobblemon", ore)
+                    )
+            );
+        }
+
+        ModPlaceholders.register();
 
         // SERVER START CAPTURE
         ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);

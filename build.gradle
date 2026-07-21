@@ -49,6 +49,11 @@ repositories {
 		name = "Architectury"
 		url = "https://maven.architectury.dev/"
 	}
+
+	maven {
+		name = "Nucleoid"
+		url = "https://maven.nucleoid.xyz/"
+	}
 }
 
 dependencies {
@@ -69,6 +74,9 @@ dependencies {
 	// Cobblemon
 	modApi "com.cobblemon:mod:$rootProject.cobblemon_version"
 	modImplementation "com.cobblemon:fabric:$rootProject.cobblemon_version"
+
+	// Placeholder
+	modImplementation include("eu.pb4:placeholder-api:2.4.1+1.21")
 
 	/*modImplementation "net.fabricmc:fabric-language-kotlin:1.12.1+kotlin.2.0.20"
 

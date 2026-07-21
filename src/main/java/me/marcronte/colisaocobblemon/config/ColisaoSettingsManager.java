@@ -22,6 +22,7 @@ public class ColisaoSettingsManager {
     }
 
     public static void reload(MinecraftServer server) {
+        GeneralConfig.load(server);
         EliteFourConfig.load(server);
         GenerationConfig.load(server);
         LevelCapConfig.load(server);

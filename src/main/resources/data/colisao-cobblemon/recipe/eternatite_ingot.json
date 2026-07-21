@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SNS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "colisao-cobblemon:eternatite_scrap"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:eternatite_ingot",
+    "count": 1
+  }
+}

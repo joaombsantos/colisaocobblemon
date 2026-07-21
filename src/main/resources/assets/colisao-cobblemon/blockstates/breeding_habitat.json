@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,ready=false": {
+      "model": "colisao-cobblemon:block/breeding_habitat"
+    },
+    "facing=east,ready=false": {
+      "model": "colisao-cobblemon:block/breeding_habitat",
+      "y": 90
+    },
+    "facing=south,ready=false": {
+      "model": "colisao-cobblemon:block/breeding_habitat",
+      "y": 180
+    },
+    "facing=west,ready=false": {
+      "model": "colisao-cobblemon:block/breeding_habitat",
+      "y": 270
+    },
+    "facing=north,ready=true": {
+      "model": "colisao-cobblemon:block/breeding_habitat_ready"
+    },
+    "facing=east,ready=true": {
+      "model": "colisao-cobblemon:block/breeding_habitat_ready",
+      "y": 90
+    },
+    "facing=south,ready=true": {
+      "model": "colisao-cobblemon:block/breeding_habitat_ready",
+      "y": 180
+    },
+    "facing=west,ready=true": {
+      "model": "colisao-cobblemon:block/breeding_habitat_ready",
+      "y": 270
+    }
+  }
+}

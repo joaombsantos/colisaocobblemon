@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "colisao-cobblemon:block/freezer" },
+    "facing=east":  { "model": "colisao-cobblemon:block/freezer", "y": 90 },
+    "facing=south": { "model": "colisao-cobblemon:block/freezer", "y": 180 },
+    "facing=west":  { "model": "colisao-cobblemon:block/freezer", "y": 270 }
+  }
+}

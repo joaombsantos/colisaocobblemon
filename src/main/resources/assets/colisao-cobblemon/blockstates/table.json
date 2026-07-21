@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "colisao-cobblemon:block/table" },
+    "facing=east":  { "model": "colisao-cobblemon:block/table", "y": 90 },
+    "facing=south": { "model": "colisao-cobblemon:block/table", "y": 180 },
+    "facing=west":  { "model": "colisao-cobblemon:block/table", "y": 270 }
+  }
+}

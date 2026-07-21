@@ -56,17 +56,20 @@ public class BreedingCalculator {
         Species childSpecies = determineChildSpecies(mother, father);
         if (childSpecies == null) return null;
 
-        // NOVO: Calcula os movimentos herdados ANTES de criar o corpo do Pokémon!
         List<String> startingMoves = calculateInheritedMoves(childSpecies, mother, father);
 
-        // Monta o "DNA" do filhote. Ex: "eevee level=1 moves=tackle,wish,yawn"
         StringBuilder dna = new StringBuilder(childSpecies.getName().toLowerCase());
+
+        String formName = mother.getForm().getName();
+        if (formName != null && !formName.isEmpty() && !formName.equalsIgnoreCase("normal")) {
+            dna.append(" form=").append(formName);
+        }
+
         dna.append(" level=1");
         if (!startingMoves.isEmpty()) {
             dna.append(" moves=").append(String.join(",", startingMoves));
         }
 
-        // Cria o Pokémon usando a fábrica nativa do Cobblemon, já com os golpes certos!
         Pokemon offspring = PokemonProperties.Companion.parse(dna.toString()).create();
 
         inheritNature(offspring, mother, father);

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "T  ",
+    "I  ",
+    "S  "
+  ],
+  "key": {
+    "T": {
+      "item": "colisao-cobblemon:thin_ice"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "S": {
+      "item": "colisao-cobblemon:screw"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:freezer",
+    "count": 1
+  }
+}

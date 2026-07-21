@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " GG",
+    "GSC",
+    "CCC"
+  ],
+  "key": {
+    "S": {
+      "item": "colisao-cobblemon:seed"
+    },
+    "G": {
+      "item": "minecraft:green_wool"
+    },
+    "C": {
+      "item": "minecraft:cyan_wool"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:bulbasaur_pokedoll",
+    "count": 1
+  }
+}

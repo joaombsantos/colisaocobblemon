@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "III",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "colisao-cobblemon:eternatite_ingot"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:eternatite_chestplate",
+    "count": 1
+  }
+}

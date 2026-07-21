@@ -12,9 +12,11 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.features.breeding.BreedingCalculator;
 import me.marcronte.colisaocobblemon.features.breeding.BreedingData;
+import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
 import me.marcronte.colisaocobblemon.network.payloads.BreedingButtonPayload;
 import me.marcronte.colisaocobblemon.network.payloads.BreedingSelectPayload;
 import me.marcronte.colisaocobblemon.network.payloads.BreedingSyncPayload;
+import me.marcronte.colisaocobblemon.network.payloads.HabitatPayloads;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -41,6 +43,9 @@ public class BreedingNetwork {
 
         ServerPlayNetworking.registerGlobalReceiver(BreedingSelectPayload.ID, (payload, context) ->
                 context.server().execute(() -> handleSelection(context.player(), payload.slot(), payload.pokemonUuid())));
+
+        ServerPlayNetworking.registerGlobalReceiver(HabitatPayloads.HabitatActionPayload.ID, (payload, context) ->
+                context.server().execute(() -> handleHabitatAction(context.player(), payload.actionId(), payload.motherId(), payload.fatherId(), payload.berryId())));
     }
 
     public static void openBreedingScreen(ServerPlayer player) {
@@ -127,6 +132,7 @@ public class BreedingNetwork {
                     child.saveToNBT(player.registryAccess(), pokemonData);
                     tag.put("PokemonData", pokemonData);
                     tag.putString("SpeciesIdentifier", child.getSpecies().resourceIdentifier.toString());
+                    tag.putString("Form", child.getForm().getName());
                     tag.putString("NatureInternal", child.getNature().getName().getPath());
                     tag.putString("AbilityInternal", child.getAbility().getTemplate().getName());
                     tag.putBoolean("IsShiny", child.getShiny());
@@ -278,12 +284,18 @@ public class BreedingNetwork {
         String speciesStr = tag.contains("Species") ? tag.getString("Species") : "";
         if (speciesStr.isEmpty() && tag.contains("species")) speciesStr = tag.getString("species");
 
+        String formStr = tag.contains("Form") ? tag.getString("Form") : "";
+
         int level = tag.contains("Level") ? tag.getInt("Level") : 1;
 
         Pokemon p;
         try {
             if (!speciesStr.isEmpty()) {
-                p = PokemonProperties.Companion.parse("species=" + speciesStr + " level=" + level).create();
+                StringBuilder dna = new StringBuilder("species=").append(speciesStr).append(" level=").append(level);
+                if (!formStr.isEmpty() && !formStr.equalsIgnoreCase("normal")) {
+                    dna.append(" form=").append(formStr);
+                }
+                p = PokemonProperties.Companion.parse(dna.toString()).create();
             } else {
                 p = new Pokemon();
             }
@@ -311,10 +323,6 @@ public class BreedingNetwork {
             if (g.equalsIgnoreCase("MALE")) p.setGender(com.cobblemon.mod.common.pokemon.Gender.MALE);
             else if (g.equalsIgnoreCase("FEMALE")) p.setGender(com.cobblemon.mod.common.pokemon.Gender.FEMALE);
             else p.setGender(com.cobblemon.mod.common.pokemon.Gender.GENDERLESS);
-        }
-
-        if (tag.contains("Form")) {
-            PokemonProperties.Companion.parse("form=" + tag.getString("Form")).apply(p);
         }
 
         if (tag.contains("Nature")) {
@@ -426,5 +434,106 @@ public class BreedingNetwork {
 
         p.heal();
         return p;
+    }
+
+    private static void handleHabitatAction(ServerPlayer player, int actionId, UUID motherId, UUID fatherId, String berryId) {
+        if (player == null) return;
+
+        if (!(player.containerMenu instanceof me.marcronte.colisaocobblemon.features.breeding.habitat.HabitatMenu habitatMenu)) return;
+
+        net.minecraft.world.level.block.entity.BlockEntity be = player.serverLevel().getBlockEntity(habitatMenu.blockPos);
+        if (!(be instanceof me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity habitat)) return;
+
+        BreedingData data = BreedingData.get(player.serverLevel());
+
+        if (actionId >= 10 && actionId <= 15) {
+            handleBerryTransfer(player, habitat, actionId, berryId);
+            return;
+        }
+
+        if (actionId == 1) {
+            habitat.cancelBreedingAndReturnParents();
+            player.closeContainer();
+        }
+        else if (actionId == 2) {
+            Pokemon mother = data.getPokemon(player, motherId);
+            Pokemon father = data.getPokemon(player, fatherId);
+
+            if (mother == null || father == null) return;
+            if (BreedingCalculator.createOffspring(mother, father) == null) {
+                player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.breeding_incompatible").withStyle(ChatFormatting.RED));
+                return;
+            }
+
+            CompoundTag mData = savePokemonSecurely(mother, player);
+            CompoundTag fData = savePokemonSecurely(father, player);
+
+            PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
+            party.remove(mother);
+            party.remove(father);
+
+            habitat.startBreeding(player, mData, fData, mother.getSpecies().getPrimaryType().getName(), father.getSpecies().getPrimaryType().getName());
+
+            player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.breeding_started").withStyle(ChatFormatting.GREEN));
+            player.closeContainer();
+        }
+        else if (actionId == 3) {
+            habitat.collectEgg(player);
+            player.closeContainer();
+        }
+    }
+
+    private static void handleBerryTransfer(ServerPlayer player, BreedingHabitatBlockEntity habitat, int actionId, String berryId) {
+        int slot = (actionId >= 10 && actionId <= 12) ? 0 : 1;
+
+        boolean addOne = (actionId == 10 || actionId == 13 || actionId == 12 || actionId == 15);
+        boolean removeOne = (actionId == 11 || actionId == 14);
+        boolean isSelecting = (actionId == 12 || actionId == 15);
+
+        ItemStack slotStack = habitat.getItem(slot);
+
+        if (removeOne) {
+            if (!slotStack.isEmpty()) {
+                ItemStack returned = slotStack.split(1);
+                if (!player.getInventory().add(returned)) player.drop(returned, false);
+                habitat.setChanged();
+            }
+            return;
+        }
+
+        if (isSelecting && !slotStack.isEmpty() && !berryId.isEmpty()) {
+            String currentSlotId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(slotStack.getItem()).toString();
+            if (!currentSlotId.equals(berryId)) {
+                if (!player.getInventory().add(slotStack.copy())) player.drop(slotStack.copy(), false);
+                habitat.setItem(slot, ItemStack.EMPTY);
+                slotStack = habitat.getItem(slot);
+            }
+        }
+
+        net.minecraft.world.entity.player.Inventory inv = player.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack invStack = inv.getItem(i);
+
+            if (!invStack.isEmpty() && invStack.getItem().toString().contains("berry")) {
+
+                if (isSelecting && !berryId.isEmpty()) {
+                    String currentItemId = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(invStack.getItem()).toString();
+                    if (!currentItemId.equals(berryId)) continue;
+                }
+
+                if (slotStack.isEmpty() || ItemStack.isSameItemSameComponents(slotStack, invStack)) {
+                    if (addOne) {
+                        if (slotStack.isEmpty()) {
+                            habitat.setItem(slot, invStack.split(1));
+                        } else if (slotStack.getCount() < slotStack.getMaxStackSize()) {
+                            slotStack.grow(1);
+                            invStack.shrink(1);
+                        }
+                        habitat.setChanged();
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

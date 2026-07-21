@@ -67,7 +67,7 @@ public class PlantationManager {
 
                 Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(berryId));
                 player.getInventory().placeItemBackInInventory(new ItemStack(item, amount));
-                player.sendSystemMessage(Component.literal("message.colisao-cobblemon.professor_harvested"));
+                player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.professor_harvested"));
 
                 prof.plantedBerries.put(slot, "empty");
                 prof.plantTimes.remove(slot);

@@ -74,7 +74,7 @@ public class FlashItem extends Item {
         } else {
             tooltipComponents.add(Component.translatable("message.colisao-cobblemon.state").withStyle(ChatFormatting.GRAY)
                     .append(Component.translatable("message.colisao-cobblemon.off").withStyle(ChatFormatting.RED)));
-            tooltipComponents.add(Component.translatable("Clique direito para usar").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            tooltipComponents.add(Component.translatable("message.colisao-cobblemon.right_click").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }
     }
 }

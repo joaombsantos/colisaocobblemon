@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SYS",
+    "RYR",
+    "YYY"
+  ],
+  "key": {
+    "S": {
+      "item": "colisao-cobblemon:screw"
+    },
+    "Y": {
+      "item": "minecraft:yellow_wool"
+    },
+    "R": {
+      "item": "minecraft:red_wool"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:pikachu_pokedoll",
+    "count": 1
+  }
+}

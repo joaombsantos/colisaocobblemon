@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BLL",
+    "BLS",
+    "BLL"
+  ],
+  "key": {
+    "S": {
+      "item": "colisao-cobblemon:scale"
+    },
+    "L": {
+      "item": "minecraft:light_blue_wool"
+    },
+    "B": {
+      "item": "minecraft:brown_wool"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:squirtle_pokedoll",
+    "count": 1
+  }
+}

@@ -8,6 +8,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import me.marcronte.colisaocobblemon.features.breeding.BreedingData;
 import me.marcronte.colisaocobblemon.network.BreedingNetwork;
 import net.minecraft.ChatFormatting;
@@ -33,6 +34,10 @@ public class BreedingCommand {
     }
 
     private static int openGui(CommandContext<CommandSourceStack> ctx) {
+        if (!GeneralConfig.get().breedingCommand) {
+            ctx.getSource().sendFailure(Component.literal("§cO comando de breeding está desativado neste servidor."));
+            return 0;
+        }
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) return 0;
         BreedingNetwork.openBreedingScreen(player);
@@ -84,6 +89,10 @@ public class BreedingCommand {
     }
 
     private static int selectParent(CommandContext<CommandSourceStack> ctx) {
+        if (!GeneralConfig.get().breedingCommand) {
+            ctx.getSource().sendFailure(Component.literal("§cO comando de breeding está desativado neste servidor."));
+            return 0;
+        }
         ServerPlayer player = ctx.getSource().getPlayer();
         if (player == null) return 0;
 

@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import me.marcronte.colisaocobblemon.features.clans.ClanMissionHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -72,10 +73,15 @@ public class CobblemonEggItem extends Item {
 
     private void hatchEgg(ServerPlayer player, ItemStack stack, CompoundTag tag) {
         String speciesStr = tag.getString("SpeciesIdentifier");
+        String formStr = tag.getString("Form");
         Pokemon pokemon;
 
         if (!speciesStr.isEmpty()) {
-            pokemon = PokemonProperties.Companion.parse("species=" + speciesStr).create();
+            StringBuilder dna = new StringBuilder("species=").append(speciesStr);
+            if (!formStr.isEmpty() && !formStr.equalsIgnoreCase("normal")) {
+                dna.append(" form=").append(formStr);
+            }
+            pokemon = PokemonProperties.Companion.parse(dna.toString()).create();
         } else {
             pokemon = new Pokemon();
         }
@@ -110,6 +116,8 @@ public class CobblemonEggItem extends Item {
 
         Cobblemon.INSTANCE.getStorage().getParty(player).add(pokemon);
         player.getInventory().removeItem(stack);
+
+        ClanMissionHandler.onEggHatched(player);
 
         if (isShiny) {
             player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.egg_hatched_shiny", pokemon.getSpecies().getName()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
