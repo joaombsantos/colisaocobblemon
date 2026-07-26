@@ -69,7 +69,7 @@ public class ColisaoCommand {
                     context.getSource().sendSuccess(() -> Component.literal("§b[Colisao] §fRotas e Cache recarregados!"), true);
                 }
                 case "generation" -> {
-                    GenerationConfig.load(server);
+                    GeneralConfig.load(server);
                     context.getSource().sendSuccess(() -> Component.literal("§b[Colisao] §fGeração (gen_limit) recarregada!"), true);
                 }
                 case "elitefour" -> {

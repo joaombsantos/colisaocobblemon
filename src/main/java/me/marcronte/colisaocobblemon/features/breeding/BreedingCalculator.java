@@ -17,7 +17,7 @@ import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import me.marcronte.colisaocobblemon.ModItems;
-import me.marcronte.colisaocobblemon.config.GenerationConfig;
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -147,7 +147,7 @@ public class BreedingCalculator {
             }
         }
 
-        int limit = GenerationConfig.get().max_generation;
+        int limit = GeneralConfig.get().max_generation;
 
         while (resultSpecies != null && getGenFromDex(resultSpecies.getNationalPokedexNumber()) > limit) {
 

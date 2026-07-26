@@ -2,7 +2,7 @@ package me.marcronte.colisaocobblemon.network;
 
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
 import me.marcronte.colisaocobblemon.client.ClientGenLimit;
-import me.marcronte.colisaocobblemon.config.GenerationConfig;
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -36,12 +36,12 @@ public class GenLimitNetwork {
     }
 
     public static void sendToPlayer(ServerPlayer player) {
-        int currentLimit = GenerationConfig.get().max_generation;
+        int currentLimit = GeneralConfig.get().max_generation;
         ServerPlayNetworking.send(player, new GenLimitPayload(currentLimit));
     }
 
     public static void sendToAll(net.minecraft.server.MinecraftServer server) {
-        int currentLimit = GenerationConfig.get().max_generation;
+        int currentLimit = GeneralConfig.get().max_generation;
         GenLimitPayload payload = new GenLimitPayload(currentLimit);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             ServerPlayNetworking.send(player, payload);

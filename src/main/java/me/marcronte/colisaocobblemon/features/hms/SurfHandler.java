@@ -1,6 +1,7 @@
 package me.marcronte.colisaocobblemon.features.hms;
 
 import me.marcronte.colisaocobblemon.ModItems;
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,8 @@ public class SurfHandler {
     }
 
     private static void onWorldTick(ServerLevel world) {
+        if (!GeneralConfig.get().need_surf) return;
+
         for (ServerPlayer player : world.players()) {
 
             if (player.isCreative() || player.isSpectator()) continue;

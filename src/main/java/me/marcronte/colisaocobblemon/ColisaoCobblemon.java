@@ -2,11 +2,10 @@ package me.marcronte.colisaocobblemon;
 
 import com.cobblemon.mod.common.entity.npc.NPCEntity;
 import me.marcronte.colisaocobblemon.commands.*;
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import me.marcronte.colisaocobblemon.placeholders.ModPlaceholders;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
-import me.marcronte.colisaocobblemon.config.GenerationConfig;
 import me.marcronte.colisaocobblemon.features.CaptureRestrictionHandler;
-import me.marcronte.colisaocobblemon.features.RideRequirement;
 import me.marcronte.colisaocobblemon.features.badges.*;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadBlock;
 import me.marcronte.colisaocobblemon.features.boostpad.BoostPadHandler;
@@ -80,7 +79,7 @@ public class ColisaoCobblemon implements ModInitializer {
         // Features Diversas
         HmManager.register();
         ModScreenHandlers.register();
-        RideRequirement.register();
+        //RideRequirement.register();
 
         // PokeLoot
         PokeLootRegistry.register();
@@ -194,7 +193,7 @@ public class ColisaoCobblemon implements ModInitializer {
 
         PayloadTypeRegistry.playS2C().register(GenLimitPayload.ID, GenLimitPayload.CODEC);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            int limit = GenerationConfig.get().max_generation;
+            int limit = GeneralConfig.get().max_generation;
             ServerPlayNetworking.send(handler.getPlayer(), new GenLimitPayload(limit));
         });
 

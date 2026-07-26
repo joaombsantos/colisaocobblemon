@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import kotlin.Unit; // Necessário para interagir com eventos Kotlin
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,6 +16,10 @@ public class RideRequirement {
 
     public static void register() {
         CobblemonEvents.RIDE_EVENT_PRE.subscribe(Priority.NORMAL, event -> {
+
+            if (!GeneralConfig.get().need_pokerider) {
+                return Unit.INSTANCE;
+            }
 
             Entity rider = event.getPlayer();
 

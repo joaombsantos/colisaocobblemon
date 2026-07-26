@@ -9,7 +9,7 @@ import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
-import me.marcronte.colisaocobblemon.config.GenerationConfig;
+import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -28,7 +28,7 @@ public class GenerationLimiter {
                 if (isAdmin(player)) return;
 
                 int gen = getGenFromDex(pokemon.getSpecies().getNationalPokedexNumber());
-                int limit = GenerationConfig.get().max_generation;
+                int limit = GeneralConfig.get().max_generation;
 
                 if (gen > limit) {
                     event.cancel();
@@ -48,7 +48,7 @@ public class GenerationLimiter {
                     if (player != null) {
                         if (isAdmin(player)) continue;
 
-                        int limit = GenerationConfig.get().max_generation;
+                        int limit = GeneralConfig.get().max_generation;
 
                         for (BattlePokemon battlePokemon : actor.getPokemonList()) {
 
@@ -96,7 +96,7 @@ public class GenerationLimiter {
 
                 int targetDex = targetSpecies.getNationalPokedexNumber();
                 int targetGen = getGenFromDex(targetDex);
-                int limit = GenerationConfig.get().max_generation;
+                int limit = GeneralConfig.get().max_generation;
 
 
                 if (targetGen > limit) {

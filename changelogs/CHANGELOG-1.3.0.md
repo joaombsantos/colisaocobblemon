@@ -1,4 +1,4 @@
-## [1.3.0 - Clash and Clans! (July 21th, 2026)](#1-3-0)
+## [1.3.0 - Clash and Clans! (July 21st, 2026)](#1-3-0)
 #### "The New Experience!"
 ### Additions
 - Implemented Clan System

@@ -15,6 +15,9 @@ public class GeneralConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public boolean breedingCommand = true;
+    public int max_generation = 9;
+    public boolean need_surf = true;
+    public boolean need_pokerider = true;
 
     public static void load(MinecraftServer server) {
         if (ColisaoSettingsManager.getSettingsFolder() == null) {
