@@ -286,21 +286,13 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
             return;
         }
 
-        String myTag = "habitat_" + pos.asLong();
-        java.util.List<PokemonEntity> nearby = level.getEntitiesOfClass(PokemonEntity.class, new net.minecraft.world.phys.AABB(pos).inflate(15));
-        for (PokemonEntity p : nearby) {
-            if (p.getTags().contains("habitat_display_entity") || p.getTags().contains(myTag)) {
-                if (!p.getUUID().equals(spawnedMotherId) && !p.getUUID().equals(spawnedFatherId)) {
-                    p.discard();
-                }
-            }
-        }
+        String ownerTag = "habitat_owner_" + pos.getX() + "_" + pos.getY() + "_" + pos.getZ();
 
-        this.spawnedMotherId = maintainSingleEntity(level, pos, this.spawnedMotherId, this.motherData, myTag);
-        this.spawnedFatherId = maintainSingleEntity(level, pos, this.spawnedFatherId, this.fatherData, myTag);
+        this.spawnedMotherId = maintainSingleEntity(level, pos, this.spawnedMotherId, this.motherData, ownerTag);
+        this.spawnedFatherId = maintainSingleEntity(level, pos, this.spawnedFatherId, this.fatherData, ownerTag);
     }
 
-    private UUID maintainSingleEntity(ServerLevel level, BlockPos pos, UUID currentEntityId, CompoundTag data, String myTag) {
+    private UUID maintainSingleEntity(ServerLevel level, BlockPos pos, UUID currentEntityId, CompoundTag data, String ownerTag) {
         Pokemon pokemon = BreedingNetwork.reconstructPokemon(data, level.registryAccess());
         if (pokemon == null) return null;
 
@@ -329,7 +321,7 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
                 pokeEntity.getBusyLocks().add("habitat_display");
 
                 pokeEntity.addTag("habitat_display_entity");
-                pokeEntity.addTag(myTag);
+                pokeEntity.addTag(ownerTag);
 
                 level.addFreshEntity(pokeEntity);
                 this.setChanged();
@@ -360,13 +352,6 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
             this.setChanged();
         }
 
-        String myTag = "habitat_" + this.getBlockPos().asLong();
-        java.util.List<PokemonEntity> nearby = level.getEntitiesOfClass(PokemonEntity.class, new net.minecraft.world.phys.AABB(getBlockPos()).inflate(15));
-        for (PokemonEntity p : nearby) {
-            if (p.getTags().contains("habitat_display_entity") || p.getTags().contains(myTag)) {
-                p.discard();
-            }
-        }
     }
 
     public void startBreeding(ServerPlayer player, CompoundTag mData, CompoundTag fData, String mType, String fType) {
@@ -506,5 +491,13 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
         CompoundTag tag = new CompoundTag();
         saveAdditional(tag, registries);
         return tag;
+    }
+
+    public UUID getSpawnedMotherId() {
+        return spawnedMotherId;
+    }
+
+    public UUID getSpawnedFatherId() {
+        return spawnedFatherId;
     }
 }

@@ -23,7 +23,9 @@ public class QuestProgressData extends SavedData {
     private final Set<String> activeQuests = new HashSet<>();
 
     public static QuestProgressData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
+        ServerLevel overworld = level.getServer().overworld();
+
+        return overworld.getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(
                         QuestProgressData::new,
                         QuestProgressData::load,

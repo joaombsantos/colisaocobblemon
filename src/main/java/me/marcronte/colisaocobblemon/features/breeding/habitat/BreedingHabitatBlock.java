@@ -115,8 +115,9 @@ public class BreedingHabitatBlock extends Block implements EntityBlock {
             net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(pos);
 
             if (blockEntity instanceof BreedingHabitatBlockEntity habitat) {
-                net.minecraft.world.Containers.dropContents(level, pos, habitat);
                 habitat.cancelBreedingAndReturnParents();
+
+                net.minecraft.world.Containers.dropContents(level, pos, habitat);
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, isMoving);

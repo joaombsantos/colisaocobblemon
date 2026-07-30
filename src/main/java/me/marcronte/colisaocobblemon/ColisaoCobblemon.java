@@ -3,6 +3,8 @@ package me.marcronte.colisaocobblemon;
 import com.cobblemon.mod.common.entity.npc.NPCEntity;
 import me.marcronte.colisaocobblemon.commands.*;
 import me.marcronte.colisaocobblemon.config.GeneralConfig;
+import me.marcronte.colisaocobblemon.features.RideRequirement;
+import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingEntityCleaner;
 import me.marcronte.colisaocobblemon.placeholders.ModPlaceholders;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
 import me.marcronte.colisaocobblemon.features.CaptureRestrictionHandler;
@@ -76,10 +78,11 @@ public class ColisaoCobblemon implements ModInitializer {
         LevelCapEvents.register();
         TrainerBattleEvents.register();
 
-        // Features Diversas
+        // Features
         HmManager.register();
         ModScreenHandlers.register();
-        //RideRequirement.register();
+        BreedingEntityCleaner.register();
+        RideRequirement.register();
 
         // PokeLoot
         PokeLootRegistry.register();
