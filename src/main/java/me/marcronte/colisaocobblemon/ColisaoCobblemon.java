@@ -2,7 +2,6 @@ package me.marcronte.colisaocobblemon;
 
 import com.cobblemon.mod.common.entity.npc.NPCEntity;
 import me.marcronte.colisaocobblemon.commands.*;
-import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import me.marcronte.colisaocobblemon.features.RideRequirement;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingEntityCleaner;
 import me.marcronte.colisaocobblemon.placeholders.ModPlaceholders;
@@ -21,23 +20,15 @@ import me.marcronte.colisaocobblemon.features.fadeblock.*;
 import me.marcronte.colisaocobblemon.features.eventblock.EventBattleHandler;
 import me.marcronte.colisaocobblemon.features.genlimit.GenerationCommand;
 import me.marcronte.colisaocobblemon.features.genlimit.GenerationLimiter;
-import me.marcronte.colisaocobblemon.features.items.backpack.BackpackMenu;
 import me.marcronte.colisaocobblemon.features.npcs.NpcInteractionHandler;
 import me.marcronte.colisaocobblemon.features.npcs.quest.QuestObjectiveRegistry;
 import me.marcronte.colisaocobblemon.features.npcs.quest.QuestTrackerEvents;
-import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootNetwork;
 import me.marcronte.colisaocobblemon.features.pokeloot.PokeLootRegistry;
 import me.marcronte.colisaocobblemon.features.pokemondrop.PokemonCustomDropEvents;
-import me.marcronte.colisaocobblemon.features.professions.CraftingManager;
-import me.marcronte.colisaocobblemon.features.professions.PlantationManager;
-import me.marcronte.colisaocobblemon.features.professions.StylistManager;
-import me.marcronte.colisaocobblemon.features.routes.RouteNetwork;
 import me.marcronte.colisaocobblemon.features.routes.RouteSpawner;
 import me.marcronte.colisaocobblemon.features.routes.RouteTracker;
 import me.marcronte.colisaocobblemon.features.switchstate.*;
 import me.marcronte.colisaocobblemon.features.teleportblock.TeleportRegistry;
-import me.marcronte.colisaocobblemon.network.*;
-import me.marcronte.colisaocobblemon.network.payloads.*;
 import net.fabricmc.api.ModInitializer;
 import me.marcronte.colisaocobblemon.features.hms.HmManager;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
@@ -45,9 +36,6 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -56,7 +44,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class ColisaoCobblemon implements ModInitializer {
     public static final String MOD_ID = "colisao-cobblemon";
@@ -74,7 +61,7 @@ public class ColisaoCobblemon implements ModInitializer {
         // Badges & Level Cap
         BadgePickupEvents.register();
         BadgeInventoryCheck.register();
-        BadgeNetwork.register();
+
         LevelCapEvents.register();
         TrainerBattleEvents.register();
 
@@ -86,10 +73,8 @@ public class ColisaoCobblemon implements ModInitializer {
 
         // PokeLoot
         PokeLootRegistry.register();
-        PokeLootNetwork.register();
 
         // Boost Pad
-        BoostNetwork.registerCommon();
         BoostPadBlock.register();
         BoostPadHandler.register();
 
@@ -106,19 +91,15 @@ public class ColisaoCobblemon implements ModInitializer {
 
         // State Block Mechanic
         SwitchStateRegistry.register();
-        SwitchNetwork.registerCommon();
 
         // Teleport Block
         TeleportRegistry.register();
-        TeleportNetwork.registerCommon();
-        TeleportNetwork.registerServerReceiver();
 
         // Elite Four
         EliteFourHandler.register();
 
         // Gen Limit
         GenerationLimiter.register();
-        GenLimitNetwork.registerCommon();
 
         // Commands
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -142,7 +123,6 @@ public class ColisaoCobblemon implements ModInitializer {
         NpcInteractionHandler.register();
         QuestObjectiveRegistry.register();
         QuestTrackerEvents.register();
-        PayloadTypeRegistry.playS2C().register(QuestBookPayload.ID, QuestBookPayload.CODEC);
 
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (entity instanceof NPCEntity && entity.isInvulnerable()) {
@@ -152,55 +132,23 @@ public class ColisaoCobblemon implements ModInitializer {
         });
 
         // Route Mechanic
-        RouteNetwork.register();
+
         RouteSpawner.register();
         RouteTracker.register();
         CaptureRestrictionHandler.register();
 
         // Clan
-        ClanPayloads.register();
-        ClanNetwork.register();
         ClanCommands.register();
         ClanPerkHandler.register();
         ClanMissionHandler.register();
         ClanScheduler.register();
 
-        // Breeding
-        PayloadTypeRegistry.playS2C().register(BreedingSyncPayload.ID, BreedingSyncPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(BreedingButtonPayload.ID, BreedingButtonPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(BreedingSelectPayload.ID, BreedingSelectPayload.CODEC);
-        HabitatPayloads.registerC2S();
-        BreedingNetwork.register();
-
-        // Professions
-        PayloadTypeRegistry.playS2C().register(PlantationPayloads.SyncPayload.ID, PlantationPayloads.SyncPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(PlantationPayloads.ActionPayload.ID, PlantationPayloads.ActionPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(PlantationPayloads.ActionPayload.ID, (payload, context) -> context.server().execute(() -> PlantationManager.handleAction(context.player(), payload)));
-        PayloadTypeRegistry.playS2C().register(ProfessionCraftPayloads.OpenMenuPayload.ID, ProfessionCraftPayloads.OpenMenuPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(ProfessionCraftPayloads.PerformCraftPayload.ID, ProfessionCraftPayloads.PerformCraftPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(ProfessionCraftPayloads.SyncExpPayload.ID, ProfessionCraftPayloads.SyncExpPayload.CODEC);
-
-        PayloadTypeRegistry.playS2C().register(StylistPayloads.OpenMenuPayload.ID, StylistPayloads.OpenMenuPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(StylistPayloads.SelectCategoryPayload.ID, StylistPayloads.SelectCategoryPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(StylistPayloads.SelectCategoryPayload.ID, (payload, context) -> context.server().execute(() -> StylistManager.handleCategorySelect(context.player(), payload)));
-
-        PayloadTypeRegistry.playS2C().register(StylistPayloads.OpenCraftPayload.ID, StylistPayloads.OpenCraftPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(StylistPayloads.PerformApplyPayload.ID, StylistPayloads.PerformApplyPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(StylistPayloads.PerformApplyPayload.ID, (payload, context) -> context.server().execute(() -> StylistManager.handleApply(context.player(), payload)));
-
-        ServerPlayNetworking.registerGlobalReceiver(ProfessionCraftPayloads.PerformCraftPayload.ID, (payload, context) -> context.server().execute(() -> CraftingManager.handleCraft(context.player(), payload)));
-
         PokemonCustomDropEvents.register();
 
         ServerLifecycleEvents.SERVER_STARTING.register(ColisaoSettingsManager::init);
 
-        PayloadTypeRegistry.playS2C().register(GenLimitPayload.ID, GenLimitPayload.CODEC);
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            int limit = GeneralConfig.get().max_generation;
-            ServerPlayNetworking.send(handler.getPlayer(), new GenLimitPayload(limit));
-        });
-
-        PayloadTypeRegistry.playS2C().register(BackpackMenu.Payload.TYPE, BackpackMenu.Payload.CODEC);
+        // Network Payloads
+        ModNetwork.register();
 
         String[] ores = {
                 "eternatite_ore",
@@ -230,5 +178,4 @@ public class ColisaoCobblemon implements ModInitializer {
     public static MinecraftServer getServer() {
         return serverInstance;
     }
-
 }

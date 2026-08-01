@@ -1,6 +1,7 @@
 package me.marcronte.colisaocobblemon.client;
 
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import me.marcronte.colisaocobblemon.ModBlocks;
 import me.marcronte.colisaocobblemon.network.payloads.*;
 import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.ModScreenHandlers;
@@ -198,6 +199,9 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
         MenuScreens.register(ModScreenHandlers.BACKPACK_MENU, BackpackScreen::new);
 
+        PokeLensOverlay.register();
+        ItemProperties.register(ModItems.POKE_LENS, new ResourceLocation("colisao-cobblemon", "using"), (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKE_LURER, RenderType.translucent());
     }
 
     public static void openTeleportScreen(BlockPos pos) {

@@ -2,6 +2,7 @@ package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.features.blocks.ChairBlock;
 import me.marcronte.colisaocobblemon.features.blocks.DecorativeBlock;
+import me.marcronte.colisaocobblemon.features.blocks.PokeLurerBlock;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlock;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
 import net.minecraft.core.Registry;
@@ -111,6 +112,15 @@ public class ModBlocks {
                     .noOcclusion(),
 
                     Block.box(0, 0.0, 4.5, 12.0, 19.0, 11.5)
+            )
+    );
+
+    public static final Block POKE_LURER = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer"),
+            new PokeLurerBlock(Block.Properties.of()
+                    .strength(1.0F)
+                    .noOcclusion()
             )
     );
 

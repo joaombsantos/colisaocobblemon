@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "colisao-cobblemon:berry_crusher"
+    },
+    {
+      "item": "cobblemon:kasib_berry"
+    }
+  ],
+  "result": {
+    "id": "colisao-cobblemon:kasib_leaves",
+    "count": 1
+  }
+}

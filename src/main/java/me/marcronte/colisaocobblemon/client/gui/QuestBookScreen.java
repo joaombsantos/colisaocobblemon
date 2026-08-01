@@ -176,7 +176,12 @@ public class QuestBookScreen extends Screen {
         graphics.drawString(this.font, backText, startX + PAGE_LEFT, startY + 30, backColor, false);
         graphics.fill(startX + PAGE_LEFT, startY + 42, startX + PAGE_RIGHT, startY + 43, 0xFF000000);
 
-        int currentY = startY + 50;
+        int listTop = startY + 50;
+        int listBottom = startY + 170;
+
+        graphics.enableScissor(startX + PAGE_LEFT, listTop, startX + PAGE_RIGHT, listBottom);
+
+        int currentY = listTop - scrollY;
 
         Component title = Component.literal(selectedQuest.title());
         graphics.drawWordWrap(this.font, title, startX + PAGE_LEFT, currentY, PAGE_WIDTH, 0x000000);
@@ -186,6 +191,14 @@ public class QuestBookScreen extends Screen {
 
         Component desc = Component.literal(selectedQuest.description());
         graphics.drawWordWrap(this.font, desc, startX + PAGE_LEFT, currentY, PAGE_WIDTH, 0x333333);
+
+        graphics.disableScissor();
+
+        int descLines = this.font.split(desc, PAGE_WIDTH).size();
+
+        int totalContentHeight = (titleLines * this.font.lineHeight) + 10 + (descLines * this.font.lineHeight);
+
+        maxScroll = Math.max(0, totalContentHeight - (listBottom - listTop));
     }
 
     @Override
@@ -196,6 +209,7 @@ public class QuestBookScreen extends Screen {
         if (selectedQuest != null) {
             if (mouseX >= startX + PAGE_LEFT && mouseX <= startX + PAGE_LEFT + 40 && mouseY >= startY + 30 && mouseY <= startY + 40) {
                 selectedQuest = null;
+                scrollY = 0;
                 return true;
             }
         } else {
@@ -230,7 +244,7 @@ public class QuestBookScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        this.scrollY -= (int) (scrollY * 10);
+        this.scrollY -= (int) (scrollY * 8);
         this.scrollY = Math.max(0, Math.min(this.scrollY, maxScroll));
         return true;
     }
