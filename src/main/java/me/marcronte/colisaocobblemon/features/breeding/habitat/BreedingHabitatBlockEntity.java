@@ -288,19 +288,19 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
 
         String ownerTag = "habitat_owner_" + pos.getX() + "_" + pos.getY() + "_" + pos.getZ();
 
-        this.spawnedMotherId = maintainSingleEntity(level, pos, this.spawnedMotherId, this.motherData, ownerTag);
-        this.spawnedFatherId = maintainSingleEntity(level, pos, this.spawnedFatherId, this.fatherData, ownerTag);
+        maintainSingleEntity(level, pos, this.spawnedMotherId, this.motherData, ownerTag, true);
+        maintainSingleEntity(level, pos, this.spawnedFatherId, this.fatherData, ownerTag, false);
     }
 
-    private UUID maintainSingleEntity(ServerLevel level, BlockPos pos, UUID currentEntityId, CompoundTag data, String ownerTag) {
+    private void maintainSingleEntity(ServerLevel level, BlockPos pos, UUID currentEntityId, CompoundTag data, String ownerTag, boolean isMother) {
         Pokemon pokemon = BreedingNetwork.reconstructPokemon(data, level.registryAccess());
-        if (pokemon == null) return null;
+        if (pokemon == null) return;
 
         if (currentEntityId != null) {
             Entity e = level.getEntity(currentEntityId);
             if (e instanceof PokemonEntity poke && poke.isAlive()) {
                 tetherEntity(poke, pos);
-                return currentEntityId;
+                return;
             }
         }
 
@@ -323,12 +323,16 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
                 pokeEntity.addTag("habitat_display_entity");
                 pokeEntity.addTag(ownerTag);
 
+                if (isMother) {
+                    this.spawnedMotherId = pokeEntity.getUUID();
+                } else {
+                    this.spawnedFatherId = pokeEntity.getUUID();
+                }
+
                 level.addFreshEntity(pokeEntity);
                 this.setChanged();
-                return pokeEntity.getUUID();
             }
         }
-        return null;
     }
 
     private void tetherEntity(PokemonEntity poke, BlockPos pos) {
