@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "facing=north,half=lower": { "model": "colisao-cobblemon:block/poke_lurer" },
+    "facing=east,half=lower":  { "model": "colisao-cobblemon:block/poke_lurer", "y": 90 },
+    "facing=south,half=lower": { "model": "colisao-cobblemon:block/poke_lurer", "y": 180 },
+    "facing=west,half=lower":  { "model": "colisao-cobblemon:block/poke_lurer", "y": 270 },
+
+    "facing=north,half=upper": { "model": "minecraft:block/air" },
+    "facing=east,half=upper":  { "model": "minecraft:block/air" },
+    "facing=south,half=upper": { "model": "minecraft:block/air" },
+    "facing=west,half=upper":  { "model": "minecraft:block/air" }
+  }
+}

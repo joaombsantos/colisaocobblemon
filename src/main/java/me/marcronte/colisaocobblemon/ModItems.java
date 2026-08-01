@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 
+import static me.marcronte.colisaocobblemon.ModBlocks.POKE_LURER;
+
 public class ModItems {
 
     public static float normalChance = 30.0f;
@@ -139,6 +141,9 @@ public class ModItems {
             new HoeItem(EternatiteTier.INSTANCE, new Item.Properties()
                     .attributes(HoeItem.createAttributes(EternatiteTier.INSTANCE, -4.0f, 0.0f))));
 
+    public static final Item BERRY_CRUSHER = registerItem("berry_crusher", new BerryCrusherItem(new Item.Properties().durability(100)));
+    public static final Item POKE_LENS = registerItem("poke_lens", new PokeLens(new Item.Properties().stacksTo(1)));
+
 
     // HMs
     public static final Item SURF = registerItem("surf", new Item(new Item.Properties().stacksTo(1)));
@@ -220,6 +225,33 @@ public class ModItems {
 
     public static final Item ENHANCED_POWDER = registerItem("enhanced_powder", new PokemonDropItem("fairy", normalChance, new Item.Properties()));
     public static final Item FAIRY_SOUL = registerItem("fairy_soul", new PokemonDropItem("fairy", rareChance, new Item.Properties()));
+
+
+    public static final Item POKE_LURER_ITEM = Registry.register(
+            BuiltInRegistries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer"),
+            new BlockItem(POKE_LURER, new Item.Properties())
+    );
+
+    // Leaves
+    public static final Item BABIRI_LEAVES = registerItem("babiri_leaves", new Item(new Item.Properties()));
+    public static final Item CHARTI_LEAVES = registerItem("charti_leaves", new Item(new Item.Properties()));
+    public static final Item CHILAN_LEAVES = registerItem("chilan_leaves", new Item(new Item.Properties()));
+    public static final Item CHOPLE_LEAVES = registerItem("chople_leaves", new Item(new Item.Properties()));
+    public static final Item COBA_LEAVES = registerItem("coba_leaves", new Item(new Item.Properties()));
+    public static final Item COLBUR_LEAVES = registerItem("colbur_leaves", new Item(new Item.Properties()));
+    public static final Item HABAN_LEAVES = registerItem("haban_leaves", new Item(new Item.Properties()));
+    public static final Item KASIB_LEAVES = registerItem("kasib_leaves", new Item(new Item.Properties()));
+    public static final Item KEBIA_LEAVES = registerItem("kebia_leaves", new Item(new Item.Properties()));
+    public static final Item OCCA_LEAVES = registerItem("occa_leaves", new Item(new Item.Properties()));
+    public static final Item PASSHO_LEAVES = registerItem("passho_leaves", new Item(new Item.Properties()));
+    public static final Item PAYAPA_LEAVES = registerItem("payapa_leaves", new Item(new Item.Properties()));
+    public static final Item RINDO_LEAVES = registerItem("rindo_leaves", new Item(new Item.Properties()));
+    public static final Item ROSELI_LEAVES = registerItem("roseli_leaves", new Item(new Item.Properties()));
+    public static final Item SHUCA_LEAVES = registerItem("shuca_leaves", new Item(new Item.Properties()));
+    public static final Item TANGA_LEAVES = registerItem("tanga_leaves", new Item(new Item.Properties()));
+    public static final Item WACAN_LEAVES = registerItem("wacan_leaves", new Item(new Item.Properties()));
+    public static final Item YACHE_LEAVES = registerItem("yache_leaves", new Item(new Item.Properties()));
 
     // Pokemon Egg (Breeding)
     public static final Item POKEMON_EGG = registerItem("pokemon_egg", new CobblemonEggItem(new Item.Properties()));

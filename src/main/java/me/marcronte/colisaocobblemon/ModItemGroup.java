@@ -70,6 +70,8 @@ public class ModItemGroup {
                 entries.accept(ModItems.ETERNATITE_AXE);
                 entries.accept(ModItems.ETERNATITE_SHOVEL);
                 entries.accept(ModItems.ETERNATITE_HOE);
+                entries.accept(ModItems.BERRY_CRUSHER);
+                entries.accept(ModItems.POKE_LENS);
 
                 // --- HMs ---
                 entries.accept(ModItems.SURF);
@@ -146,6 +148,29 @@ public class ModItemGroup {
                 entries.accept(ModBlocks.CHAIR);
                 entries.accept(ModBlocks.TABLE);
                 entries.accept(ModBlocks.MAILBOX);
+
+
+                entries.accept(ModItems.POKE_LURER_ITEM);
+
+                // --- LEAVES ---
+                entries.accept(ModItems.BABIRI_LEAVES);
+                entries.accept(ModItems.CHARTI_LEAVES);
+                entries.accept(ModItems.CHILAN_LEAVES);
+                entries.accept(ModItems.CHOPLE_LEAVES);
+                entries.accept(ModItems.COBA_LEAVES);
+                entries.accept(ModItems.COLBUR_LEAVES);
+                entries.accept(ModItems.HABAN_LEAVES);
+                entries.accept(ModItems.KASIB_LEAVES);
+                entries.accept(ModItems.KEBIA_LEAVES);
+                entries.accept(ModItems.OCCA_LEAVES);
+                entries.accept(ModItems.PASSHO_LEAVES);
+                entries.accept(ModItems.PAYAPA_LEAVES);
+                entries.accept(ModItems.RINDO_LEAVES);
+                entries.accept(ModItems.ROSELI_LEAVES);
+                entries.accept(ModItems.SHUCA_LEAVES);
+                entries.accept(ModItems.TANGA_LEAVES);
+                entries.accept(ModItems.WACAN_LEAVES);
+                entries.accept(ModItems.YACHE_LEAVES);
 
                 // --- KEYs ---
                 entries.accept(ModItems.LEGENDARY_KEY);
