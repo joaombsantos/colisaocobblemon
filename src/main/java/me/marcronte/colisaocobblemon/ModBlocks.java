@@ -1,8 +1,6 @@
 package me.marcronte.colisaocobblemon;
 
-import me.marcronte.colisaocobblemon.features.blocks.ChairBlock;
-import me.marcronte.colisaocobblemon.features.blocks.DecorativeBlock;
-import me.marcronte.colisaocobblemon.features.blocks.PokeLurerBlock;
+import me.marcronte.colisaocobblemon.features.blocks.*;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlock;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
 import net.minecraft.core.Registry;
@@ -115,6 +113,26 @@ public class ModBlocks {
             )
     );
 
+    public static final Block BATTLE_TROPHY = registerBlock("battle_trophy",
+            new DecorativeBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(),
+
+                    Block.box(3.0, 0.0, 3.0, 13.0, 16.0, 13.0)
+            )
+    );
+
+    public static final Block RACING_TROPHY = registerBlock("racing_trophy",
+            new DecorativeBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(),
+
+                    Block.box(3.0, 0.0, 3.0, 13.0, 16.0, 13.0)
+            )
+    );
+
     public static final Block POKE_LURER = Registry.register(
             BuiltInRegistries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer"),
@@ -122,6 +140,39 @@ public class ModBlocks {
                     .strength(1.0F)
                     .noOcclusion()
             )
+    );
+
+    public static final BlockEntityType<PokeLurerBlockEntity> POKE_LURER_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer_be"),
+            BlockEntityType.Builder.of(
+                    PokeLurerBlockEntity::new,
+                    POKE_LURER
+            ).build(null)
+    );
+
+    public static final Block MINING_BLOCK = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "mining_block"),
+            new MiningBlock(Block.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops())
+    );
+
+    public static final Block ETERNATITE_ORE = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "eternatite_ore"),
+            new Block(Block.Properties.of()
+                    .strength(30.0F, 1200.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(net.minecraft.world.level.block.SoundType.ANCIENT_DEBRIS)
+            )
+    );
+    public static final Block TERASTALITE_ORE = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "terastalite_ore"),
+            new Block(Block.Properties.of()
+                    .strength(3.0F, 3.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(net.minecraft.world.level.block.SoundType.STONE))
     );
 
     private static Block registerBlock(String name, Block block) {

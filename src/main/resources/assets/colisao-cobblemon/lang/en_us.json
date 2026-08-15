@@ -340,6 +340,8 @@
   "block.colisao-cobblemon.chair": "Chair",
   "block.colisao-cobblemon.table": "Table",
   "block.colisao-cobblemon.mailbox": "Mailbox",
+  "block.colisao-cobblemon.battle_trophy": "Battle Trophy",
+  "block.colisao-cobblemon.racing_trophy": "Racing Trophy",
 
   "item.colisao-cobblemon.berry_crusher": "Berry Crusher",
   "item.colisao-cobblemon.babiri_leaves": "Babiri Leaves",
@@ -362,6 +364,8 @@
   "item.colisao-cobblemon.yache_leaves": "Yache Leaves",
 
   "item.colisao-cobblemon.poke_lens": "Poke Lens",
+  "block.colisao-cobblemon.poke_lurer": "Poke Lurer",
+  "item.colisao-cobblemon.awakened_terastalite": "Awakened Terastalite",
 
   "item.colisao-cobblemon.legendary_key": "Legendary Key",
   "item.colisao-cobblemon.mega_key": "Mega Key",

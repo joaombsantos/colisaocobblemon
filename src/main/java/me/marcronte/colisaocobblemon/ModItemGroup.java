@@ -17,7 +17,7 @@ public class ModItemGroup {
     );
 
     public static final CreativeModeTab COLISAO_GROUP = FabricItemGroup.builder()
-            .icon(() -> new ItemStack(ModItems.KANTO_BADGE_CASE)) // Ícone da aba
+            .icon(() -> new ItemStack(ModItems.KANTO_BADGE_CASE))
             .title(Component.translatable("itemGroup.colisao-cobblemon.general"))
             .displayItems((context, entries) -> {
 
@@ -51,6 +51,7 @@ public class ModItemGroup {
                 entries.accept(ModItems.ETERNATITE_SCRAP);
                 entries.accept(ModItems.ETERNATITE_INGOT);
                 entries.accept(ModItems.TERASTALITE_CRYSTAL);
+                entries.accept(ModItems.AWAKENED_TERASTALITE);
 
                 // --- BLOCKS ---
                 entries.accept(ModItems.MINING_BLOCK_ITEM);
@@ -148,6 +149,8 @@ public class ModItemGroup {
                 entries.accept(ModBlocks.CHAIR);
                 entries.accept(ModBlocks.TABLE);
                 entries.accept(ModBlocks.MAILBOX);
+                entries.accept(ModBlocks.BATTLE_TROPHY);
+                entries.accept(ModBlocks.RACING_TROPHY);
 
 
                 entries.accept(ModItems.POKE_LURER_ITEM);

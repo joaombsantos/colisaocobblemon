@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ATA",
+    "TNT",
+    "ATA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "T": {
+      "item": "colisao-cobblemon:terastalite_crystal"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:awakened_terastalite",
+    "count": 1
+  }
+}
