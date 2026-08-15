@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "colisao-cobblemon:eternatite_pickaxe",
+    "colisao-cobblemon:eternatite_axe",
+    "colisao-cobblemon:eternatite_shovel",
+    "colisao-cobblemon:eternatite_hoe"
+  ]
+}

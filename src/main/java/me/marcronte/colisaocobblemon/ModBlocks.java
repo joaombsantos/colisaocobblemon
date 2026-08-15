@@ -18,8 +18,7 @@ public class ModBlocks {
 
     public static final Block BREEDING_HABITAT = registerBlock("breeding_habitat",
             new BreedingHabitatBlock(BlockBehaviour.Properties.of()
-                    .strength(2.5F, 3.0F)
-                    .requiresCorrectToolForDrops()
+                    .strength(2.0F, 3.0F)
                     .sound(SoundType.WOOD)
                     .noOcclusion()
             )
