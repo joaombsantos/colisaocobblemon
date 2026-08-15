@@ -1,7 +1,6 @@
 package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.features.badgecase.BadgeCaseItem;
-import me.marcronte.colisaocobblemon.features.blocks.MiningBlock;
 import me.marcronte.colisaocobblemon.features.hms.FlashItem;
 import me.marcronte.colisaocobblemon.features.items.*;
 import me.marcronte.colisaocobblemon.features.items.backpack.BackpackItem;
@@ -10,7 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
+
 
 import static me.marcronte.colisaocobblemon.ModBlocks.POKE_LURER;
 
@@ -50,33 +49,12 @@ public class ModItems {
     public static final Item ETERNATITE_SCRAP = registerItem("eternatite_scrap", new Item(new Item.Properties().fireResistant()));
     public static final Item ETERNATITE_INGOT = registerItem("eternatite_ingot", new Item(new Item.Properties().fireResistant()));
     public static final Item TERASTALITE_CRYSTAL = registerItem("terastalite_crystal", new Item(new Item.Properties()));
+    public static final Item AWAKENED_TERASTALITE = registerItem("awakened_terastalite", new Item(new Item.Properties().rarity(Rarity.RARE)));
 
     // --- BLOCKS ---
-    public static final Block MINING_BLOCK = Registry.register(
-            BuiltInRegistries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "mining_block"),
-            new MiningBlock(Block.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops())
-    );
-    public static final Item MINING_BLOCK_ITEM = registerItem("mining_block", new BlockItem(MINING_BLOCK, new Item.Properties()));
-    public static final Block ETERNATITE_ORE = Registry.register(
-            BuiltInRegistries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "eternatite_ore"),
-            new Block(Block.Properties.of()
-                    .strength(30.0F, 1200.0F)
-                    .requiresCorrectToolForDrops()
-                    .sound(net.minecraft.world.level.block.SoundType.ANCIENT_DEBRIS)
-            )
-    );
-    public static final Item ETERNATITE_ORE_ITEM = registerItem("eternatite_ore", new BlockItem(ETERNATITE_ORE, new Item.Properties()));
-    public static final Block TERASTALITE_ORE = Registry.register(
-            BuiltInRegistries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "terastalite_ore"),
-            new Block(Block.Properties.of()
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()
-                    .sound(net.minecraft.world.level.block.SoundType.STONE))
-    );
-    public static final Item TERASTALITE_ORE_ITEM = registerItem("terastalite_ore", new BlockItem(TERASTALITE_ORE, new Item.Properties()));
+    public static final Item MINING_BLOCK_ITEM = registerItem("mining_block", new BlockItem(ModBlocks.MINING_BLOCK, new Item.Properties()));
+    public static final Item ETERNATITE_ORE_ITEM = registerItem("eternatite_ore", new BlockItem(ModBlocks.ETERNATITE_ORE, new Item.Properties()));
+    public static final Item TERASTALITE_ORE_ITEM = registerItem("terastalite_ore", new BlockItem(ModBlocks.TERASTALITE_ORE, new Item.Properties()));
 
     // ARMORs
     public static final Item ETERNATITE_HELMET = registerItem("eternatite_helmet",

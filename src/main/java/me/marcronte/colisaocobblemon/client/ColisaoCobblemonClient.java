@@ -202,6 +202,8 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         PokeLensOverlay.register();
         ItemProperties.register(ModItems.POKE_LENS, new ResourceLocation("colisao-cobblemon", "using"), (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKE_LURER, RenderType.translucent());
+
+        net.minecraft.client.gui.screens.MenuScreens.register(ModScreenHandlers.POKE_LURER_MENU, PokeLurerScreen::new);
     }
 
     public static void openTeleportScreen(BlockPos pos) {

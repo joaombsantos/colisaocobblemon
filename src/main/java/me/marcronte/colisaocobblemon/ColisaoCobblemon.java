@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.entity.npc.NPCEntity;
 import me.marcronte.colisaocobblemon.commands.*;
 import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import me.marcronte.colisaocobblemon.features.RideRequirement;
+import me.marcronte.colisaocobblemon.features.blocks.LureRarityManager;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingEntityCleaner;
 import me.marcronte.colisaocobblemon.placeholders.ModPlaceholders;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
@@ -201,6 +202,8 @@ public class ColisaoCobblemon implements ModInitializer {
         });
 
         PayloadTypeRegistry.playS2C().register(BackpackMenu.Payload.TYPE, BackpackMenu.Payload.CODEC);
+
+        ServerLifecycleEvents.SERVER_STARTED.register(LureRarityManager::initializeRarities);
 
         String[] ores = {
                 "eternatite_ore",
