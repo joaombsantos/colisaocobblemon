@@ -18,6 +18,11 @@ public class EternatiteArmorItem extends ArmorItem {
     }
 
     @Override
+    public boolean isValidRepairItem(ItemStack stack, ItemStack repairCandidate) {
+        return repairCandidate.is(me.marcronte.colisaocobblemon.ModItems.ETERNATITE_INGOT) || super.isValidRepairItem(stack, repairCandidate);
+    }
+
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (!level.isClientSide() && entity instanceof Player player) {
 

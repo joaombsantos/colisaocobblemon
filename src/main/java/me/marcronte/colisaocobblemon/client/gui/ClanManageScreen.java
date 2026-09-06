@@ -75,7 +75,7 @@ public class ClanManageScreen extends Screen {
             MemberRow row = memberRows.get(idx);
             int itemY = listY + (i * 22);
 
-            graphics.fill(listX, itemY, startX + 235, itemY + 20, 0xFF222222); // Fundo da linha
+            graphics.fill(listX, itemY, startX + 235, itemY + 20, 0xFF222222);
 
             String color = row.role.equals("DONO") ? "§6" : (row.role.equals("GERENTE") ? "§d" : "§7");
             graphics.drawString(this.font, color + "[" + row.role + "] §f" + row.name, listX + 5, itemY + 6, 0xFFFFFF);

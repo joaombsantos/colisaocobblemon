@@ -5,6 +5,7 @@ import me.marcronte.colisaocobblemon.commands.*;
 import me.marcronte.colisaocobblemon.config.GeneralConfig;
 import me.marcronte.colisaocobblemon.features.RideRequirement;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingEntityCleaner;
+import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
 import me.marcronte.colisaocobblemon.placeholders.ModPlaceholders;
 import me.marcronte.colisaocobblemon.config.ColisaoSettingsManager;
 import me.marcronte.colisaocobblemon.features.CaptureRestrictionHandler;
@@ -45,10 +46,12 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -56,6 +59,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 
 public class ColisaoCobblemon implements ModInitializer {
@@ -219,6 +224,22 @@ public class ColisaoCobblemon implements ModInitializer {
         }
 
         ModPlaceholders.register();
+
+        PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
+            if (blockEntity instanceof BreedingHabitatBlockEntity habitat) {
+                if (!player.isCreative() && habitat.hasActiveBreeding()) {
+                    UUID owner = habitat.getOwner();
+
+                    if (owner != null && world.getServer() != null) {
+                        if (world.getServer().getPlayerList().getPlayer(owner) == null) {
+                            player.sendSystemMessage(Component.literal("§cVocê não pode quebrar este habitat enquanto o dono dos Pokémon estiver offline!"));
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        });
 
         // SERVER START CAPTURE
         ServerLifecycleEvents.SERVER_STARTED.register(server -> serverInstance = server);

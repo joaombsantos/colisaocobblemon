@@ -29,7 +29,6 @@ public class BreedingData extends SavedData {
         public long startTime = 0;
         public boolean isActive = false;
 
-        // 10000 = 10s | 5400000 = 1h30m
         public static final long BREEDING_DURATION = 5400000;
 
         public boolean isReady() {

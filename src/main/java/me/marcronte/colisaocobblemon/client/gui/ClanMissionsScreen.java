@@ -48,7 +48,7 @@ public class ClanMissionsScreen extends Screen {
             if (idx >= missions.size()) break;
 
             int itemY = listY + (i * 20);
-            graphics.fill(listX, itemY, startX + 235, itemY + 18, 0xFF333333); // Fundo do item
+            graphics.fill(listX, itemY, startX + 235, itemY + 18, 0xFF333333);
             graphics.drawString(this.font, missions.get(idx), listX + 5, itemY + 5, 0xFFFFFF);
             graphics.drawString(this.font, "§b+143 XP", startX + 180, itemY + 5, 0x55FFFF);
         }

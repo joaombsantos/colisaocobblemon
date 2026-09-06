@@ -504,4 +504,12 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
     public UUID getSpawnedFatherId() {
         return spawnedFatherId;
     }
+
+    public UUID getOwner() {
+        return this.owner;
+    }
+
+    public boolean hasActiveBreeding() {
+        return this.motherData != null || this.fatherData != null;
+    }
 }
