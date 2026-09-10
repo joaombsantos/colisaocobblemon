@@ -154,7 +154,7 @@ public class PokeLurerBlockEntity extends BlockEntity implements WorldlyContaine
 
                     BlockPos testPos = new BlockPos((int) spawnX, (int) spawnY, (int) spawnZ);
 
-                    if (level.getBlockState(testPos).isAir() && level.getBlockState(testPos.below()).isSolid()) {
+                    if (level.getBlockState(testPos).isAir() && level.getBlockState(testPos.below()).isFaceSturdy(level, testPos.below(), Direction.UP)) {
 
                         pokeEntity.moveTo(spawnX, spawnY, spawnZ, level.random.nextFloat() * 360F, 0);
                         pokeEntity.addTag("lure_spawned");

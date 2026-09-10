@@ -82,6 +82,12 @@ public class ClanCommands {
                 .then(Commands.literal("bonus")
                         .executes(context -> activateClanBonus(context.getSource().getPlayerOrException())))
 
+                // /clan leaderboard
+                .then(Commands.literal("leaderboard")
+                        .executes(context -> showLeaderboard(context.getSource().getPlayerOrException(), 1))
+                        .then(Commands.argument("pagina", IntegerArgumentType.integer(1))
+                                .executes(context -> showLeaderboard(context.getSource().getPlayerOrException(), IntegerArgumentType.getInteger(context, "pagina")))))
+
                 // /clan expulsar <nick>
                 .then(Commands.literal("expulsar")
                         .then(Commands.argument("nick", StringArgumentType.string())
@@ -139,13 +145,7 @@ public class ClanCommands {
             }
         }
 
-        java.util.List<String> perks = new java.util.ArrayList<>();
-        perks.add(Component.translatable("message.colisao-cobblemon.perk_chat").getString());
-        if (clan.getLevel() >= 2) perks.add(Component.translatable("message.colisao-cobblemon.perk_home").getString());
-        if (clan.getLevel() >= 3) perks.add(Component.translatable("message.colisao-cobblemon.perk_chest").getString());
-        if (clan.getLevel() >= 3) perks.add(Component.translatable("message.colisao-cobblemon.perk_affinity_1").getString());
-        if (clan.getLevel() >= 4) perks.add(Component.translatable("message.colisao-cobblemon.perk_bonus").getString());
-        if (clan.getLevel() >= 5) perks.add(Component.translatable("message.colisao-cobblemon.perk_affinity_2").getString());
+        List<String> perks = getPerks(clan);
 
         List<String> missions = getStrings(clan);
 
@@ -167,6 +167,17 @@ public class ClanCommands {
         ));
 
         return 1;
+    }
+
+    private static @NotNull List<String> getPerks(Clan clan) {
+        List<String> perks = new ArrayList<>();
+        perks.add(Component.translatable("message.colisao-cobblemon.perk_chat").getString());
+        if (clan.getLevel() >= 2) perks.add(Component.translatable("message.colisao-cobblemon.perk_home").getString());
+        if (clan.getLevel() >= 3) perks.add(Component.translatable("message.colisao-cobblemon.perk_chest").getString());
+        if (clan.getLevel() >= 3) perks.add(Component.translatable("message.colisao-cobblemon.perk_affinity_1").getString());
+        if (clan.getLevel() >= 4) perks.add(Component.translatable("message.colisao-cobblemon.perk_bonus").getString());
+        if (clan.getLevel() >= 5) perks.add(Component.translatable("message.colisao-cobblemon.perk_affinity_2").getString());
+        return perks;
     }
 
     private static @NotNull List<String> getStrings(Clan clan) {
@@ -582,6 +593,81 @@ public class ClanCommands {
         }
 
         player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.help.footer"));
+        return 1;
+    }
+
+    private static int showLeaderboard(ServerPlayer player, int requestedPage){
+        ClanSavedData data = ClanSavedData.get(player.serverLevel());
+
+        List<Clan> allClans = new ArrayList<>(data.getAllClans().values());
+
+        if (allClans.isEmpty()) {
+            player.sendSystemMessage(Component.literal("§cNenhum clã registrado no servidor."));
+            return 0;
+        }
+
+        allClans.sort(Comparator.comparingInt(Clan::getLevel).thenComparingInt(Clan::getXp).reversed());
+
+        int maxPerPage = 10;
+        int totalPages = (int) Math.ceil((double) allClans.size() / maxPerPage);
+
+        int validPage = requestedPage;
+        if (validPage > totalPages) {
+            validPage = totalPages;
+        }
+        if (validPage < 1) {
+            validPage = 1;
+        }
+
+        final int currentPage = validPage;
+
+        int start = (currentPage - 1) * maxPerPage;
+        int end = Math.min(start + maxPerPage, allClans.size());
+
+        player.sendSystemMessage(Component.literal("§6§m==========§r §eLeaderboard de Clãs §7(Página " + currentPage + "/" + totalPages + ") §6§m=========="));
+
+        for (int i = start; i < end; i++) {
+            Clan c = allClans.get(i);
+            int position = i + 1;
+
+            String posColor = (position == 1) ? "§6" : (position == 2) ? "§7" : (position == 3) ? "§c" : "§e";
+
+            String clanLine = posColor + "#" + position + " §8[" + c.getTagColor() + c.getTag() + "§8] §f" + c.getName() +
+                    " §7- Nível: §a" + c.getLevel() + " §7| XP: §b" + c.getXp();
+
+            player.sendSystemMessage(Component.literal(clanLine));
+        }
+
+        player.sendSystemMessage(Component.literal("§6§m====================================================="));
+
+        net.minecraft.network.chat.MutableComponent footer = Component.literal("                ");
+
+        if (currentPage > 1) {
+            final int prevPage = currentPage - 1;
+            footer.append(Component.literal("§a[« Anterior] ")
+                    .withStyle(style -> style
+                            .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/clan leaderboard " + prevPage))
+                            .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT, Component.literal("§eIr para a Página " + prevPage)))
+                    ));
+        } else {
+            footer.append(Component.literal("§8[« Anterior] "));
+        }
+
+        footer.append(Component.literal("§7| "));
+
+        if (currentPage < totalPages) {
+            final int nextPage = currentPage + 1;
+            footer.append(Component.literal("§a[Próxima »]")
+                    .withStyle(style -> style
+                            .withClickEvent(new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, "/clan leaderboard " + nextPage))
+                            .withHoverEvent(new net.minecraft.network.chat.HoverEvent(net.minecraft.network.chat.HoverEvent.Action.SHOW_TEXT, Component.literal("§eIr para a Página " + nextPage)))
+                    ));
+        } else {
+            footer.append(Component.literal("§8[Próxima »]"));
+        }
+
+        player.sendSystemMessage(footer);
+
         return 1;
     }
 
