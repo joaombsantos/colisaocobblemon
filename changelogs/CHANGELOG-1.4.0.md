@@ -3,6 +3,7 @@
 ### Additions
 - Added Poke Lens
 - Added Berry Crusher and Berry Leaves
+- Added Clan Leaderboard
 
 ### Changes
 - 

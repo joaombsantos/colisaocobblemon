@@ -62,7 +62,6 @@ public class ClanSavedData extends SavedData {
 
     public long getNextResetTimestamp() {
         if (this.nextResetTimestamp == 0) {
-            // Se for um mundo novo, calcula a próxima terça-feira
             this.nextResetTimestamp = ClanScheduler.calculateNextReset();
             this.setDirty();
         }
