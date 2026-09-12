@@ -83,7 +83,11 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
         MenuScreens.register(ModScreenHandlers.FADE_BLOCK_MENU, FadeBlockScreen::new);
         MenuScreens.register(ModScreenHandlers.POKEMON_BLOCKADE_MENU, PokemonBlockadeScreen::new);
         MenuScreens.register(ModScreenHandlers.HABITAT_MENU, HabitatScreen::new);
-
+        MenuScreens.register(ModScreenHandlers.BACKPACK_MENU, BackpackScreen::new);
+        MenuScreens.register(ModScreenHandlers.POKE_LURER_MENU, PokeLurerScreen::new);
+        MenuScreens.register(ModScreenHandlers.HARVESTER_MENU, HarvesterScreen::new);
+        MenuScreens.register(ModScreenHandlers.POKE_MINER_MENU, PokeMinerScreen::new);
+        MenuScreens.register(ModScreenHandlers.POKE_FURNACE_MENU, PokeFurnaceScreen::new);
         // --- 4. CLIENT REGISTERS ---
 
         BoostNetwork.registerClient();
@@ -197,13 +201,12 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(StylistPayloads.OpenCraftPayload.ID, (payload, context) -> context.client().execute(() -> Minecraft.getInstance().setScreen(new StylistCraftScreen(payload))));
 
-        MenuScreens.register(ModScreenHandlers.BACKPACK_MENU, BackpackScreen::new);
 
         PokeLensOverlay.register();
         ItemProperties.register(ModItems.POKE_LENS, new ResourceLocation("colisao-cobblemon", "using"), (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.POKE_LURER, RenderType.translucent());
 
-        net.minecraft.client.gui.screens.MenuScreens.register(ModScreenHandlers.POKE_LURER_MENU, PokeLurerScreen::new);
+
     }
 
     public static void openTeleportScreen(BlockPos pos) {

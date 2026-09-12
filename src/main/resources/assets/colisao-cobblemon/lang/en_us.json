@@ -371,5 +371,9 @@
   "item.colisao-cobblemon.mega_key": "Mega Key",
   "item.colisao-cobblemon.mega_equipment_key": "Mega Equipment Key",
   "item.colisao-cobblemon.shiny_key": "Shiny Key",
-  "item.colisao-cobblemon.skin_key": "Skin Key"
+  "item.colisao-cobblemon.skin_key": "Skin Key",
+
+  "block.colisao-cobblemon.harvester_block": "Harvester Block",
+  "block.colisao-cobblemon.poke_miner_block": "Poke Miner Block",
+  "block.colisao-cobblemon.poke_furnace_block": "Poke Furnace Block"
 }

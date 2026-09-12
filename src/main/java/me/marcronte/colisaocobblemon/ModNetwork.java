@@ -95,6 +95,8 @@ public class ModNetwork {
             });
         });
 
+        PayloadTypeRegistry.playC2S().register(MachineActionPayload.ID, MachineActionPayload.CODEC);
+
         ClanNetwork.register();
         BadgeNetwork.register();
         PokeLootNetwork.register();
@@ -105,5 +107,6 @@ public class ModNetwork {
         TeleportNetwork.registerServerReceiver();
         GenLimitNetwork.registerCommon();
         SwitchNetwork.registerCommon();
+        MachineNetwork.register();
     }
 }

@@ -35,7 +35,7 @@ public class ChairBlock extends DecorativeBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction dir = state.getValue(FACING);
         switch (dir) {
             case NORTH: return SHAPE_NORTH;
@@ -47,7 +47,7 @@ public class ChairBlock extends DecorativeBlock {
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return this.getShape(state, level, pos, context);
     }
 

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SAS",
+    "DFD",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "A": {
+      "item": "colisao-cobblemon:awakened_terastalite"
+    },
+    "S": {
+      "item": "colisao-cobblemon:supernova_core"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:poke_furnace_block",
+    "count": 1
+  }
+}
