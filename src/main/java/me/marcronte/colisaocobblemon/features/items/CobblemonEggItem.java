@@ -2,6 +2,7 @@ package me.marcronte.colisaocobblemon.features.items;
 
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.marcronte.colisaocobblemon.features.clans.ClanMissionHandler;
@@ -137,10 +138,22 @@ public class CobblemonEggItem extends Item {
         CompoundTag tag = customData.copyTag();
 
         String speciesId = tag.getString("SpeciesIdentifier");
-        Pokemon dummy = PokemonProperties.Companion.parse("species=" + speciesId).create();
+        String displayName = "???";
+
+        try {
+            String cleanName = speciesId.toLowerCase().replace("cobblemon:", "").trim();
+            com.cobblemon.mod.common.pokemon.Species species = PokemonSpecies.getByName(cleanName);
+            if (species != null) {
+                displayName = species.getName();
+            } else {
+                displayName = formatName(cleanName);
+            }
+        } catch (Exception e) {
+            displayName = formatName(speciesId);
+        }
 
         tooltipComponents.add(Component.literal("Pokémon: ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(dummy.getSpecies().getName()).withStyle(ChatFormatting.AQUA)));
+                .append(Component.literal(displayName).withStyle(ChatFormatting.AQUA)));
 
         String rawNature = tag.getString("NatureInternal");
         tooltipComponents.add(Component.literal("Nature: ").withStyle(ChatFormatting.GRAY)

@@ -1,6 +1,7 @@
 package me.marcronte.colisaocobblemon.client.gui;
 
 import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
+import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.client.storage.ClientParty;
 import com.cobblemon.mod.common.item.PokemonItem;
@@ -125,18 +126,33 @@ public class BreedingScreen extends Screen {
         if (isActive) {
             if (isMother) {
                 if (cachedMotherDummy == null && speciesStr != null) {
-                    cachedMotherDummy = PokemonProperties.Companion.parse("species=" + speciesStr).create();
+                    cachedMotherDummy = createSafeClientDummy(speciesStr);
                 }
                 return cachedMotherDummy;
             } else {
                 if (cachedFatherDummy == null && speciesStr != null) {
-                    cachedFatherDummy = PokemonProperties.Companion.parse("species=" + speciesStr).create();
+                    cachedFatherDummy = createSafeClientDummy(speciesStr);
                 }
                 return cachedFatherDummy;
             }
         }
 
         return getClientSidePokemon(uuid);
+    }
+
+    private Pokemon createSafeClientDummy(String speciesStr) {
+        Pokemon dummy = new Pokemon();
+        try {
+            String cleanName = speciesStr.toLowerCase().replace("cobblemon:", "").trim();
+
+            com.cobblemon.mod.common.pokemon.Species species = PokemonSpecies.getByName(cleanName);
+
+            if (species != null) {
+                dummy.setSpecies(species);
+            }
+        } catch (Exception ignored) {
+        }
+        return dummy;
     }
 
     private void renderPartyList(GuiGraphics graphics, int mouseX, int mouseY, int startX, int startY) {

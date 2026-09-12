@@ -57,11 +57,8 @@ repositories {
 }
 
 dependencies {
-	// --- Dependências Fundamentais (Vieram do antigo subprojects) ---
 	minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
 	mappings loom.officialMojangMappings()
-
-	// --- Dependências do Mod (Vieram da raiz) ---
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
 
@@ -77,10 +74,6 @@ dependencies {
 
 	// Placeholder
 	modImplementation include("eu.pb4:placeholder-api:2.4.1+1.21")
-
-	/*modImplementation "net.fabricmc:fabric-language-kotlin:1.12.1+kotlin.2.0.20"
-
-	modLocalRuntime "com.cobblemon:mod:$rootProject.cobblemon_version"*/
 
 	// Kotlin
 	implementation "org.jetbrains.kotlin:kotlin-reflect:2.2.20"
