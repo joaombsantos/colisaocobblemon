@@ -366,7 +366,15 @@ public class BreedingHabitatBlockEntity extends BlockEntity implements WorldlyCo
     }
 
     private String getSecondaryType(CompoundTag data) {
-        return "normal";
+        if (this.level == null || data == null) return null;
+
+        Pokemon pokemon = BreedingNetwork.reconstructPokemon(data, this.level.registryAccess());
+
+        if (pokemon != null && pokemon.getSecondaryType() != null) {
+            return pokemon.getSecondaryType().getName();
+        }
+
+        return null;
     }
 
     protected final ContainerData dataAccess = new ContainerData() {

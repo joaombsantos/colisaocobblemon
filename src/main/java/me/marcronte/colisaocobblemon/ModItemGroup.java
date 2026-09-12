@@ -182,6 +182,11 @@ public class ModItemGroup {
                 entries.accept(ModItems.SHINY_KEY);
                 entries.accept(ModItems.SKIN_KEY);
 
+                // --- MACHINEs ---
+                entries.accept(ModBlocks.HARVESTER_BLOCK);
+                entries.accept(ModBlocks.POKE_MINER_BLOCK);
+                entries.accept(ModBlocks.POKE_FURNACE_BLOCK);
+
             })
             .build();
 

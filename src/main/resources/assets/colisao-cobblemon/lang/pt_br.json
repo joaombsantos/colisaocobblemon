@@ -372,5 +372,10 @@
   "item.colisao-cobblemon.mega_key": "Chave Mega",
   "item.colisao-cobblemon.mega_equipment_key": "Chave Mega Equipamentos",
   "item.colisao-cobblemon.skin_key": "Chave de Skins",
-  "item.colisao-cobblemon.shiny_key": "Chave de Shiny"
+  "item.colisao-cobblemon.shiny_key": "Chave de Shiny",
+
+  "block.colisao-cobblemon.harvester_block": "Colheitadeira",
+  "block.colisao-cobblemon.poke_miner_block": "Mineradora",
+  "block.colisao-cobblemon.poke_furnace_block": "Poke Fornalha"
+
 }

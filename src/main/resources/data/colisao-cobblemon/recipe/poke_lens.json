@@ -1,25 +1,16 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"pattern": [
-		"  P",
-		"ITH",
-		"L L"
+		" G ",
+		"GTG",
+		" G "
 	],
 	"key": {
+		"G": {
+			"item": "minecraft:deepslate"
+		},
 		"T": {
 			"item": "colisao-cobblemon:terastalite_crystal"
-		},
-		"I": {
-			"item": "minecraft:iron_ingot"
-		},
-		"H": {
-			"item": "minecraft:hay_block"
-		},
-		"L": {
-			"tag": "minecraft:logs"
-		},
-		"P": {
-			"tag": "minecraft:planks"
 		}
 	},
 	"result": {
