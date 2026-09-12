@@ -1,7 +1,12 @@
 package me.marcronte.colisaocobblemon;
 
-import me.marcronte.colisaocobblemon.features.blocks.ChairBlock;
-import me.marcronte.colisaocobblemon.features.blocks.DecorativeBlock;
+import me.marcronte.colisaocobblemon.features.blocks.*;
+import me.marcronte.colisaocobblemon.features.blocks.machines.harvester.HarvesterBlock;
+import me.marcronte.colisaocobblemon.features.blocks.machines.harvester.HarvesterBlockEntity;
+import me.marcronte.colisaocobblemon.features.blocks.machines.pokefurnace.PokeFurnaceBlock;
+import me.marcronte.colisaocobblemon.features.blocks.machines.pokefurnace.PokeFurnaceBlockEntity;
+import me.marcronte.colisaocobblemon.features.blocks.machines.pokeminer.PokeMinerBlock;
+import me.marcronte.colisaocobblemon.features.blocks.machines.pokeminer.PokeMinerBlockEntity;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlock;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
 import net.minecraft.core.Registry;
@@ -111,6 +116,119 @@ public class ModBlocks {
 
                     Block.box(0, 0.0, 4.5, 12.0, 19.0, 11.5)
             )
+    );
+
+    public static final Block BATTLE_TROPHY = registerBlock("battle_trophy",
+            new DecorativeBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(),
+
+                    Block.box(3.0, 0.0, 3.0, 13.0, 16.0, 13.0)
+            )
+    );
+
+    public static final Block RACING_TROPHY = registerBlock("racing_trophy",
+            new DecorativeBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion(),
+
+                    Block.box(3.0, 0.0, 3.0, 13.0, 16.0, 13.0)
+            )
+    );
+
+    public static final Block POKE_LURER = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer"),
+            new PokeLurerBlock(Block.Properties.of()
+                    .strength(1.0F)
+                    .noOcclusion()
+            )
+    );
+
+    public static final BlockEntityType<PokeLurerBlockEntity> POKE_LURER_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer_be"),
+            BlockEntityType.Builder.of(
+                    PokeLurerBlockEntity::new,
+                    POKE_LURER
+            ).build(null)
+    );
+
+    public static final Block MINING_BLOCK = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "mining_block"),
+            new MiningBlock(Block.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops())
+    );
+
+    public static final Block ETERNATITE_ORE = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "eternatite_ore"),
+            new Block(Block.Properties.of()
+                    .strength(30.0F, 1200.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(net.minecraft.world.level.block.SoundType.ANCIENT_DEBRIS)
+            )
+    );
+    public static final Block TERASTALITE_ORE = Registry.register(
+            BuiltInRegistries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "terastalite_ore"),
+            new Block(Block.Properties.of()
+                    .strength(3.0F, 3.0F)
+                    .requiresCorrectToolForDrops()
+                    .sound(net.minecraft.world.level.block.SoundType.STONE))
+    );
+
+    public static final Block HARVESTER_BLOCK = registerBlock("harvester_block",
+            new HarvesterBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+            )
+    );
+
+    public static final BlockEntityType<HarvesterBlockEntity> HARVESTER_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "harvester_be"),
+            BlockEntityType.Builder.of(
+                    HarvesterBlockEntity::new,
+                    HARVESTER_BLOCK
+            ).build(null)
+    );
+
+    public static final Block POKE_MINER_BLOCK = registerBlock("poke_miner_block",
+            new PokeMinerBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+            )
+    );
+
+    public static final BlockEntityType<PokeMinerBlockEntity> POKE_MINER_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_miner_be"),
+            BlockEntityType.Builder.of(
+                    PokeMinerBlockEntity::new,
+                    POKE_MINER_BLOCK
+            ).build(null)
+    );
+
+    public static final Block POKE_FURNACE_BLOCK = registerBlock("poke_furnace_block",
+            new PokeFurnaceBlock(BlockBehaviour.Properties.of()
+                    .strength(1.0F)
+                    .sound(SoundType.STONE)
+                    .noOcclusion()
+            )
+    );
+
+    public static final BlockEntityType<PokeFurnaceBlockEntity> POKE_FURNACE_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_furnace_be"),
+            BlockEntityType.Builder.of(
+                    PokeFurnaceBlockEntity::new,
+                    POKE_FURNACE_BLOCK
+            ).build(null)
     );
 
     private static Block registerBlock(String name, Block block) {

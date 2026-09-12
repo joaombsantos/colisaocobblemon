@@ -341,9 +341,41 @@
   "block.colisao-cobblemon.chair": "Cadeira",
   "block.colisao-cobblemon.table": "Mesa",
   "block.colisao-cobblemon.mailbox": "Caixa de Correio",
+  "block.colisao-cobblemon.battle_trophy": "Troféu de Batalha",
+  "block.colisao-cobblemon.racing_trophy": "Troféu de Corrida",
+
+  "item.colisao-cobblemon.berry_crusher": "Triturador de Berries",
+  "item.colisao-cobblemon.babiri_leaves": "Folhas de Babiri",
+  "item.colisao-cobblemon.charti_leaves": "Folhas de Charti",
+  "item.colisao-cobblemon.chilan_leaves": "Folhas de Chilan",
+  "item.colisao-cobblemon.chople_leaves": "Folhas de Chople",
+  "item.colisao-cobblemon.coba_leaves": "Folhas de Coba",
+  "item.colisao-cobblemon.colbur_leaves": "Folhas de Colbur",
+  "item.colisao-cobblemon.haban_leaves": "Folhas de Haban",
+  "item.colisao-cobblemon.kasib_leaves": "Folhas de Kasib",
+  "item.colisao-cobblemon.kebia_leaves": "Folhas de Kebia",
+  "item.colisao-cobblemon.occa_leaves": "Folhas de Occa",
+  "item.colisao-cobblemon.passho_leaves": "Folhas de Passho",
+  "item.colisao-cobblemon.payapa_leaves": "Folhas de Payapa",
+  "item.colisao-cobblemon.rindo_leaves": "Folhas de Rindo",
+  "item.colisao-cobblemon.roseli_leaves": "Folhas de Roseli",
+  "item.colisao-cobblemon.shuca_leaves": "Folhas de Shuca",
+  "item.colisao-cobblemon.tanga_leaves": "Folhas de Tanga",
+  "item.colisao-cobblemon.wacan_leaves": "Folhas de Wacan",
+  "item.colisao-cobblemon.yache_leaves": "Folhas de Yache",
+
+  "item.colisao-cobblemon.poke_lens": "Poke Lentes",
+  "block.colisao-cobblemon.poke_lurer": "Atrator Pokémon",
+  "item.colisao-cobblemon.awakened_terastalite": "Terastalita Desperta",
 
   "item.colisao-cobblemon.legendary_key": "Chave Lendária",
   "item.colisao-cobblemon.mega_key": "Chave Mega",
   "item.colisao-cobblemon.mega_equipment_key": "Chave Mega Equipamentos",
-  "item.colisao-cobblemon.skin_key": "Chave de Skins"
+  "item.colisao-cobblemon.skin_key": "Chave de Skins",
+  "item.colisao-cobblemon.shiny_key": "Chave de Shiny",
+
+  "block.colisao-cobblemon.harvester_block": "Colheitadeira",
+  "block.colisao-cobblemon.poke_miner_block": "Mineradora",
+  "block.colisao-cobblemon.poke_furnace_block": "Poke Fornalha"
+
 }

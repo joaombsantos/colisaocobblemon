@@ -267,8 +267,19 @@ public class NpcInteractionHandler {
     private static void openCobblemonUI(ServerPlayer player, NPCEntity npc, String title, String text, String btnLabel, DialogueAction btnAction) {
         if (text == null) text = "...";
 
+        int MAX_BUTTON_LENGTH = 19;
+        String safeLabel = btnLabel;
+
+        if (safeLabel != null && safeLabel.length() > MAX_BUTTON_LENGTH) {
+            safeLabel = "Aceitar Missão";
+        }
+
+        if (safeLabel == null || safeLabel.isEmpty()) {
+            safeLabel = "Continuar";
+        }
+
         DialogueOption option = new DialogueOption(
-                new WrappedDialogueText(Component.literal(btnLabel)),
+                new WrappedDialogueText(Component.literal(safeLabel)),
                 "primary_option",
                 btnAction,
                 dialogue -> true,

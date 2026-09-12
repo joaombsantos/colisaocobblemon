@@ -1,7 +1,6 @@
 package me.marcronte.colisaocobblemon;
 
 import me.marcronte.colisaocobblemon.features.badgecase.BadgeCaseItem;
-import me.marcronte.colisaocobblemon.features.blocks.MiningBlock;
 import me.marcronte.colisaocobblemon.features.hms.FlashItem;
 import me.marcronte.colisaocobblemon.features.items.*;
 import me.marcronte.colisaocobblemon.features.items.backpack.BackpackItem;
@@ -10,7 +9,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
+
+
+import static me.marcronte.colisaocobblemon.ModBlocks.POKE_LURER;
 
 public class ModItems {
 
@@ -48,33 +49,12 @@ public class ModItems {
     public static final Item ETERNATITE_SCRAP = registerItem("eternatite_scrap", new Item(new Item.Properties().fireResistant()));
     public static final Item ETERNATITE_INGOT = registerItem("eternatite_ingot", new Item(new Item.Properties().fireResistant()));
     public static final Item TERASTALITE_CRYSTAL = registerItem("terastalite_crystal", new Item(new Item.Properties()));
+    public static final Item AWAKENED_TERASTALITE = registerItem("awakened_terastalite", new Item(new Item.Properties().rarity(Rarity.RARE)));
 
     // --- BLOCKS ---
-    public static final Block MINING_BLOCK = Registry.register(
-            BuiltInRegistries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "mining_block"),
-            new MiningBlock(Block.Properties.of().strength(3.0f, 3.0f).requiresCorrectToolForDrops())
-    );
-    public static final Item MINING_BLOCK_ITEM = registerItem("mining_block", new BlockItem(MINING_BLOCK, new Item.Properties()));
-    public static final Block ETERNATITE_ORE = Registry.register(
-            BuiltInRegistries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "eternatite_ore"),
-            new Block(Block.Properties.of()
-                    .strength(30.0F, 1200.0F)
-                    .requiresCorrectToolForDrops()
-                    .sound(net.minecraft.world.level.block.SoundType.ANCIENT_DEBRIS)
-            )
-    );
-    public static final Item ETERNATITE_ORE_ITEM = registerItem("eternatite_ore", new BlockItem(ETERNATITE_ORE, new Item.Properties()));
-    public static final Block TERASTALITE_ORE = Registry.register(
-            BuiltInRegistries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "terastalite_ore"),
-            new Block(Block.Properties.of()
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()
-                    .sound(net.minecraft.world.level.block.SoundType.STONE))
-    );
-    public static final Item TERASTALITE_ORE_ITEM = registerItem("terastalite_ore", new BlockItem(TERASTALITE_ORE, new Item.Properties()));
+    public static final Item MINING_BLOCK_ITEM = registerItem("mining_block", new BlockItem(ModBlocks.MINING_BLOCK, new Item.Properties()));
+    public static final Item ETERNATITE_ORE_ITEM = registerItem("eternatite_ore", new BlockItem(ModBlocks.ETERNATITE_ORE, new Item.Properties()));
+    public static final Item TERASTALITE_ORE_ITEM = registerItem("terastalite_ore", new BlockItem(ModBlocks.TERASTALITE_ORE, new Item.Properties()));
 
     // ARMORs
     public static final Item ETERNATITE_HELMET = registerItem("eternatite_helmet",
@@ -138,6 +118,9 @@ public class ModItems {
     public static final Item ETERNATITE_HOE = registerItem("eternatite_hoe",
             new HoeItem(EternatiteTier.INSTANCE, new Item.Properties()
                     .attributes(HoeItem.createAttributes(EternatiteTier.INSTANCE, -4.0f, 0.0f))));
+
+    public static final Item BERRY_CRUSHER = registerItem("berry_crusher", new BerryCrusherItem(new Item.Properties().durability(100)));
+    public static final Item POKE_LENS = registerItem("poke_lens", new PokeLens(new Item.Properties().stacksTo(1)));
 
 
     // HMs
@@ -220,6 +203,33 @@ public class ModItems {
 
     public static final Item ENHANCED_POWDER = registerItem("enhanced_powder", new PokemonDropItem("fairy", normalChance, new Item.Properties()));
     public static final Item FAIRY_SOUL = registerItem("fairy_soul", new PokemonDropItem("fairy", rareChance, new Item.Properties()));
+
+
+    public static final Item POKE_LURER_ITEM = Registry.register(
+            BuiltInRegistries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(ColisaoCobblemon.MOD_ID, "poke_lurer"),
+            new BlockItem(POKE_LURER, new Item.Properties())
+    );
+
+    // Leaves
+    public static final Item BABIRI_LEAVES = registerItem("babiri_leaves", new Item(new Item.Properties()));
+    public static final Item CHARTI_LEAVES = registerItem("charti_leaves", new Item(new Item.Properties()));
+    public static final Item CHILAN_LEAVES = registerItem("chilan_leaves", new Item(new Item.Properties()));
+    public static final Item CHOPLE_LEAVES = registerItem("chople_leaves", new Item(new Item.Properties()));
+    public static final Item COBA_LEAVES = registerItem("coba_leaves", new Item(new Item.Properties()));
+    public static final Item COLBUR_LEAVES = registerItem("colbur_leaves", new Item(new Item.Properties()));
+    public static final Item HABAN_LEAVES = registerItem("haban_leaves", new Item(new Item.Properties()));
+    public static final Item KASIB_LEAVES = registerItem("kasib_leaves", new Item(new Item.Properties()));
+    public static final Item KEBIA_LEAVES = registerItem("kebia_leaves", new Item(new Item.Properties()));
+    public static final Item OCCA_LEAVES = registerItem("occa_leaves", new Item(new Item.Properties()));
+    public static final Item PASSHO_LEAVES = registerItem("passho_leaves", new Item(new Item.Properties()));
+    public static final Item PAYAPA_LEAVES = registerItem("payapa_leaves", new Item(new Item.Properties()));
+    public static final Item RINDO_LEAVES = registerItem("rindo_leaves", new Item(new Item.Properties()));
+    public static final Item ROSELI_LEAVES = registerItem("roseli_leaves", new Item(new Item.Properties()));
+    public static final Item SHUCA_LEAVES = registerItem("shuca_leaves", new Item(new Item.Properties()));
+    public static final Item TANGA_LEAVES = registerItem("tanga_leaves", new Item(new Item.Properties()));
+    public static final Item WACAN_LEAVES = registerItem("wacan_leaves", new Item(new Item.Properties()));
+    public static final Item YACHE_LEAVES = registerItem("yache_leaves", new Item(new Item.Properties()));
 
     // Pokemon Egg (Breeding)
     public static final Item POKEMON_EGG = registerItem("pokemon_egg", new CobblemonEggItem(new Item.Properties()));

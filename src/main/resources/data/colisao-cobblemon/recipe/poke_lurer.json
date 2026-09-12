@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "GAG",
+    "III"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "A": {
+      "item": "colisao-cobblemon:awakened_terastalite"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:poke_lurer",
+    "count": 1
+  }
+}

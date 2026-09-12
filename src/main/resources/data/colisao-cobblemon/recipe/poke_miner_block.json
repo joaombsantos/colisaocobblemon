@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DAS",
+    "CTC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "T": {
+      "item": "minecraft:stonecutter"
+    },
+    "A": {
+      "item": "colisao-cobblemon:awakened_terastalite"
+    },
+    "D": {
+      "item": "colisao-cobblemon:dense_dirt"
+    },
+    "S": {
+      "item": "colisao-cobblemon:sandbag"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:poke_miner_block",
+    "count": 1
+  }
+}

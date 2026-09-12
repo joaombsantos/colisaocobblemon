@@ -17,7 +17,7 @@ public class ModItemGroup {
     );
 
     public static final CreativeModeTab COLISAO_GROUP = FabricItemGroup.builder()
-            .icon(() -> new ItemStack(ModItems.KANTO_BADGE_CASE)) // Ícone da aba
+            .icon(() -> new ItemStack(ModItems.KANTO_BADGE_CASE))
             .title(Component.translatable("itemGroup.colisao-cobblemon.general"))
             .displayItems((context, entries) -> {
 
@@ -51,6 +51,7 @@ public class ModItemGroup {
                 entries.accept(ModItems.ETERNATITE_SCRAP);
                 entries.accept(ModItems.ETERNATITE_INGOT);
                 entries.accept(ModItems.TERASTALITE_CRYSTAL);
+                entries.accept(ModItems.AWAKENED_TERASTALITE);
 
                 // --- BLOCKS ---
                 entries.accept(ModItems.MINING_BLOCK_ITEM);
@@ -70,6 +71,8 @@ public class ModItemGroup {
                 entries.accept(ModItems.ETERNATITE_AXE);
                 entries.accept(ModItems.ETERNATITE_SHOVEL);
                 entries.accept(ModItems.ETERNATITE_HOE);
+                entries.accept(ModItems.BERRY_CRUSHER);
+                entries.accept(ModItems.POKE_LENS);
 
                 // --- HMs ---
                 entries.accept(ModItems.SURF);
@@ -146,6 +149,31 @@ public class ModItemGroup {
                 entries.accept(ModBlocks.CHAIR);
                 entries.accept(ModBlocks.TABLE);
                 entries.accept(ModBlocks.MAILBOX);
+                entries.accept(ModBlocks.BATTLE_TROPHY);
+                entries.accept(ModBlocks.RACING_TROPHY);
+
+
+                entries.accept(ModItems.POKE_LURER_ITEM);
+
+                // --- LEAVES ---
+                entries.accept(ModItems.BABIRI_LEAVES);
+                entries.accept(ModItems.CHARTI_LEAVES);
+                entries.accept(ModItems.CHILAN_LEAVES);
+                entries.accept(ModItems.CHOPLE_LEAVES);
+                entries.accept(ModItems.COBA_LEAVES);
+                entries.accept(ModItems.COLBUR_LEAVES);
+                entries.accept(ModItems.HABAN_LEAVES);
+                entries.accept(ModItems.KASIB_LEAVES);
+                entries.accept(ModItems.KEBIA_LEAVES);
+                entries.accept(ModItems.OCCA_LEAVES);
+                entries.accept(ModItems.PASSHO_LEAVES);
+                entries.accept(ModItems.PAYAPA_LEAVES);
+                entries.accept(ModItems.RINDO_LEAVES);
+                entries.accept(ModItems.ROSELI_LEAVES);
+                entries.accept(ModItems.SHUCA_LEAVES);
+                entries.accept(ModItems.TANGA_LEAVES);
+                entries.accept(ModItems.WACAN_LEAVES);
+                entries.accept(ModItems.YACHE_LEAVES);
 
                 // --- KEYs ---
                 entries.accept(ModItems.LEGENDARY_KEY);
@@ -153,6 +181,11 @@ public class ModItemGroup {
                 entries.accept(ModItems.MEGA_EQUIPMENT_KEY);
                 entries.accept(ModItems.SHINY_KEY);
                 entries.accept(ModItems.SKIN_KEY);
+
+                // --- MACHINEs ---
+                entries.accept(ModBlocks.HARVESTER_BLOCK);
+                entries.accept(ModBlocks.POKE_MINER_BLOCK);
+                entries.accept(ModBlocks.POKE_FURNACE_BLOCK);
 
             })
             .build();

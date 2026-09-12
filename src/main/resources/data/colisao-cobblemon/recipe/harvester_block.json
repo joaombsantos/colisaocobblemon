@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NAH",
+    "PCP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "F": {
+      "item": "minecraft:composter"
+    },
+    "A": {
+      "item": "colisao-cobblemon:awakened_terastalite"
+    },
+    "N": {
+      "item": "colisao-cobblemon:nature_essence"
+    },
+    "H": {
+      "item": "colisao-cobblemon:horn"
+    }
+  },
+  "result": {
+    "id": "colisao-cobblemon:harvester_block",
+    "count": 1
+  }
+}

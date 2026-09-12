@@ -340,10 +340,40 @@
   "block.colisao-cobblemon.chair": "Chair",
   "block.colisao-cobblemon.table": "Table",
   "block.colisao-cobblemon.mailbox": "Mailbox",
+  "block.colisao-cobblemon.battle_trophy": "Battle Trophy",
+  "block.colisao-cobblemon.racing_trophy": "Racing Trophy",
+
+  "item.colisao-cobblemon.berry_crusher": "Berry Crusher",
+  "item.colisao-cobblemon.babiri_leaves": "Babiri Leaves",
+  "item.colisao-cobblemon.charti_leaves": "Charti Leaves",
+  "item.colisao-cobblemon.chilan_leaves": "Chilan Leaves",
+  "item.colisao-cobblemon.chople_leaves": "Chople Leaves",
+  "item.colisao-cobblemon.coba_leaves": "Coba Leaves",
+  "item.colisao-cobblemon.colbur_leaves": "Colbur Leaves",
+  "item.colisao-cobblemon.haban_leaves": "Haban Leaves",
+  "item.colisao-cobblemon.kasib_leaves": "Kasib Leaves",
+  "item.colisao-cobblemon.kebia_leaves": "Kebia Leaves",
+  "item.colisao-cobblemon.occa_leaves": "Occa Leaves",
+  "item.colisao-cobblemon.passho_leaves": "Passho Leaves",
+  "item.colisao-cobblemon.payapa_leaves": "Payapa Leaves",
+  "item.colisao-cobblemon.rindo_leaves": "Rindo Leaves",
+  "item.colisao-cobblemon.roseli_leaves": "Roseli Leaves",
+  "item.colisao-cobblemon.shuca_leaves": "Shuca Leaves",
+  "item.colisao-cobblemon.tanga_leaves": "Tanga Leaves",
+  "item.colisao-cobblemon.wacan_leaves": "Wacan Leaves",
+  "item.colisao-cobblemon.yache_leaves": "Yache Leaves",
+
+  "item.colisao-cobblemon.poke_lens": "Poke Lens",
+  "block.colisao-cobblemon.poke_lurer": "Poke Lurer",
+  "item.colisao-cobblemon.awakened_terastalite": "Awakened Terastalite",
 
   "item.colisao-cobblemon.legendary_key": "Legendary Key",
   "item.colisao-cobblemon.mega_key": "Mega Key",
   "item.colisao-cobblemon.mega_equipment_key": "Mega Equipment Key",
   "item.colisao-cobblemon.shiny_key": "Shiny Key",
-  "item.colisao-cobblemon.skin_key": "Skin Key"
+  "item.colisao-cobblemon.skin_key": "Skin Key",
+
+  "block.colisao-cobblemon.harvester_block": "Harvester Block",
+  "block.colisao-cobblemon.poke_miner_block": "Poke Miner Block",
+  "block.colisao-cobblemon.poke_furnace_block": "Poke Furnace Block"
 }
