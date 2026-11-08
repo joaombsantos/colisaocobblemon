@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import me.marcronte.colisaocobblemon.features.breeding.BreedingCalculator;
 import me.marcronte.colisaocobblemon.features.clans.ClanMissionHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -114,6 +115,11 @@ public class CobblemonEggItem extends Item {
             }
 
             pokemon = PokemonProperties.Companion.parse(dna.toString()).create();
+
+            String featureProps = BreedingCalculator.formFeatureProperties(pokemon.getSpecies(), formStr).trim();
+            if (!featureProps.isEmpty()) {
+                PokemonProperties.Companion.parse(featureProps).apply(pokemon);
+            }
 
             if (!formStr.isEmpty() && !formStr.equalsIgnoreCase("normal")) {
                 String cleanForm = formStr.toLowerCase();

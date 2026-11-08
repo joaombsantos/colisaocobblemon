@@ -11,6 +11,10 @@ import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.api.pokemon.egg.EggGroup;
 import com.cobblemon.mod.common.api.pokemon.evolution.Evolution;
+import com.cobblemon.mod.common.api.pokemon.feature.ChoiceSpeciesFeatureProvider;
+import com.cobblemon.mod.common.api.pokemon.feature.SpeciesFeatureProvider;
+import com.cobblemon.mod.common.api.pokemon.feature.SpeciesFeatures;
+import com.cobblemon.mod.common.api.pokemon.feature.StringSpeciesFeature;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.*;
 import me.marcronte.colisaocobblemon.ModItems;
@@ -91,6 +95,8 @@ public class BreedingCalculator {
         dna.append(" level=1");
         if (!startingMoves.isEmpty()) {
             dna.append(" moves=").append(String.join(",", startingMoves));
+            String safeFormName = (inheritedForm != null) ? inheritedForm.getName() : "";
+            dna.append(formFeatureProperties(childSpecies, safeFormName));
         }
 
         Pokemon offspring = PokemonProperties.Companion.parse(dna.toString()).create();
@@ -452,6 +458,43 @@ public class BreedingCalculator {
         Random rand = new Random();
         int chance = 4096;
         child.setShiny(rand.nextInt(chance) == 0);
+    }
+
+    private static String normalizeFormId(String name) {
+        return name == null ? "" : name.toLowerCase().replaceAll("[^a-z0-9]", "");
+    }
+
+    public static FormData findForm(Species species, String formName) {
+        if (species == null || formName == null || formName.isEmpty()) return null;
+
+        String wanted = normalizeFormId(formName);
+        for (FormData candidate : species.getForms()) {
+            if (normalizeFormId(candidate.getName()).equals(wanted)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    public static String formFeatureProperties(Species species, String formName) {
+        if (species == null || formName == null || formName.isEmpty() || formName.equalsIgnoreCase("normal")) return "";
+        if (isRegionalForm(formName)) return "";
+
+        FormData form = findForm(species, formName);
+        if (form == null) return "";
+
+        StringBuilder props = new StringBuilder();
+        for (SpeciesFeatureProvider<?> provider : SpeciesFeatures.getFeaturesFor(species)) {
+            if (!(provider instanceof ChoiceSpeciesFeatureProvider choice) || !choice.isAspect()) continue;
+
+            for (String option : choice.getChoices()) {
+                StringSpeciesFeature feature = choice.fromString(option);
+                if (feature != null && form.getAspects().contains(choice.getAspect(feature))) {
+                    props.append(' ').append(feature.asString());
+                }
+            }
+        }
+        return props.toString();
     }
 
     private static int getGenFromDex(int dex) {

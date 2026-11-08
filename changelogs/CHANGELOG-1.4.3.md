@@ -2,7 +2,7 @@
 
 ### Aditions
 - 'Flame Body', 'Magma Armor' and 'Steam Engine' abilities now counts two steps on Cobblemon Egg
-- Implemented castrate with '/castrar <slot>'
+  - Implemented castrate with '/castrar <slot>'
 
 ### Fixes
 - Fixed spawnExtraLoot crash
