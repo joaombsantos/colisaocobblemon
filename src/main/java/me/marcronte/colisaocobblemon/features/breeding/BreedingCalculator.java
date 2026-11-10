@@ -271,14 +271,14 @@ public class BreedingCalculator {
 
         Random rand = new Random();
 
-        boolean sourceHasHidden = hiddenInChild != null && hiddenInChild.getTemplate().equals(sourceTemplate);
+        boolean sourceHasHidden = hiddenInChild != null && hasHiddenAbility(sourceParent);
         boolean sourceHasNormal = normalAbilities.contains(sourceTemplate);
 
         boolean passAbility = rand.nextInt(100) < 60;
 
         if (passAbility) {
             if (sourceHasHidden) {
-                child.updateAbility(new Ability(sourceTemplate, false, Priority.LOW));
+                child.updateAbility(new Ability(hiddenInChild.getTemplate(), false, Priority.LOW));
                 return;
             }
             else if (sourceHasNormal) {
@@ -291,6 +291,20 @@ public class BreedingCalculator {
             AbilityTemplate selected = normalAbilities.get(rand.nextInt(normalAbilities.size()));
             child.updateAbility(new Ability(selected, false, Priority.NORMAL));
         }
+    }
+
+    private static boolean hasHiddenAbility(Pokemon parent) {
+        String parentAbility = parent.getAbility().getTemplate().getName();
+
+        List<PotentialAbility> parentPotentials = new ArrayList<>();
+        parent.getForm().getAbilities().getMapping().values().forEach(parentPotentials::addAll);
+
+        for (PotentialAbility pot : parentPotentials) {
+            if (pot.getPriority() == Priority.LOW && pot.getTemplate().getName().equalsIgnoreCase(parentAbility)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void inheritIVs(Pokemon child, Pokemon mother, Pokemon father) {
