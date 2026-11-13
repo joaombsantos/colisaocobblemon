@@ -78,7 +78,9 @@ public class PokeMinerMenu extends AbstractContainerMenu {
                 this.lastKnownTag = currentTag;
                 try {
                     assert Minecraft.getInstance().level != null;
-                    this.cachedPokemon = me.marcronte.colisaocobblemon.network.BreedingNetwork.reconstructPokemon(currentTag, Minecraft.getInstance().level.registryAccess());
+                    this.cachedPokemon = me.marcronte.colisaocobblemon.client.gui.BreedingDisplay.applyDisplayForm(
+                            me.marcronte.colisaocobblemon.network.BreedingNetwork.reconstructPokemon(currentTag, Minecraft.getInstance().level.registryAccess()),
+                            currentTag);
                 } catch (Exception e) {
                     return null;
                 }

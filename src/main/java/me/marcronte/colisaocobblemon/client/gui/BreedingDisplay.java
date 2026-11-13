@@ -1,6 +1,8 @@
 package me.marcronte.colisaocobblemon.client.gui;
 
+import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
+import com.cobblemon.mod.common.item.PokemonItem;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.Species;
 import me.marcronte.colisaocobblemon.ColisaoCobblemon;
@@ -13,13 +15,11 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public final class BreedingDisplay {
 
@@ -56,16 +56,23 @@ public final class BreedingDisplay {
     private static final String[] REGIONAL_ASPECTS = {"alolan", "galarian", "hisuian", "paldean"};
 
     @Nullable
-    private static Pokemon applyDisplayForm(@Nullable Pokemon pokemon, @Nullable CompoundTag data) {
+    public static Pokemon applyDisplayForm(@Nullable Pokemon pokemon, @Nullable CompoundTag data) {
         if (pokemon == null) return null;
 
         try {
-            String aspect = matchRegionalAspect(pokemon.getForm().getName());
+            String formName = pokemon.getForm().getName();
+            String aspect = matchRegionalAspect(formName);
             if (aspect == null && data != null) aspect = findRegionalAspect(data);
+
             if (aspect == null) return pokemon;
 
             if (!pokemon.getAspects().contains(aspect)) {
-                pokemon.getAspects().add(aspect);
+                try {
+                    pokemon.getAspects().add(aspect);
+                } catch (UnsupportedOperationException ex) {
+                    ColisaoCobblemon.LOGGER.warn("[Display] getAspects() é imutável; aplicando '{}' via PokemonProperties.", aspect);
+                    PokemonProperties.Companion.parse(aspect).apply(pokemon);
+                }
             }
             return pokemon;
         } catch (Exception e) {
@@ -77,10 +84,14 @@ public final class BreedingDisplay {
     @Nullable
     private static String matchRegionalAspect(@Nullable String value) {
         if (value == null) return null;
-        for (String aspect : REGIONAL_ASPECTS) {
-            if (aspect.equalsIgnoreCase(value.trim())) return aspect;
-        }
-        return null;
+        String v = value.trim().toLowerCase();
+        return switch (v) {
+            case "alola", "alolan" -> "alolan";
+            case "galar", "galarian" -> "galarian";
+            case "hisui", "hisuian" -> "hisuian";
+            case "paldea", "paldean" -> "paldean";
+            default -> null;
+        };
     }
 
     @Nullable
@@ -120,6 +131,11 @@ public final class BreedingDisplay {
             ColisaoCobblemon.LOGGER.warn("[Breeding] Falha ao criar Pokémon de exibição para '{}'.", speciesStr, e);
             return null;
         }
+    }
+
+    public static ItemStack spriteStack(@Nullable Pokemon pokemon) {
+        if (pokemon == null) return ItemStack.EMPTY;
+        return PokemonItem.from(Objects.requireNonNull(applyDisplayForm(pokemon, null)), 1);
     }
 
     private static final int CASTRATED_COLOR = 0xFF5555;

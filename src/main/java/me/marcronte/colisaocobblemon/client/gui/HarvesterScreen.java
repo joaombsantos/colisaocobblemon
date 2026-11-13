@@ -157,7 +157,7 @@ public class HarvesterScreen extends AbstractContainerScreen<HarvesterMenu> {
     private void renderPokemonSprite(GuiGraphics graphics, Pokemon pokemon, int x, int y, float scale) {
         if (pokemon == null) return;
         try {
-            ItemStack stack = PokemonItem.from(pokemon, 1);
+            ItemStack stack = BreedingDisplay.spriteStack(pokemon);
             if (stack.isEmpty()) return;
 
             graphics.pose().pushPose();

@@ -8,4 +8,4 @@
 - Added Neutered visual hint to breed UI
 
 ### Fixes
-- Fixed display on Breeding
+- Fixed display on Breeding and Machines
