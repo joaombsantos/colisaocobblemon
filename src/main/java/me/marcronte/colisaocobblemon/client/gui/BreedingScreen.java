@@ -1,7 +1,5 @@
 package me.marcronte.colisaocobblemon.client.gui;
 
-import com.cobblemon.mod.common.api.pokemon.PokemonProperties;
-import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import com.cobblemon.mod.common.client.CobblemonClient;
 import com.cobblemon.mod.common.client.storage.ClientParty;
 import com.cobblemon.mod.common.item.PokemonItem;
@@ -15,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -33,6 +32,9 @@ public class BreedingScreen extends Screen {
     private String motherSpeciesStr;
     private String fatherSpeciesStr;
 
+    private final CompoundTag motherData;
+    private final CompoundTag fatherData;
+
     private long startTime;
     private long totalDuration;
     private boolean isActive;
@@ -43,12 +45,14 @@ public class BreedingScreen extends Screen {
 
     private int selectingSlot = -1;
 
-    public BreedingScreen(UUID mother, UUID father, String mSpecies, String fSpecies, long start, long duration, boolean active, boolean ready) {
+    public BreedingScreen(UUID mother, UUID father, String mSpecies, String fSpecies, CompoundTag mData, CompoundTag fData, long start, long duration, boolean active, boolean ready) {
         super(Component.literal("Breeding"));
         this.motherId = mother;
         this.fatherId = father;
         this.motherSpeciesStr = mSpecies;
         this.fatherSpeciesStr = fSpecies;
+        this.motherData = mData;
+        this.fatherData = fData;
         this.startTime = start;
         this.totalDuration = duration;
         this.isActive = active;
@@ -84,6 +88,7 @@ public class BreedingScreen extends Screen {
                 renderPokemonSprite(graphics, mother, x + 30, y + 70, 3.0f);
                 String name = (mother.getSpecies() != null) ? mother.getSpecies().getName() : "???";
                 graphics.drawCenteredString(font, name, x + 51, y + 115, 0xFFFFFF);
+                if (BreedingDisplay.isCastrated(mother)) BreedingDisplay.drawCastratedTag(graphics, font, x + 51, y + 126);
             }
         }
 
@@ -93,6 +98,7 @@ public class BreedingScreen extends Screen {
                 renderPokemonSprite(graphics, father, x + 182, y + 70, 3.0f);
                 String name = (father.getSpecies() != null) ? father.getSpecies().getName() : "???";
                 graphics.drawCenteredString(font, name, x + 203, y + 115, 0xFFFFFF);
+                if (BreedingDisplay.isCastrated(father)) BreedingDisplay.drawCastratedTag(graphics, font, x + 203, y + 126);
             }
         }
         float scale = 1.5f;
@@ -111,7 +117,11 @@ public class BreedingScreen extends Screen {
 
         graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.choose"), x + 52, y + 153, 0xFFFFFF);
         graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.choose"), x + 204, y + 153, 0xFFFFFF);
-        graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.breeding_breed"), x + 128, y + 193, 0xFFFFFF);
+        if (!isActive) {
+            graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.breeding_breed"), x + 128, y + 193, 0xFFFFFF);
+        } else if (!(isReadyServer || isReadyTime)) {
+            graphics.drawCenteredString(font, Component.translatable("message.colisao-cobblemon.cancel"), x + 128, y + 193, 0xFF6666);
+        }
         graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.claim"), x + 127, y + 153, 0xFFFFFF);
 
         if (selectingSlot == 0) graphics.fill(x + 25, y + 145, x + 79, y + 169, 0x80009BAD);
@@ -125,34 +135,19 @@ public class BreedingScreen extends Screen {
     private Pokemon resolvePokemonToRender(UUID uuid, String speciesStr, boolean isMother) {
         if (isActive) {
             if (isMother) {
-                if (cachedMotherDummy == null && speciesStr != null) {
-                    cachedMotherDummy = createSafeClientDummy(speciesStr);
+                if (cachedMotherDummy == null) {
+                    cachedMotherDummy = BreedingDisplay.fromData(motherData, speciesStr);
                 }
                 return cachedMotherDummy;
             } else {
-                if (cachedFatherDummy == null && speciesStr != null) {
-                    cachedFatherDummy = createSafeClientDummy(speciesStr);
+                if (cachedFatherDummy == null) {
+                    cachedFatherDummy = BreedingDisplay.fromData(fatherData, speciesStr);
                 }
                 return cachedFatherDummy;
             }
         }
 
         return getClientSidePokemon(uuid);
-    }
-
-    private Pokemon createSafeClientDummy(String speciesStr) {
-        Pokemon dummy = new Pokemon();
-        try {
-            String cleanName = speciesStr.toLowerCase().replace("cobblemon:", "").trim();
-
-            com.cobblemon.mod.common.pokemon.Species species = PokemonSpecies.getByName(cleanName);
-
-            if (species != null) {
-                dummy.setSpecies(species);
-            }
-        } catch (Exception ignored) {
-        }
-        return dummy;
     }
 
     private void renderPartyList(GuiGraphics graphics, int mouseX, int mouseY, int startX, int startY) {
@@ -166,10 +161,12 @@ public class BreedingScreen extends Screen {
 
             int slotY = startY + (i * 35);
             boolean isHovered = mouseX >= startX && mouseX <= startX + 60 && mouseY >= slotY && mouseY <= slotY + 32;
-            int color = isHovered ? 0xC0FFFFFF : 0xC0000000;
+            boolean castrated = BreedingDisplay.isCastrated(p);
+            int color = BreedingDisplay.partyEntryColor(castrated, isHovered);
 
             graphics.fill(startX, slotY, startX + 60, slotY + 32, color);
             renderPokemonSprite(graphics, p, startX + 2, slotY + 2, 1.5f);
+            if (castrated) BreedingDisplay.drawCastratedTagSmall(graphics, font, startX + 22, slotY + 21);
 
             graphics.pose().pushPose();
             graphics.pose().translate(startX + 22, slotY + 12, 0);
@@ -202,7 +199,9 @@ public class BreedingScreen extends Screen {
             graphics.pose().scale(scale, scale, 1.0f);
             graphics.renderItem(stack, 0, 0);
             graphics.pose().popPose();
-        } catch (Exception ignored) { }
+        } catch (Exception e) {
+            BreedingDisplay.logRenderFailure(e);
+        }
     }
 
     private void renderTimer(GuiGraphics graphics, int x, int y) {
@@ -264,7 +263,11 @@ public class BreedingScreen extends Screen {
             boolean isReadyTime = isActive && (System.currentTimeMillis() - startTime >= totalDuration);
             if (isReadyServer || isReadyTime) { sendClick(3); return true; }
         }
-        if (relX >= 101 && relX <= 154 && relY >= 185 && relY <= 208) { sendClick(2); return true; }
+        if (relX >= 101 && relX <= 154 && relY >= 185 && relY <= 208) {
+            if (!isActive) { sendClick(2); return true; }
+            boolean readyNow = isReadyServer || (System.currentTimeMillis() - startTime >= totalDuration);
+            if (!readyNow) { sendClick(4); return true; }
+        }
 
         return super.mouseClicked(mouseX, mouseY, button);
     }

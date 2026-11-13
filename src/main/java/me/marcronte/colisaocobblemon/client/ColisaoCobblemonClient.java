@@ -158,17 +158,20 @@ public class ColisaoCobblemonClient implements ClientModInitializer {
                 payload.father(),
                 payload.motherSpecies(),
                 payload.fatherSpecies(),
+                payload.motherData(),
+                payload.fatherData(),
                 payload.startTime(),
                 payload.totalDuration(),
                 payload.active(),
                 payload.ready()
         ))));
 
+        ClientPlayNetworking.registerGlobalReceiver(CastratedPartyPayload.ID, (payload, context) ->
+                context.client().execute(() -> BreedingDisplay.setCastratedParty(payload.castrated())));
 
         ClientPlayNetworking.registerGlobalReceiver(ClanPayloads.OpenClanCreationPayload.ID, (payload, context) -> context.client().execute(() -> {
             Minecraft.getInstance().setScreen(new ClanCreationScreen());
         }));
-
 
         ClientPlayNetworking.registerGlobalReceiver(ClanPayloads.OpenClanMenuPayload.ID, (payload, context) -> context.client().execute(() -> {
             Minecraft.getInstance().setScreen(new ClanMenuScreen(

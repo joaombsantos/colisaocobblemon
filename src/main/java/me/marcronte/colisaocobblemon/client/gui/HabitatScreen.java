@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.item.PokemonItem;
 import com.cobblemon.mod.common.pokemon.Gender;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.mojang.blaze3d.systems.RenderSystem;
+import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.HabitatMenu;
 import me.marcronte.colisaocobblemon.network.payloads.HabitatPayloads;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -16,6 +17,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -33,6 +35,9 @@ public class HabitatScreen extends AbstractContainerScreen<HabitatMenu> {
     private UUID motherId;
     private UUID fatherId;
     private int selectingSlot = -1;
+
+    private Pokemon activeMother;
+    private Pokemon activeFather;
 
     private int selectingBerryForSlot = -1;
     private int berryPage = 0;
@@ -125,6 +130,10 @@ public class HabitatScreen extends AbstractContainerScreen<HabitatMenu> {
             graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.breeding_breed"), x + 128, y + 193, 0xFFFFFF);
         }
 
+        if (this.menu.isActive() && !isHabitatReady()) {
+            graphics.drawCenteredString(font, Component.translatable("message.colisao-cobblemon.cancel"), x + 128, y + 193, 0xFF6666);
+        }
+
         graphics.drawCenteredString(font, Component.translatable("gui.colisao-cobblemon.claim"), x + 127, y + 153, 0xFFFFFF);
 
         int fuel = this.menu.getFuel();
@@ -209,16 +218,43 @@ public class HabitatScreen extends AbstractContainerScreen<HabitatMenu> {
         ResourceLocation bg = isReady ? BG_READY : BG_NOT_READY;
         graphics.blit(bg, this.leftPos, this.topPos, 0, 0, 256, 256, 256, 256);
 
-        if (motherId != null) {
-            Pokemon mother = getClientSidePokemon(motherId);
+        Pokemon mother = resolveDisplayedPokemon(true);
+        if (mother != null) {
             renderPokemonSprite(graphics, mother, this.leftPos + 30, this.topPos + 70, 3.0f);
-            if (mother != null) graphics.drawCenteredString(font, mother.getSpecies().getName(), this.leftPos + 51, this.topPos + 115, 0xFFFFFF);
+            graphics.drawCenteredString(font, mother.getSpecies().getName(), this.leftPos + 51, this.topPos + 115, 0xFFFFFF);
+            if (BreedingDisplay.isCastrated(mother)) BreedingDisplay.drawCastratedTag(graphics, font, this.leftPos + 51, this.topPos + 126);
         }
-        if (fatherId != null) {
-            Pokemon father = getClientSidePokemon(fatherId);
+
+        Pokemon father = resolveDisplayedPokemon(false);
+        if (father != null) {
             renderPokemonSprite(graphics, father, this.leftPos + 182, this.topPos + 70, 3.0f);
-            if (father != null) graphics.drawCenteredString(font, father.getSpecies().getName(), this.leftPos + 203, this.topPos + 115, 0xFFFFFF);
+            graphics.drawCenteredString(font, father.getSpecies().getName(), this.leftPos + 203, this.topPos + 115, 0xFFFFFF);
+            if (BreedingDisplay.isCastrated(father)) BreedingDisplay.drawCastratedTag(graphics, font, this.leftPos + 203, this.topPos + 126);
         }
+    }
+
+    private Pokemon resolveDisplayedPokemon(boolean isMother) {
+        if (!this.menu.isActive()) {
+            return getClientSidePokemon(isMother ? motherId : fatherId);
+        }
+
+        Pokemon cached = isMother ? activeMother : activeFather;
+        if (cached != null) return cached;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || this.menu.blockPos == null) return null;
+        if (!(mc.level.getBlockEntity(this.menu.blockPos) instanceof BreedingHabitatBlockEntity habitat)) return null;
+
+        CompoundTag data = isMother ? habitat.getMotherData() : habitat.getFatherData();
+        if (data == null || data.isEmpty()) return null;
+
+        Pokemon built = BreedingDisplay.fromData(data, data.getString("UI_Species"));
+        if (isMother) activeMother = built; else activeFather = built;
+        return built;
+    }
+
+    private boolean isHabitatReady() {
+        return this.menu.isActive() && this.menu.getProgress() >= this.menu.getRequired() && this.menu.getRequired() > 0;
     }
 
     private void renderTimer(GuiGraphics graphics, int x, int y) {
@@ -261,9 +297,11 @@ public class HabitatScreen extends AbstractContainerScreen<HabitatMenu> {
             if (p == null) { i++; continue; }
             int slotY = startY + (i * 35);
             boolean isHovered = mouseX >= startX && mouseX <= startX + 60 && mouseY >= slotY && mouseY <= slotY + 32;
-            int color = isHovered ? 0xC0FFFFFF : 0xC0000000;
+            boolean castrated = BreedingDisplay.isCastrated(p);
+            int color = BreedingDisplay.partyEntryColor(castrated, isHovered);
             graphics.fill(startX, slotY, startX + 60, slotY + 32, color);
             renderPokemonSprite(graphics, p, startX + 2, slotY + 2, 1.5f);
+            if (castrated) BreedingDisplay.drawCastratedTagSmall(graphics, font, startX + 22, slotY + 21);
             graphics.pose().pushPose();
             graphics.pose().translate(startX + 22, slotY + 12, 0);
             graphics.pose().scale(0.7f, 0.7f, 1f);
@@ -291,7 +329,9 @@ public class HabitatScreen extends AbstractContainerScreen<HabitatMenu> {
             graphics.pose().scale(scale, scale, 1.0f);
             graphics.renderItem(stack, 0, 0);
             graphics.pose().popPose();
-        } catch (Exception ignored) { }
+        } catch (Exception e) {
+            BreedingDisplay.logRenderFailure(e);
+        }
     }
 
     @Override
@@ -376,6 +416,11 @@ public class HabitatScreen extends AbstractContainerScreen<HabitatMenu> {
                 ClientPlayNetworking.send(new HabitatPayloads.HabitatActionPayload(3, new UUID(0,0), new UUID(0,0), ""));
                 return true;
             }
+        }
+
+        if (relX >= 101 && relX <= 154 && relY >= 185 && relY <= 208 && this.menu.isActive() && !isHabitatReady()) {
+            sendAction(1, null, "");
+            return true;
         }
 
         if (relX >= 101 && relX <= 154 && relY >= 185 && relY <= 208 && !this.menu.isActive()) {

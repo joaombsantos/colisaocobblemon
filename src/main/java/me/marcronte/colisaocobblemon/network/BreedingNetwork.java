@@ -10,10 +10,7 @@ import me.marcronte.colisaocobblemon.ModItems;
 import me.marcronte.colisaocobblemon.features.breeding.BreedingCalculator;
 import me.marcronte.colisaocobblemon.features.breeding.BreedingData;
 import me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlockEntity;
-import me.marcronte.colisaocobblemon.network.payloads.BreedingButtonPayload;
-import me.marcronte.colisaocobblemon.network.payloads.BreedingSelectPayload;
-import me.marcronte.colisaocobblemon.network.payloads.BreedingSyncPayload;
-import me.marcronte.colisaocobblemon.network.payloads.HabitatPayloads;
+import me.marcronte.colisaocobblemon.network.payloads.*;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -46,6 +43,7 @@ public class BreedingNetwork {
     }
 
     public static void openBreedingScreen(ServerPlayer player) {
+        sendCastratedParty(player);
         BreedingData data = BreedingData.get(player.serverLevel());
         BreedingData.PlayerBreedingInfo info = data.getPlayerInfo(player.getUUID());
 
@@ -68,6 +66,8 @@ public class BreedingNetwork {
                 info.fatherId,
                 mSpecies,
                 fSpecies,
+                info.isActive ? info.motherData : null,
+                info.isActive ? info.fatherData : null,
                 info.startTime,
                 BreedingData.PlayerBreedingInfo.BREEDING_DURATION,
                 info.isActive,
@@ -112,6 +112,13 @@ public class BreedingNetwork {
 
             player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.breeding_started").withStyle(ChatFormatting.GREEN));
             openBreedingScreen(player);
+        }
+        else if (buttonId == 4) {
+            if (!info.isActive || info.isReady()) return;
+
+            if (cancelBreeding(player)) {
+                player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.breeding_canceled").withStyle(ChatFormatting.GREEN));
+            }
         }
         else if (buttonId == 3) {
             if (!info.isReady()) return;
@@ -175,11 +182,52 @@ public class BreedingNetwork {
                     data.setDirty();
 
                     ServerPlayNetworking.send(player, new BreedingSyncPayload(
-                            null, null, null, null, 0, BreedingData.PlayerBreedingInfo.BREEDING_DURATION, false, false
+                            null, null, null, null, null, null, 0, BreedingData.PlayerBreedingInfo.BREEDING_DURATION, false, false
                     ));
                 }
             }
         }
+    }
+
+    public static boolean cancelBreeding(ServerPlayer player) {
+        BreedingData data = BreedingData.get(player.serverLevel());
+        BreedingData.PlayerBreedingInfo info = data.getPlayerInfo(player.getUUID());
+
+        boolean wasActive = info.isActive;
+
+        if (wasActive) {
+            if (info.motherData != null) {
+                Pokemon mother = reconstructPokemon(info.motherData, player.registryAccess());
+                if (mother != null) givePokemonOrToPC(player, mother);
+            }
+            if (info.fatherData != null) {
+                Pokemon father = reconstructPokemon(info.fatherData, player.registryAccess());
+                if (father != null) givePokemonOrToPC(player, father);
+            }
+        }
+
+        info.isActive = false;
+        info.startTime = 0;
+        info.motherId = null;
+        info.fatherId = null;
+        info.motherData = null;
+        info.fatherData = null;
+        data.setDirty();
+
+        openBreedingScreen(player);
+        return wasActive;
+    }
+
+    public static void sendCastratedParty(ServerPlayer player) {
+        PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
+        List<UUID> castrated = new java.util.ArrayList<>();
+        for (int slot = 0; slot < 6; slot++) {
+            Pokemon pokemon = party.get(slot);
+            if (pokemon != null && pokemon.getPersistentData().getBoolean("castrado")) {
+                castrated.add(pokemon.getUuid());
+            }
+        }
+        ServerPlayNetworking.send(player, new CastratedPartyPayload(castrated));
     }
 
     public static void givePokemonOrToPC(ServerPlayer player, Pokemon pokemon) {
@@ -334,7 +382,15 @@ public class BreedingNetwork {
         }
 
         if (actionId == 1) {
+            if (!habitat.hasActiveBreeding()) return;
+            if (habitat.getBlockState().getValue(me.marcronte.colisaocobblemon.features.breeding.habitat.BreedingHabitatBlock.READY)) return;
+            if (!player.getUUID().equals(habitat.getOwner())) {
+                player.sendSystemMessage(Component.literal("§cApenas o dono pode cancelar este breeding."));
+                return;
+            }
+
             habitat.cancelBreedingAndReturnParents();
+            player.sendSystemMessage(Component.translatable("message.colisao-cobblemon.breeding_canceled").withStyle(ChatFormatting.GREEN));
             player.closeContainer();
         }
         else if (actionId == 2) {
